@@ -1,0 +1,222 @@
+News
+****
+
+Release 4.1
+===========
+
+   • Workability on GNU/Linux systems and Go 1.10 is fixed.
+
+Release 4.0
+===========
+
+   • *Incompatible* encrypted and eblob packet format change: AEAD
+     encryption mode with 128 KiB blocks is used now, because previously
+     ‘nncp-toss’ did not verify encrypted packet’s MAC before feeding
+     decrypted data to external command.  Older versions are not
+     supported.
+   • Available free space checking before copying in ‘nncp-xfer’,
+     ‘nncp-daemon’, ‘nncp-call(er)’.
+   • ‘nncp-call’ has ability only to list packets on remote node,
+     without their transmission.
+   • ‘nncp-call’ has ability to transfer only specified packets.
+   • Workability of ‘xxrate’ preference in ‘calls’ configuration file
+     section.
+   • Dependant libraries are updated.
+   • Minor bugfixes.
+   • Begin using of ‘go.mod’ subsystem.
+
+Release 3.4
+===========
+
+   • ‘nncp-daemon’ can be run as ‘inetd’-service.
+
+Release 3.3
+===========
+
+   • ‘nncp-daemon’, ‘nncp-call’, ‘nncp-caller’ check if ‘.seen’ exists
+     and treat it like file was already downloaded.  Possibly it was
+     transferred out-of-bound and remote side needs to be notifier about
+     that.
+   • If higher priority packet is spooled, then ‘nncp-daemon’ will queue
+     its sending first, interrupting lower priority transmissions.
+   • Simple packet rate limiter added to online-related tools
+     (‘nncp-daemon’, ‘nncp-call’, ‘nncp-caller’).
+   • Ability to specify niceness with symbolic notation: NORMAL,
+     BULK+10, PRIORITY-5, etc.
+   • Changed default niceness levels: for ‘nncp-exec’ from 64 to 96, for
+     ‘nncp-freq’ from 64 to 160, for ‘nncp-file’ from 196 to 224.
+
+Release 3.2
+===========
+
+   • *Incompatible* _bundle_ archive format changes and ‘nncp-bundle’
+     workability with Go 1.10+.  Bundles must be valid tar archives, but
+     Go 1.9 made them invalid because of long paths inside.  NNCP
+     accidentally was dependant on that bug.  Explicit adding of ‘NNCP/’
+     directory in archive restores workability with valid tar archives.
+
+Release 3.1
+===========
+
+   • Ability to disable relaying at all using -via - command line
+     option.
+
+Release 3.0
+===========
+
+   • *Incompatible* plain packet format changes.  Older versions are not
+     supported.
+   • Ability to queue remote command execution, by configuring ‘exec’
+     option in configuration file and using ‘nncp-exec’ command:
+        • ‘nncp-mail’ command is replaced with more flexible
+          ‘nncp-exec’.  Instead of nncp-mail NODE RECIPIENT you must use
+          nncp-exec NODE sendmail RECIPIENT.
+        • ‘sendmail’ configuration file option is replaced with ‘exec’.
+          sendmail: [...] must be replaced with exec: sendmail: [...].
+   • Ability to override ‘via’ configuration option for destination node
+     via ‘-via’ command line option for following commands: ‘nncp-file’,
+     ‘nncp-freq’, ‘nncp-exec’.
+   • Chunked files, having size less than specified chunk size, will be
+     sent as an ordinary single file.
+   • Exec commands are invoked with additional ‘NNCP_NICE’ and
+     ‘NNCP_SELF’ environment variables.
+   • Files, that are sent as a reply to freq, have niceness level taken
+     from the freq packet.  You can set desired niceness during
+     ‘nncp-freq’ invocation using ‘-replynice’ option.
+   • ‘nncp-toss’ command can ignore specified packet types during
+     processing: ‘-nofile’, ‘-nofreq’, ‘-noexec’, ‘-notrns’.
+   • ‘nncp-file’ command uses ‘FreqMinSize’/‘FreqChunked’ configuration
+     file options for ‘-minsize’/‘-chunked’ by default.  You can turn
+     this off by specifying zero value.
+
+Release 2.0
+===========
+
+   • *Incompatible* encrypted/eblob packet format changes.  Older
+     versions are not supported.
+   • Twofish encryption algorithm is replaced with ChaCha20.  It is much
+     more faster.  One cryptographic primitive less.
+   • HKDF-BLAKE2b-256 KDF algorithm is replaced with BLAKE2Xb XOF. Yet
+     another cryptographic primitive less (assuming that BLAKE2X is
+     nearly identical to BLAKE2).
+
+Release 1.0
+===========
+
+   • *Incompatible* encrypted packet format changes.  Older versions are
+     not supported.
+   • ‘nncp-bundle’ command can either create stream of encrypted
+     packets, or digest it.  It is useful when dealing with stdin/stdout
+     based transmission methods (like writing to CD-ROM without
+     intermediate prepared ISO image and working with tape drives).
+   • ‘nncp-toss’ is able to create ‘.seen’ files preventing duplicate
+     packets receiving.
+   • Single background checksum verifier worker is allowed in
+     ‘nncp-call’.  This is helpful when thousands of small inbound
+     packets could create many goroutines.
+   • Ability to override path to spool directory and logfile through
+     either command line argument, or environment variable.
+   • ‘nncp-rm’ is able to delete outbound/inbound, ‘.seen’, ‘.part’,
+     ‘.lock’ and temporary files.
+
+Release 0.12
+============
+
+   • Sendmail command is called with ‘NNCP_SENDER’ environment variable.
+
+Release 0.11
+============
+
+   • ‘nncp-stat’’s command output is sorted by node name.
+
+Release 0.10
+============
+
+   • ‘nncp-freq’’s ‘DST’ argument is optional now.  Last ‘SRC’ path’s
+     element will be used by default.
+
+Release 0.9
+===========
+
+   • Fix ‘-rx’/‘-tx’ arguments processing in ‘nncp-call’ command.  They
+     were ignored.
+
+Release 0.8
+===========
+
+   • Little bugfix in ‘nncp-file’ command, where ‘-minsize’ option for
+     unchunked transfer was not in KiBs, but in bytes.
+
+Release 0.7
+===========
+
+   • Ability to feed ‘nncp-file’ from stdin, that uses an encrypted
+     temporary file for that.
+
+   • Chunked files transmission appeared with corresponding ‘nncp-reass’
+     command and ‘freqchunked’ configuration file entry.  Useful for
+     transferring big files over small storage devices.
+
+   • ‘freqminsize’ configuration file option, analogue to ‘-minsize’
+     one.
+
+   • ‘nncp-xfer’’s ‘-force’ option is renamed to ‘-mkdir’ for clarity.
+
+   • ‘-minsize’ option is specified in KiBs, not bytes, for convenience.
+
+   • ‘nncp-newcfg’ command is renamed to ‘nncp-cfgnew’, and
+     ‘nncp-mincfg’ to ‘nncp-cfgmin’ – now they have common prefix and
+     are grouped together for convenience.
+
+   • ‘nncp-cfgenc’ command appeared, allowing configuration file
+     encryption/decryption, for keeping it safe without any either
+     OpenPGP or similar tools usage.
+
+   • Cryptographic libraries (dependencies) are updated.
+
+Release 0.6
+===========
+
+   • Small ‘nncp-rm’ command appeared.
+   • Cryptographic libraries (dependencies) are updated.
+
+Release 0.5
+===========
+
+   • Trivial small fix in default niceness level of ‘nncp-file’ and
+     ‘nncp-freq’ commands.
+
+Release 0.4
+===========
+
+   • Small fix in ‘nncp-call’, ‘nncp-caller’, ‘nncp-daemon’: they can
+     segmentation fail sometimes (no data is lost).
+   • ‘nncp-newnode’ renamed to ‘nncp-newcfg’ – it is shorter and more
+     convenient to use.
+   • ‘nncp-mincfg’ command appeared: helper allowing to create
+     minimalistic stripped down configuration file without private keys,
+     that is useful during ‘nncp-xfer’ usage.
+
+Release 0.3
+===========
+
+Fixed compatibility with Go 1.6.
+
+Release 0.2
+===========
+
+   • *Incompatible* packet’s format change (magic number is changed
+     too): size field is encrypted and is not send in plaintext anymore.
+   • ‘-minsize’ option gives ability to automatically pad outgoing
+     packets to specified minimal size.
+   • ‘nncp-daemon’ and ‘nncp-call’/‘nncp-caller’ always check new _tx_
+     packets appearance in the background while connected.  Remote side
+     is immediately notified.
+   • ‘-onlinedeadline’ option gives ability to configure timeout of
+     inactivity of online connection, when it could be disconnected.  It
+     could be used to keep connection alive for a long time.
+   • ‘-maxonlinetime’ option gives ability to set maximal allowable
+     online connection aliveness time.
+   • ‘nncp-caller’ command appeared: cron-ed TCP daemon caller.
+   • ‘nncp-pkt’ command can decompress the data.
+

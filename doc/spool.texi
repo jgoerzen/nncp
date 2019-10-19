@@ -1,0 +1,40 @@
+@node Spool
+@unnumbered Spool directory
+
+Spool directory holds @ref{Encrypted, encrypted packets} received from
+remote nodes and queued for sending to them. It has the following
+example structure:
+
+@verbatim
+spool/tmp/
+spool/2WHB...OABQ/rx.lock
+spool/2WHB...OABQ/rx/5ZIB...UMKW.part
+spool/2WHB...OABQ/tx.lock
+spool/BYRR...CG6Q/rx.lock
+spool/BYRR...CG6Q/rx/
+spool/BYRR...CG6Q/tx.lock
+spool/BYRR...CG6Q/tx/AQUT...DGNT.seen
+spool/BYRR...CG6Q/tx/NSYY...ZUU6
+spool/BYRR...CG6Q/tx/VCSR...3VXX.seen
+spool/BYRR...CG6Q/tx/ZI5U...5RRQ
+@end verbatim
+
+Except for @file{tmp}, all other directories are Base32-encoded node
+identifiers (@file{2WHB...OABQ}, @file{BYRR...CG6Q} in our example).
+Each node subdirectory has @file{rx} (received, partially received and
+currently unprocessed packets) and @file{tx} (for outbound packets)
+directories.
+
+Each @file{rx}/@file{tx} directory contains one file per encrypted
+packet. Its filename is Base32 encoded BLAKE2b hash of the contents. So
+it can be integrity checked at any time. @file{5ZIB...UMKW.part} is
+partially received file from @file{2WHB...OABQ} node. @file{tx}
+directory can not contain partially written files -- they are moved
+atomically from @file{tmp}.
+
+When @ref{nncp-toss} utility is called with @option{-seen} option, it
+will create empty @file{XXX.seen} files, telling that some kind of
+packet was already tossed sometime.
+
+Only one process can work with @file{rx}/@file{tx} directories at once,
+so there are corresponding lock files.

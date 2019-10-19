@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Comparison (NNCP)</title>
+
+<meta name="description" content="Comparison (NNCP)">
+<meta name="keywords" content="Comparison (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="Use-cases.html#Use-cases" rel="next" title="Use cases">
+<link href="index.html#Top" rel="prev" title="Top">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="Comparison"></a>
+<div class="header">
+<p>
+Next: <a href="Use-cases.html#Use-cases" rel="next">Use cases</a>, Previous: <a href="index.html#Top" rel="prev">Top</a>, Up: <a href="index.html#Top" rel="up">Top</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Comparison-with-existing-solutions"></a>
+<h2 class="unnumbered">Comparison with existing solutions</h2>
+
+<p>Here is comparison with <a href="https://en.wikipedia.org/wiki/UUCP">UUCP</a>
+(Unix to Unix copy), FTN (<a href="https://en.wikipedia.org/wiki/FidoNet">FidoNet</a> Technology Networks) and <a href="https://en.wikipedia.org/wiki/SMTP">SMTP</a>
+(because it is also store-and-forward solution).
+</p>
+<table>
+<thead><tr><th width="40%"></th><th width="15%">UUCP</th><th width="15%">FTN</th><th width="15%">NNCP</th><th width="15%">SMTP</th></tr></thead>
+<tr><td width="40%">Ease of setup</td><td width="15%">Medium</td><td width="15%">Hard</td><td width="15%">Easy</td><td width="15%">Hard</td></tr>
+<tr><td width="40%">Mail transmission</td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td></tr>
+<tr><td width="40%">News transmission</td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td><td width="15%">No</td></tr>
+<tr><td width="40%">File transmission</td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td></tr>
+<tr><td width="40%">Chunked files</td><td width="15%">No</td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td></tr>
+<tr><td width="40%">Remote command execution</td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td></tr>
+<tr><td width="40%">Resumable downloads</td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td></tr>
+<tr><td width="40%">Packets prioritizing</td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td></tr>
+<tr><td width="40%">Mail compression</td><td width="15%">No</td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td></tr>
+<tr><td width="40%">SMTP integration</td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td><td width="15%"><strong>Yes</strong></td><td width="15%">N/A</td></tr>
+<tr><td width="40%">Push/poll</td><td width="15%"><strong>Both</strong></td><td width="15%"><strong>Both</strong></td><td width="15%"><strong>Both</strong></td><td width="15%">Push</td></tr>
+<tr><td width="40%">DTN</td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td></tr>
+<tr><td width="40%">Intended network size</td><td width="15%">Dozens</td><td width="15%">Global</td><td width="15%">Dozens</td><td width="15%">Global</td></tr>
+<tr><td width="40%">Routing</td><td width="15%">Manual/static</td><td width="15%">Federated</td><td width="15%">Manual/static</td><td width="15%">Federated</td></tr>
+<tr><td width="40%">PSTN support</td><td width="15%"><strong>Yes</strong></td><td width="15%"><strong>Yes</strong></td><td width="15%">Possible</td><td width="15%">No</td></tr>
+<tr><td width="40%">Anonymous peers</td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td><td width="15%">No</td><td width="15%"><strong>Yes</strong></td></tr>
+<tr><td width="40%">Peers authentication</td><td width="15%">PAP</td><td width="15%">PAP/CHAP</td><td width="15%">public-key</td><td width="15%">No</td></tr>
+<tr><td width="40%">Packets encryption</td><td width="15%">No</td><td width="15%">No</td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td></tr>
+<tr><td width="40%">Metadata privacy</td><td width="15%">No</td><td width="15%">No</td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td></tr>
+<tr><td width="40%">Packets integrity check</td><td width="15%">No</td><td width="15%">No</td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td></tr>
+<tr><td width="40%">Sneakernet friendliness</td><td width="15%">No</td><td width="15%">No</td><td width="15%"><strong>Yes</strong></td><td width="15%">No</td></tr>
+</table>
+
+<dl compact="compact">
+<dt><strong>Ease of setup</strong></dt>
+<dd><p>UUCP can be setup rather easily with few configuration files
+    and few lines in each of them. But you have to add some encryption
+    and authentication overlay for securing you data transmission.
+</p>
+<p>FTN is hard to setup because it is totally different world of
+    software comparing to Unix one. Even mail editor will be something
+    like GoldEd, not an ordinary email client. Moreover, there is no
+    out-of-box encryption and strong authentication involved.
+</p>
+<p>NNCP requires editing of single YAML <a href="Configuration.html#Configuration">    configuration file</a>.
+</p>
+</dd>
+<dt><strong>News transmission</strong></dt>
+<dd><p>SMTP does not know anything about news, NNTP and so forth. Neither
+    does NNCP, because they are not used very much nowadays.
+</p>
+</dd>
+<dt><strong>File transmission</strong></dt>
+<dd><p>SMTP could transfer files only Base64-encoding them &ndash; this is very
+    inefficient.
+</p>
+</dd>
+<dt><strong>Chunked files</strong></dt>
+<dd><p>FTN software can automatically split huge files on smaller chunks,
+    to reassemble it on the destination node. NNCP also supports
+    <a href="Chunked.html#Chunked">that feature</a>, especially important when dealing with
+    small capacity removable storage devices.
+</p>
+</dd>
+<dt><strong>Packets prioritizing</strong></dt>
+<dd><p>UUCP and NNCP will push higher priority (&quot;grade&quot; in UUCP
+    terminology) packets first. You mail will pass, even when many
+    gigabytes files are queued in parallel.
+</p>
+</dd>
+<dt><strong>SMTP integration</strong></dt>
+<dd><p>Mail servers like <a href="http://www.postfix.org/">Postfix</a> offers
+    documentation and configuration file examples how to use it with
+    UUCP. <a href="http://www.exim.org/">Exim</a> and
+    <a href="http://www.sendmail.com/sm/open_source/">Sendmail</a> could be
+    integrated with UUCP rather easily too. For using NNCP, just replace
+    UUCP commands with NNCP ones.
+</p>
+</dd>
+<dt><strong>Push/poll</strong></dt>
+<dd><p>With SMTP, you have to wait online when remote peers will push you
+    the messages. There are extensions to the protocol allowing
+    poll-model, but they are not used everywhere. This is very important
+    to be independent from specified model and be able to exchange the
+    data with possibility you have.
+</p>
+</dd>
+<dt><strong><a href="https://en.wikipedia.org/wiki/Delay-tolerant_networking">DTN</a> (delay tolerant networking)</strong></dt>
+<dd><p>SMTP will drop messages that can not be delivered for a long time
+    (several days). Others are tolerant for the long delays.
+</p>
+</dd>
+<dt><strong>Routing</strong></dt>
+<dd><p>UUCP and NNCP does not known nothing about routing. You have to
+    explicitly tell how to send (what hops to use) packets to each node.
+</p>
+</dd>
+<dt><strong>PSTN support</strong></dt>
+<dd><p>UUCP and FidoNet always have been working with modems out-of-box.
+    Only many years later they gained support for working over TCP/IP
+    connections. SMTP works only over TCP/IP. NNCP currently has only
+    TCP daemon, but nothing prohibits using of another 8-bit aware
+    online transport.
+</p>
+</dd>
+<dt><strong>Anonymous peers</strong></dt>
+<dd><p>NNCP and FTN are friend-to-friend networks exclusively. This is very
+    secure and mitigates many possible man-in-the-middle (MitM) and
+    <a href="https://en.wikipedia.org/wiki/Sybil_attack">Sybil</a> attacks.
+</p>
+</dd>
+<dt><strong>Sneakernet friendliness</strong></dt>
+<dd><p>No one, except NNCP, supports data exchanging via removable storages
+    likes flash drives, CD-ROMs, tapes and hard drives out-of-box. It
+    can be emulated for many FTN software, by manually copying files in
+    its inbound/outbound directories. But UUCP and SMTP software
+    requires more manual work to do so.
+</p>
+</dd>
+</dl>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Use-cases.html#Use-cases" rel="next">Use cases</a>, Previous: <a href="index.html#Top" rel="prev">Top</a>, Up: <a href="index.html#Top" rel="up">Top</a> &nbsp; </p>
+</div>
+
+
+
+</body>
+</html>

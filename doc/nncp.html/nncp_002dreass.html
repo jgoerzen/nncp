@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>nncp-reass (NNCP)</title>
+
+<meta name="description" content="nncp-reass (NNCP)">
+<meta name="keywords" content="nncp-reass (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Commands.html#Commands" rel="up" title="Commands">
+<link href="nncp_002drm.html#nncp_002drm" rel="next" title="nncp-rm">
+<link href="nncp_002dpkt.html#nncp_002dpkt" rel="prev" title="nncp-pkt">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="nncp_002dreass"></a>
+<div class="header">
+<p>
+Next: <a href="nncp_002drm.html#nncp_002drm" rel="next">nncp-rm</a>, Previous: <a href="nncp_002dpkt.html#nncp_002dpkt" rel="prev">nncp-pkt</a>, Up: <a href="Commands.html#Commands" rel="up">Commands</a> &nbsp; </p>
+</div>
+<hr>
+<a name="nncp_002dreass-1"></a>
+<h3 class="section">nncp-reass</h3>
+
+<pre class="verbatim">% nncp-reass [options] [-dryrun] [-keep] [-dump] [-stdout] FILE.nncp.meta
+% nncp-reass [options] [-dryrun] [-keep] {-all | -node NODE}
+</pre>
+<p>Reassemble <a href="Chunked.html#Chunked">chunked file</a> after <a href="nncp_002dtoss.html#nncp_002dtoss">tossing</a>.
+</p>
+<p>When called with <samp>FILE</samp> option, this command will reassemble only
+it. When called with <samp>-node</samp> option, this command will try to
+reassemble all <samp>.nncp.meta</samp> files found in <samp>NODE</samp>&rsquo;s
+<a href="Configuration.html#CfgIncoming">incoming</a> directory. When called with <samp>-all</samp>
+option, then cycle through all known nodes to do the same.
+</p>
+<p>Reassembling process does the following:
+</p>
+<ol>
+<li> Parses <a href="Chunked.html#Chunked"><samp>.nncp.meta</samp></a> file.
+</li><li> Checks existence and size of every <samp>.nncp.chunkXXX</samp>.
+</li><li> Verifies integrity of every chunk.
+</li><li> Concatenates all chunks, simultaneously removing them from filesystem.
+</li></ol>
+
+<p>That process reads the whole data twice. Be sure to have free disk
+space for at least one chunk. Decrypted chunk files as a rule are saved
+in pseudo-random order, so removing them during reassembly process will
+likely lead to filesystem fragmentation. Reassembly process on
+filesystems with deduplication capability should be rather lightweight.
+</p>
+<p>If <samp>-dryrun</samp> option is specified, then only existence and
+integrity checking are performed.
+</p>
+<p>If <samp>-keep</samp> option is specified, then no
+<samp>.nncp.meta</samp>/<samp>.nncp.chunkXXX</samp> files are deleted during
+reassembly process.
+</p>
+<p><samp>-stdout</samp> option outputs reassembled file to stdout, instead of
+saving to temporary file with renaming after. This could be useful for
+reassembling on separate filesystem to lower fragmentation effect,
+and/or separate storage device for higher performance.
+</p>
+<p><samp>-dump</samp> option prints meta-file contents in human-friendly form.
+It is useful mainly for debugging purposes. For example:
+</p><pre class="verbatim">Original filename: testfile
+File size: 3.8 MiB (3987795 bytes)
+Chunk size: 1.0 MiB (1048576 bytes)
+Number of chunks: 4
+Checksums:
+    0: eac60d819edf40b8ecdacd0b9a5a8c62de2d15eef3c8ca719eafa0be9b894017
+    1: 013a07e659f2e353d0e4339c3375c96c7fffaa2fa00875635f440bbc4631052a
+    2: f4f883975a663f2252328707a30e71b2678f933b2f3103db8475b03293e4316e
+    3: 0e9e229501bf0ca42d4aa07393d19406d40b179f3922a3986ef12b41019b45a3
+</pre>
+<p>Do not forget about <a href="Chunked.html#ChunkedZFS">possible</a> ZFS deduplication issues.
+</p>
+<hr>
+<div class="header">
+<p>
+Next: <a href="nncp_002drm.html#nncp_002drm" rel="next">nncp-rm</a>, Previous: <a href="nncp_002dpkt.html#nncp_002dpkt" rel="prev">nncp-pkt</a>, Up: <a href="Commands.html#Commands" rel="up">Commands</a> &nbsp; </p>
+</div>
+
+
+
+</body>
+</html>

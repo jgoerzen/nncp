@@ -1,0 +1,19 @@
+@startuml
+hide footbox
+participant Initiator
+participant Responder
+
+== preparation ==
+
+Initiator <- Responder : [s]
+
+== interactive ==
+
+Initiator -> Responder : [e, es, s, ss], INFO..., HALT...
+Initiator <- Responder : [e, ee, se], INFO..., HALT...
+Initiator -> Responder : INFO..., FREQ..., DONE...
+Initiator <- Responder : INFO..., FREQ..., DONE...
+Initiator -> Responder : FILE..., INFO..., DONE...
+Initiator <- Responder : FILE..., INFO..., DONE...
+
+@enduml

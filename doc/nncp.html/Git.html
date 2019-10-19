@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Git (NNCP)</title>
+
+<meta name="description" content="Git (NNCP)">
+<meta name="keywords" content="Git (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Integration.html#Integration" rel="up" title="Integration">
+<link href="Multimedia.html#Multimedia" rel="next" title="Multimedia">
+<link href="DownloadService.html#DownloadService" rel="prev" title="DownloadService">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="Git"></a>
+<div class="header">
+<p>
+Next: <a href="Multimedia.html#Multimedia" rel="next">Multimedia</a>, Previous: <a href="DownloadService.html#DownloadService" rel="prev">DownloadService</a>, Up: <a href="Integration.html#Integration" rel="up">Integration</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Integration-with-Git"></a>
+<h3 class="section">Integration with Git</h3>
+
+<p><a href="https://git-scm.com/">Git</a> version control system already has all
+necessary tools for store-and-forward networking.
+<a href="https://git-scm.com/docs/git-bundle">git-bundle</a> command is
+everything you need.
+</p>
+<p>Use it to create bundles containing all required blobs/trees/commits and tags:
+</p><pre class="verbatim">% git bundle create repo-initial.bundle master --tags --branches
+% git tag -f last-bundle
+% nncp-file repo-initial.bundle remote.node:repo-$(date % '+%Y%M%d%H%m%S').bundle
+</pre>
+<p>Do usual working with the Git: commit, add, branch, checkout, etc. When
+you decide to queue your changes for sending, create diff-ed bundle and
+transfer them:
+</p><pre class="verbatim">% git bundle create repo-$(date '+%Y%M%d%H%m%S').bundle last-bundle..master
+or maybe
+% git bundle create repo-$(date '+%Y%M%d').bundle --since=10.days master
+</pre>
+<p>Received bundle on remote machine acts like usual remote:
+</p><pre class="verbatim">% git clone -b master repo-XXX.bundle
+</pre><p>overwrite <samp>repo.bundle</samp> file with newer bundles you retrieve and
+fetch all required branches and commits:
+</p><pre class="verbatim">% git pull # assuming that origin remote points to repo.bundle
+% git fetch repo.bundle master:localRef
+% git ls-remote repo.bundle
+</pre>
+<p>Bundles are also useful when cloning huge repositories (like Linux has).
+Git&rsquo;s native protocol does not support any kind of interrupted download
+resuming, so you will start from the beginning if connection is lost.
+Bundles, being an ordinary files, can be downloaded with native
+HTTP/FTP/NNCP resuming capabilities. After you fetch repository via the
+bundle, you can add an ordinary <samp>git://</samp> remote and fetch the
+difference.
+</p>
+
+
+
+</body>
+</html>

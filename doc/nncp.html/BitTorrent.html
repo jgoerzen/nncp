@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>BitTorrent (NNCP)</title>
+
+<meta name="description" content="BitTorrent (NNCP)">
+<meta name="keywords" content="BitTorrent (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Integration.html#Integration" rel="up" title="Integration">
+<link href="DownloadService.html#DownloadService" rel="next" title="DownloadService">
+<link href="WARCs.html#WARCs" rel="prev" title="WARCs">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="BitTorrent"></a>
+<div class="header">
+<p>
+Next: <a href="DownloadService.html#DownloadService" rel="next">DownloadService</a>, Previous: <a href="WARCs.html#WARCs" rel="prev">WARCs</a>, Up: <a href="Integration.html#Integration" rel="up">Integration</a> &nbsp; </p>
+</div>
+<hr>
+<a name="BitTorrent-and-huge-files"></a>
+<h3 class="section">BitTorrent and huge files</h3>
+
+<p>If dealing with <a href="Git.html#Git">Git</a>, <a href="Feeds.html#Feeds">web feeds</a> and <a href="Multimedia.html#Multimedia">multimedia</a> goes relatively fast, then BitTorrent and huge files
+consumes much time. You can not wait for downloads finish, but want to
+queue them after.
+</p>
+<p><a href="http://aria2.github.io/">aria2</a> multi-protocol download utility
+could be used for solving that issue conveniently. It supports HTTP,
+HTTPS, FTP, SFTP and BitTorrent protocols, together with
+<a href="http://tools.ietf.org/html/rfc5854">Metalink</a> format. BitTorrent
+support is fully-featured: UDP trackers, DHT, PEX, encryption, magnet
+URIs, Web-seeding, selective downloads, LPD. <code>aria2</code> can
+accelerate HTTP*/*FTP downloads by segmented multiple parallel
+connections.
+</p>
+<p>You can queue you files after they are completely downloaded.
+<samp>aria2-downloaded.sh</samp> contents:
+</p><pre class="verbatim">#!/bin/sh
+
+TORRENTS_DIR=/storage/torrents
+REMOTE=stargrave.org
+
+if [ &quot;$2&quot; -eq 0 ]; then
+    # downloaded .torrent/.metalink
+    exit 0
+fi
+
+if [ &quot;$2&quot; -gt 1 ]; then
+    cd &quot;$3&quot;
+    while [ &quot;$(pwd)&quot; != $TORRENTS_DIR ]; do
+        name=&quot;$(basename &quot;$(pwd)&quot;)&quot;
+        cd ..
+    done
+    tartmp=$(mktemp ./finished.XXXXXX)
+    tar cf $tartmp &quot;$name&quot;
+    nncp-file $tartmp $REMOTE:&quot;$name&quot;.tar
+    rm $tartmp
+else
+    nncp-file &quot;$3&quot; $REMOTE:
+fi
+</pre>
+<p>Also you can prepare
+<a href="http://aria2.github.io/manual/en/html/aria2c.html#files">input file</a>
+with the jobs you want to download:
+</p><pre class="verbatim">% cat jobs
+http://www.nncpgo.org/download/nncp-0.11.tar.xz
+    out=nncp.txz
+http://www.nncpgo.org/download/nncp-0.11.tar.xz.sig
+    out=nncp.txz.sig
+% aria2c \
+    --on-download-complete aria2-downloaded.sh \
+    --input-file jobs
+</pre><p>and all that downloaded (<samp>nncp.txz</samp>, <samp>nncp.txz.sig</samp>) files
+will be sent to <samp>remote.node</samp> when finished.
+</p>
+
+
+
+</body>
+</html>

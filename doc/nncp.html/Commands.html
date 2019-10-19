@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Commands (NNCP)</title>
+
+<meta name="description" content="Commands (NNCP)">
+<meta name="keywords" content="Commands (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="nncp_002dbundle.html#nncp_002dbundle" rel="next" title="nncp-bundle">
+<link href="Multimedia.html#Multimedia" rel="prev" title="Multimedia">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="Commands"></a>
+<div class="header">
+<p>
+Next: <a href="Niceness.html#Niceness" rel="next">Niceness</a>, Previous: <a href="Integration.html#Integration" rel="prev">Integration</a>, Up: <a href="index.html#Top" rel="up">Top</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Commands-1"></a>
+<h2 class="unnumbered">Commands</h2>
+
+<p>Nearly all commands have the following common options:
+</p>
+<dl compact="compact">
+<dt><samp>-cfg</samp></dt>
+<dd><p>Path to configuration file. May be overridden by <code>NNCPCFG</code>
+    environment variable. If file file is an encrypted <a href="EBlob.html#EBlob">    eblob</a>, then ask for passphrase to decrypt it first.
+</p></dd>
+<dt><samp>-debug</samp></dt>
+<dd><p>Print debug messages. Normally this option should not be used.
+</p></dd>
+<dt><samp>-minsize</samp></dt>
+<dd><a name="OptMinSize"></a><p>Minimal required resulting packet size, in KiBs. For example if you
+    send 2 KiB file and set <samp>-minsize 4</samp>, then resulting packet
+    will be 4 KiB (containing file itself and some junk).
+</p></dd>
+<dt><samp>-nice</samp></dt>
+<dd><p>Set desired outgoing packet <a href="Niceness.html#Niceness">niceness level</a>.
+</p></dd>
+<dt><samp>-replynice</samp></dt>
+<dd><p>Set desired reply packet <a href="Niceness.html#Niceness">niceness level</a>. Only freq
+    and exec packets look at that niceness level.
+</p></dd>
+<dt><samp>-via</samp></dt>
+<dd><p>Override <a href="Configuration.html#CfgVia">via</a> configuration option for destination node.
+    Specified nodes must be separated with comma: <tt>NODE1,NODE2</tt>.
+    With <tt>-via -</tt> you can disable relaying at all.
+</p></dd>
+<dt><samp>-spool</samp></dt>
+<dd><p>Override path to spool directory. May be specified by
+    <code>NNCPSPOOL</code> environment variable.
+</p></dd>
+<dt><samp>-log</samp></dt>
+<dd><p>Override path to logfile. May be specified by <code>NNCPLOG</code>
+    environment variable.
+</p></dd>
+<dt><samp>-quiet</samp></dt>
+<dd><p>Print only errors, omit simple informational messages. In any case
+    those messages are logged, so you can reread them using
+    <a href="nncp_002dlog.html#nncp_002dlog">nncp-log</a> command.
+</p></dd>
+<dt><samp>-version</samp></dt>
+<dd><p>Print version information.
+</p></dd>
+<dt><samp>-warranty</samp></dt>
+<dd><p>Print warranty information (no warranty).
+</p></dd>
+</dl>
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dbundle.html#nncp_002dbundle">nncp-bundle</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dcall.html#nncp_002dcall">nncp-call</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dcaller.html#nncp_002dcaller">nncp-caller</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dcfgenc.html#nncp_002dcfgenc">nncp-cfgenc</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dcfgmin.html#nncp_002dcfgmin">nncp-cfgmin</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dcfgnew.html#nncp_002dcfgnew">nncp-cfgnew</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dcheck.html#nncp_002dcheck">nncp-check</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002ddaemon.html#nncp_002ddaemon">nncp-daemon</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dexec.html#nncp_002dexec">nncp-exec</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dfile.html#nncp_002dfile">nncp-file</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dfreq.html#nncp_002dfreq">nncp-freq</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dlog.html#nncp_002dlog">nncp-log</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dpkt.html#nncp_002dpkt">nncp-pkt</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dreass.html#nncp_002dreass">nncp-reass</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002drm.html#nncp_002drm">nncp-rm</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dstat.html#nncp_002dstat">nncp-stat</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dtoss.html#nncp_002dtoss">nncp-toss</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nncp_002dxfer.html#nncp_002dxfer">nncp-xfer</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="Niceness.html#Niceness" rel="next">Niceness</a>, Previous: <a href="Integration.html#Integration" rel="prev">Integration</a>, Up: <a href="index.html#Top" rel="up">Top</a> &nbsp; </p>
+</div>
+
+
+
+</body>
+</html>

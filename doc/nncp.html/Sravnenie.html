@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Сравнение (NNCP)</title>
+
+<meta name="description" content="Сравнение (NNCP)">
+<meta name="keywords" content="Сравнение (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Russkii.html#g_t_0420_0443_0441_0441_043a_0438_0439" rel="up" title="Русский">
+<link href="Scenarii.html#g_t_0421_0446_0435_043d_0430_0440_0438_0438" rel="next" title="Сценарии">
+<link href="Ob-utilitakh.html#g_t_041e_0431-_0443_0442_0438_043b_0438_0442_0430_0445" rel="prev" title="Об утилитах">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="g_t_0421_0440_0430_0432_043d_0435_043d_0438_0435"></a>
+<div class="header">
+<p>
+Next: <a href="Scenarii.html#g_t_0421_0446_0435_043d_0430_0440_0438_0438" rel="next">Сценарии</a>, Previous: <a href="Ob-utilitakh.html#g_t_041e_0431-_0443_0442_0438_043b_0438_0442_0430_0445" rel="prev">Об утилитах</a>, Up: <a href="Russkii.html#g_t_0420_0443_0441_0441_043a_0438_0439" rel="up">Русский</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Sravnenie-s-sushchestvuiushchimi-resheniyami"></a>
+<h3 class="section">Сравнение с существующими решениями</h3>
+
+<p>Это сравнение <a href="https://ru.wikipedia.org/wiki/Uucp">UUCP</a>
+(Unix to Unix copy), <a href="https://ru.wikipedia.org/wiki/FTN">FTN</a>
+(<a href="https://ru.wikipedia.org/wiki/%D0%A4%D0%B8%D0%B4%D0%BE">FidoNet</a>)
+и <a href="https://ru.wikipedia.org/wiki/SMTP">SMTP</a> (так как это тоже
+сохранить-и-переслать режим).
+</p>
+<table>
+<thead><tr><th width="40%"></th><th width="15%">UUCP</th><th width="15%">FTN</th><th width="15%">NNCP</th><th width="15%">SMTP</th></tr></thead>
+<tr><td width="40%">Простота настройки</td><td width="15%">Средне</td><td width="15%">Сложно</td><td width="15%">Легко</td><td width="15%">Сложно</td></tr>
+<tr><td width="40%">Передача почты</td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td></tr>
+<tr><td width="40%">Передача новостей</td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Передача файлов</td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Разбиение файлов на части</td><td width="15%">Нет</td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Удалённое исполнение команд</td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Возобновляемое скачивание</td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Приоритезация пакетов</td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Сжатие почты</td><td width="15%">Нет</td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Интеграция с SMTP</td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td><td width="15%"><strong>Да</strong></td><td width="15%">N/A</td></tr>
+<tr><td width="40%">Push/poll модель</td><td width="15%"><strong>Обе</strong></td><td width="15%"><strong>Обе</strong></td><td width="15%"><strong>Обе</strong></td><td width="15%">Push</td></tr>
+<tr><td width="40%">DTN</td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Предполагаемый размер сети</td><td width="15%">Дюжины</td><td width="15%">Глобально</td><td width="15%">Дюжины</td><td width="15%">Глобально</td></tr>
+<tr><td width="40%">Маршрутизация</td><td width="15%">Ручное/статичное</td><td width="15%">Федеративное</td><td width="15%">Ручное/статичное</td><td width="15%">Федеративное</td></tr>
+<tr><td width="40%">Поддержка телефонной сети</td><td width="15%"><strong>Да</strong></td><td width="15%"><strong>Да</strong></td><td width="15%">Возможно</td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Анонимные участники</td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td><td width="15%">Нет</td><td width="15%"><strong>Да</strong></td></tr>
+<tr><td width="40%">Аутентификация участников</td><td width="15%">PAP</td><td width="15%">PAP/CHAP</td><td width="15%">публичный ключ</td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Шифрование пакетов</td><td width="15%">Нет</td><td width="15%">Нет</td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Приватность метаданных</td><td width="15%">Нет</td><td width="15%">Нет</td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Проверка целостности пакетов</td><td width="15%">Нет</td><td width="15%">Нет</td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td></tr>
+<tr><td width="40%">Дружелюбность к флоппинету</td><td width="15%">Нет</td><td width="15%">Нет</td><td width="15%"><strong>Да</strong></td><td width="15%">Нет</td></tr>
+</table>
+
+<dl compact="compact">
+<dt><strong>Простота установки</strong></dt>
+<dd><p>UUCP относительно легко настраивается несколькими строчками в
+    нескольких конфигурационных файлах. Но вы вынуждены добавить
+    дополнительный уровень шифрования и аутентификации для безопасного
+    обмена данными.
+</p>
+<p>FTN сложен в настройке, потому что это совершенно другой мир
+    программного обеспечения, по-сравнению с Unix-ом. Даже редактор
+    почты будет какой-нибудь GoldEd, а не обычный почтовый клиент. Более
+    того, из коробки не предоставляется никакого шифрования и сильной
+    аутентификации.
+</p>
+<p>NNCP требует редактирование единственного YAML <a href="Configuration.html#Configuration">    конфигурационного файла</a>.
+</p>
+</dd>
+<dt><strong>Передача новостей</strong></dt>
+<dd><p>SMTP ничего не знает о новостях, NNTP и тому подобному. NNCP тоже не
+    знает, потому что на текущий день они уже мало используются.
+</p>
+</dd>
+<dt><strong>Передача файлов</strong></dt>
+<dd><p>SMTP может передавать файлы только в Base64 кодировке &ndash; это очень
+    не эффективно.
+</p>
+</dd>
+<dt><strong>Разбиение файлов на части</strong></dt>
+<dd><p>FTN программы могут автоматически разбивать огромные файлы на
+    меньшие части, чтобы собрать их воедино на целевом узле. NNCP тоже
+    <a href="Chunked.html#Chunked">поддерживает</a> эту возможность, особенно важную когда
+    дело касается переносных устройств хранения небольшого объёма.
+</p>
+</dd>
+<dt><strong>Приоритезация пакетов</strong></dt>
+<dd><p>UUCP и NNCP сначала будут отправлять пакеты с высоким приоритетом
+    (&quot;grade&quot; в терминологии UUCP). Ваша почта пройдёт, даже если при
+    этом в очереди на отправку будут гигабайты файлов.
+</p>
+</dd>
+<dt><strong>Интеграция с SMTP</strong></dt>
+<dd><p>Почтовые серверы типа <a href="http://www.postfix.org/">Postfix</a>
+    предоставляют документацию и примеры конфигурации для использования
+    с UUCP. <a href="http://www.exim.org/">Exim</a> и
+    <a href="http://www.sendmail.com/sm/open_source/">Sendmail</a> тоже
+    относительно легко могут быть интегрированы с ним. Для использования
+    с NNCP, просто замените UUCP команды на аналогичные NNCP.
+</p>
+</dd>
+<dt><strong>Push/poll модель</strong></dt>
+<dd><p>С SMTP, вы вынуждены ждать в online режиме когда удалённые участники
+    отправят вам сообщение. Существуют расширения протокола позволяющие
+    делать poll-модель взаимодействия, но они не везде доступны и
+    используются. Очень важно быть независимым от заданной модели
+    поведения и обмениваться данными с теми возможностями которые у вас
+    имеются.
+</p>
+</dd>
+<dt><strong><a href="https://ru.wikipedia.org/wiki/DTN">DTN</a> (сеть устойчивая к разрывам)</strong></dt>
+<dd><p>SMTP удалит сообщения которые не могут быть доставлены в течении
+    длительного времени (несколько дней). Другие решения толерантны к
+    длительным задержкам.
+</p>
+</dd>
+<dt><strong>Маршрутизация</strong></dt>
+<dd><p>UUCP и NNCP ничего не знают о маршрутизации. Вы явно должны сообщать
+    через какие и к каким узлам нужно посылать пакет.
+</p>
+</dd>
+<dt><strong>Поддержка телефонной сети</strong></dt>
+<dd><p>UUCP и FidoNet всегда из коробки поддерживали работу с модемами.
+    Только много лет позже они получили возможность работы поверх
+    TCP/IP соединений. SMTP работает только поверх TCP/IP. NNCP на
+    данный момент имеет только TCP демон, но ничего не мешает
+    использовать другой 8-бит online транспорт.
+</p>
+</dd>
+<dt><strong>Анонимные участники</strong></dt>
+<dd><p>NNCP и FTN являются только друг-к-другу (F2F) сетью. Это очень
+    безопасно и предотвращает многие возможные атаки
+    человека-по-середине (MitM) и
+    <a href="https://en.wikipedia.org/wiki/Sybil_attack">Sybil</a>.
+</p>
+</dd>
+<dt><strong>Дружелюбность к флоппинету</strong></dt>
+<dd><p>Никто, кроме NNCP, не поддерживает штатный обмен данными через
+    переносные устройства хранения типа флеш накопителей, CD-ROM-ов,
+    лент и жёстких дисков. Это можно сэмулировать для большинства FTN
+    программного обеспечения, путём ручного копирования файлов в
+    входящие/исходящие директории. Но UUCP и SMTP требуют ещё больше
+    ручной работы для этого.
+</p>
+</dd>
+</dl>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Scenarii.html#g_t_0421_0446_0435_043d_0430_0440_0438_0438" rel="next">Сценарии</a>, Previous: <a href="Ob-utilitakh.html#g_t_041e_0431-_0443_0442_0438_043b_0438_0442_0430_0445" rel="prev">Об утилитах</a>, Up: <a href="Russkii.html#g_t_0420_0443_0441_0441_043a_0438_0439" rel="up">Русский</a> &nbsp; </p>
+</div>
+
+
+
+</body>
+</html>

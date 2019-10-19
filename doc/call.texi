@@ -1,0 +1,184 @@
+@node Call
+@unnumbered Call configuration
+
+Call is a rule when and how node can be called.
+
+Example list of call structures:
+
+@verbatim
+calls:
+  -
+    cron: "*/1 * * * MON-FRI"
+    onlinedeadline: 3600
+    nice: PRIORITY+10
+  -
+    cron: "30 * * * SAT,SUN"
+    onlinedeadline: 1800
+    maxonlinetime: 1750
+    nice: NORMAL
+    rxrate: 10
+    txrate: 20
+  -
+    cron: "0 * * * SAT,SUN"
+    xx: rx
+    addr: lan
+@end verbatim
+
+tells that on work days of the week call that node every minute,
+disconnect after an hour of inactivity and process only relatively high
+priority packets (presumably mail ones). So we connect and hold
+connection for very long time to pass only emails. On weekends call that
+node only each half-hour for processing high-priority packets. Also only
+on weekends try to connect to that node every hour only using LAN
+address and only receiving any (any priority) packets (assume that low
+priority huge file transmission are done additionally via offline
+connections).
+
+It contains the following fields (only @emph{cron} is required):
+
+@table @emph
+
+@item cron
+This is copy-pasted documentation from
+@code{github.com/gorhill/cronexpr} library used there.
+
+@multitable @columnfractions .2 .1 .2 .5
+@headitem Field name @tab Mandatory? @tab Allowed values @tab Allowed special characters
+
+@item Seconds @tab No @tab 0-59 @tab @verb{|* / , -|}
+@item Minutes @tab Yes @tab 0-59 @tab @verb{|* / , -|}
+@item Hours @tab Yes @tab 0-23 @tab @verb{|* / , -|}
+@item Day of month @tab Yes @tab 1-31 @tab @verb{|* / , - L W|}
+@item Month @tab Yes @tab 1-12 or JAN-DEC @tab @verb{|* / , -|}
+@item Day of week @tab Yes @tab 0-6 or SUN-SAT @tab @verb{|* / , - L #|}
+@item Year @tab No @tab 1970–2099 @tab @verb{|* / , -|}
+
+@end multitable
+
+@table @asis
+
+@item Asterisk (@verb{|*|})
+
+The asterisk indicates that the cron expression matches for all values
+of the field. E.g., using an asterisk in the 4th field (month) indicates
+every month.
+
+@item Slash (@verb{|/|})
+
+Slashes describe increments of ranges. For example @verb{|3-59/15|} in
+the minute field indicate the third minute of the hour and every 15
+minutes thereafter. The form @verb{|*/...|} is equivalent to the form
+"first-last/...", that is, an increment over the largest possible range
+of the field.
+
+@item Comma (@verb{|,|})
+
+Commas are used to separate items of a list. For example, using
+@verb{|MON,WED,FRI|} in the 5th field (day of week) means Mondays,
+Wednesdays and Fridays.
+
+@item Hyphen (@verb{|-|})
+
+Hyphens define ranges. For example, 2000-2010 indicates every year
+between 2000 and 2010 AD, inclusive.
+
+@item L
+
+@verb{|L|} stands for "last". When used in the day-of-week field, it
+allows you to specify constructs such as "the last Friday" (@verb{|5L|})
+of a given month. In the day-of-month field, it specifies the last day
+of the month.
+
+@item W
+
+The @verb{|W|} character is allowed for the day-of-month field. This
+character is used to specify the business day (Monday-Friday) nearest
+the given day. As an example, if you were to specify @verb{|15W|} as the
+value for the day-of-month field, the meaning is: "the nearest business
+day to the 15th of the month."
+
+So, if the 15th is a Saturday, the trigger fires on Friday the 14th. If
+the 15th is a Sunday, the trigger fires on Monday the 16th. If the 15th
+is a Tuesday, then it fires on Tuesday the 15th. However if you specify
+@verb{|1W|} as the value for day-of-month, and the 1st is a Saturday,
+the trigger fires on Monday the 3rd, as it does not 'jump' over the
+boundary of a month's days.
+
+The @verb{|W|} character can be specified only when the day-of-month is
+a single day, not a range or list of days.
+
+The @verb{|W|} character can also be combined with @verb{|L|}, i.e.
+@verb{|LW|} to mean "the last business day of the month."
+
+@item Hash (@verb{|#|})
+
+@verb{|#|} is allowed for the day-of-week field, and must be followed by
+a number between one and five. It allows you to specify constructs such
+as "the second Friday" of a given month.
+
+@end table
+
+Predefined cron expressions:
+
+@multitable @columnfractions .1 .75 .15
+@headitem Entry @tab Description @tab Equivalent to
+@item @verb{|@annually|} @tab
+    Run once a year at midnight in the morning of January 1 @tab
+    @verb{|0 0 0 1 1 * *|}
+@item @verb{|@yearly|} @tab
+    Run once a year at midnight in the morning of January 1 @tab
+    @verb{|0 0 0 1 1 * *|}
+@item @verb{|@monthly|} @tab
+    Run once a month at midnight in the morning of the first of the month @tab
+    @verb{|0 0 0 1 * * *|}
+@item @verb{|@weekly|} @tab
+    Run once a week at midnight in the morning of Sunday @tab
+    @verb{|0 0 0 * * 0 *|}
+@item @verb{|@daily|} @tab
+    Run once a day at midnight @tab
+    @verb{|0 0 0 * * * *|}
+@item @verb{|@hourly|} @tab
+    Run once an hour at the beginning of the hour @tab
+    @verb{|0 0 * * * * *|}
+@end multitable
+
+@itemize
+@item
+If only six fields are present, a @verb{|0|} second field is prepended,
+that is, @verb{|* * * * * 2013|} internally become
+@verb{|0 * * * * * 2013|}.
+@item
+If only five fields are present, a @verb{|0|} second field is prepended
+and a wildcard year field is appended, that is, @verb{|* * * * Mon|}
+internally become @verb{|0 * * * * Mon *|}.
+@item
+Domain for day-of-week field is [0-7] instead of [0-6], 7 being Sunday
+(like 0). This to comply with @url{https://linux.die.net/man/5/crontab}.
+@end itemize
+
+@item nice
+Optional. Use that @ref{Niceness, niceness} during the call (255 is used
+otherwise).
+
+@item xx
+Optional. Either @verb{|rx|} or @verb{|tx|}. Tells only to either to
+receive or to transmit data during that call.
+
+@item addr
+Optional. Call only that address, instead of trying all from
+@ref{CfgAddrs, @emph{addrs}} configuration option. It can be either key
+from @emph{addrs} dictionary, or an ordinary @option{addr:port}.
+
+@item rxrate/txrate
+Optional. Override @ref{CfgXxRate, @emph{rxrate/txrate}} configuration
+option when calling.
+
+@item onlinedeadline
+Optional. Override @ref{CfgOnlineDeadline, @emph{onlinedeadline}}
+configuration option when calling.
+
+@item maxonlinetime
+Optional. Override @ref{CfgMaxOnlineTime, @emph{maxonlinetime}}
+configuration option when calling.
+
+@end table

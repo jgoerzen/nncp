@@ -1,0 +1,175 @@
+@node Configuration
+@unnumbered Configuration file
+
+Example YAML configuration file:
+
+@verbatim
+spool: /var/spool/nncp
+log: /var/spool/nncp/log
+notify:
+  file:
+    from: nncp@localhost
+    to: user+file@example.com
+  freq:
+    from: nncp@localhost
+    to: user+freq@example.com
+self:
+  id: TIJQL...2NGIA
+  exchpub: CYVGQ...PSEWQ
+  exchprv: 65PUY...MPZ3Q
+  signpub: 2NMVC...CMH5Q
+  signprv: 555JD...RGD6Y
+  noiseprv: D62XU...NKYPA
+  noisepub: KIBKK...ESM7Q
+neigh:
+  self:
+    id: TIJQL...2NGIA
+    exchpub: CYVGQ...PSEWQ
+    signpub: 2NMVC...CMH5Q
+    noisepub: KIBKK...ESM7Q
+    exec:
+      sendmail: [/usr/sbin/sendmail]
+  alice:
+    id: XJZBK...65IJQ
+    exchpub: MJACJ...FAI6A
+    signpub: T4AFC...N2FRQ
+    noisepub: UBM5K...VI42A
+    exec:
+      flag: ["/usr/bin/touch", "-t"]
+    incoming: /home/alice/incoming
+    onlinedeadline: 1800
+    maxonlinetime: 3600
+    addrs:
+      lan: "[fe80::1234%igb0]:5400"
+      internet: alice.com:3389
+    calls:
+      -
+        cron: "*/2 * * * *"
+  bob:
+    id: 2IZNP...UYGYA
+    exchpub: WFLMZ...B7NHA
+    signpub: GTGXG...IE3OA
+    exec:
+      sendmail: [/usr/sbin/sendmail]
+      warcer: [/path/to/warcer.sh]
+      wgeter: [/path/to/wgeter.sh]
+    freq: /home/bob/pub
+    freqchunked: 1024
+    freqminsize: 2048
+    via: [alice]
+    rxrate: 10
+    txrate: 20
+@end verbatim
+
+@strong{spool} field contains an absolute path to @ref{Spool, spool}
+directory. @strong{log} field contains an absolute path to @ref{Log,
+log} file.
+
+@anchor{CfgNotify}
+@strong{notify} section contains notification settings for successfully
+tossed file and freq packets. Corresponding @strong{from} and
+@strong{to} fields will be substituted in notification email message.
+@emph{neigh/self/exec/sendmail} will be used as a local mailer. You can
+omit either of those two @emph{from}/@emph{to} sections to omit
+corresponding notifications, or the whole section at once.
+
+@strong{self} section contains our node's private keypairs.
+@strong{exch*} and @strong{sign*} are used during @ref{Encrypted,
+encrypted} packet creation. @strong{noise*} are used during @ref{Sync,
+synchronization protocol} working in @ref{nncp-call}/@ref{nncp-daemon}.
+
+@strong{neigh} section contains all known neighbours information. It
+always has @strong{self} neighbour that is copy of our node's public
+data (public keys). It is useful for copy-paste sharing with your
+friends. Each section's key is a human-readable name of the neighbour.
+
+Except for @emph{id}, @emph{exchpub} and @emph{signpub} each neighbour
+node has the following fields:
+
+@table @strong
+
+@item noisepub
+If present, then node can be online called using @ref{Sync,
+synchronization protocol}. Contains authentication public key.
+
+@anchor{CfgExec}
+@item exec
+Dictionary consisting of handles and corresponding command line
+arguments. In example above there are @command{sendmail} handles,
+@command{warcer}, @command{wgeter} and @command{flag} one. Remote node
+can queue some handle execution with providing additional command line
+arguments and the body fed to command's stdin.
+
+@verb{|sendmail: ["/usr/sbin/sendmail", "-t"]|} handle, when called by
+@verb{|echo hello world | nncp-exec OURNODE sendmail ARG0 ARG1 ARG2|}
+command, will execute:
+
+@verbatim
+echo hello world |
+    NNCP_SELF=OURNODE \
+    NNCP_SENDER=REMOTE \
+    NNCP_NICE=64 \
+    /usr/sbin/sendmail -t ARG0 ARG1 ARG2
+@end verbatim
+
+@anchor{CfgIncoming}
+@item incoming
+Full path to directory where all file uploads will be saved. May be
+omitted to forbid file uploading on that node.
+
+@anchor{CfgFreq}
+@item freq
+Full path to directory from where file requests will queue files for
+transmission. May be omitted to forbid freqing from that node.
+
+@item freqchunked
+If set, then enable @ref{Chunked, chunked} file transmission during
+freqing. This is the desired chunk size in KiBs.
+
+@item freqminsize
+If set, then apply @ref{OptMinSize, -minsize} option during file
+transmission.
+
+@anchor{CfgVia}
+@item via
+An array of node identifiers that will be used as a relay to that node.
+For example @verb{|[foo,bar]|} means that packet can reach current node
+by transitioning through @emph{foo} and then @emph{bar} nodes. May be
+omitted if direct connection exists and no relaying is required.
+
+@anchor{CfgAddrs}
+@item addrs
+Dictionary containing known network addresses of the node. Each key is
+human-readable name of the link/address. Values are @verb{|addr:port|}
+pairs pointing to @ref{nncp-daemon}'s listening instance. May be omitted
+if either no direct connection exists, or @ref{nncp-call} is used with
+forced address specifying.
+
+@anchor{CfgXxRate}
+@item rxrate/txrate
+If greater than zero, then at most *rate packets per second will be
+sent/received after the handshake. It could be used as crude bandwidth
+traffic shaper: each packet has at most 64 KiB payload size. Could be
+omitted at all -- no rate limits.
+
+@anchor{CfgOnlineDeadline}
+@item onlinedeadline
+Online connection deadline of node inactivity in seconds. It is the time
+connection considered dead after not receiving/sending any packets and
+node must disconnect. By default it is set to 10 seconds -- that means
+disconnecting after 10 seconds when no packets received and transmitted.
+This can be set to rather high values to keep connection alive (to
+reduce handshake overhead and delays), wait for appearing packets ready
+to send and notifying remote side about their appearance.
+
+@anchor{CfgMaxOnlineTime}
+@item maxonlinetime
+If greater than zero, then it is maximal amount of time connect could be
+alive. Forcefully disconnect if it is exceeded.
+
+@anchor{CfgCalls}
+@item calls
+List of @ref{Call, call configuration}s. Can be omitted if
+@ref{nncp-caller} won't be used to call that node.
+
+@end table

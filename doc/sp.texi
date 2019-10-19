@@ -1,0 +1,198 @@
+@node Sync
+@unnumbered Synchronization protocol
+
+So-called synchronization protocol (SP) is used in current TCP daemon's
+implementation. It is used for synchronizing @ref{Spool, spool}
+directory contents between two nodes.
+
+It is aimed to be very simple and effective. It uses reliable transport
+like TCP connections. It must be effective both on single-duplex and
+full-duplex links: for example satellites have very high throughput but
+high-delay links, so acknowledging of each received packet, like
+@url{https://en.wikipedia.org/wiki/XMODEM, XMODEM} does, causes
+unacceptable performance degradation.
+
+SP works on top of
+@url{http://noiseprotocol.org/noise.html#interactive-patterns,
+@code{Noise_IK_25519_ChaChaPoly_BLAKE2b}} protocol. Each Noise packet
+is sent inside an @url{https://tools.ietf.org/html/rfc4506, XDR} envelope:
+
+@verbatim
++-----------------+
+| MAGIC | PAYLOAD |
++-----------------+
+@end verbatim
+
+@multitable @columnfractions 0.2 0.3 0.5
+@headitem @tab XDR type @tab Value
+@item Magic number @tab
+    8-byte, fixed length opaque data @tab
+    @verb{|N N C P S 0x00 0x00 0x01|}
+@item Payload @tab
+    variable length opaque data @tab
+    Noise packet itself
+@end multitable
+
+Peers static keys are specified as @ref{Configuration, @emph{noisepub}}
+configuration entry.
+
+Payload inside Noise packets has maximum size of @emph{64 KiB - 256 B =
+65280 B}. It is sent immediately in the first message by each side. The
+very first payload (that is carried inside handshake messages) is always
+padded to the maximum size with @emph{HALT} packets (read below), for
+hiding actual number of @emph{INFO} packets (number of files available
+for transmission).
+
+Each SP payload is a concatenation of SP packets. Each packet has
+XDR-encoded header and then corresponding XDR-encoded body. Header is
+just an unsigned integer telling what body structure follows.
+
+@table @emph
+
+@item HALT
+    Stop file transmission, empty sending queue on the remote side.
+    Actually @emph{HALT} packet does not have any body, only the header
+    with the type. It is also used in the first payload for padding to
+    the maximum size.
+@verbatim
++------+
+| HALT |
++------+
+@end verbatim
+
+@item INFO
+    Information about the file we have for transmission.
+@verbatim
++------+--------------------+
+| INFO | NICE | SIZE | HASH |
++------+--------------------+
+@end verbatim
+    @multitable @columnfractions 0.2 0.3 0.5
+    @headitem @tab XDR type @tab Value
+    @item Niceness @tab
+        unsigned integer @tab
+        1-255, file niceness level
+    @item Size @tab
+        unsigned hyper integer @tab
+        File size
+    @item Hash @tab
+        32-byte, fixed length opaque data @tab
+        Unique file identifier, its checksum
+    @end multitable
+
+@item FREQ
+    File transmission request. Ask remote side to queue the file for
+    transmission.
+@verbatim
++------+---------------+
+| FREQ | HASH | OFFSET |
++------+---------------+
+@end verbatim
+    @multitable @columnfractions 0.2 0.3 0.5
+    @headitem @tab XDR type @tab Value
+    @item Hash @tab
+        32-byte, fixed length opaque data @tab
+        Unique file identifier, its checksum
+    @item Offset @tab
+        unsigned hyper integer @tab
+        Offset from which remote side must transmit the file
+    @end multitable
+
+@item FILE
+    Chunk of file.
+@verbatim
++------+-------------------------+
+| FILE | HASH | OFFSET | PAYLOAD |
++------+-------------------------+
+@end verbatim
+    @multitable @columnfractions 0.2 0.3 0.5
+    @headitem @tab XDR type @tab Value
+    @item Hash @tab
+        32-byte, fixed length opaque data @tab
+        Unique file identifier, its checksum
+    @item Offset @tab
+        unsigned hyper integer @tab
+        Offset from which transmission goes
+    @item Payload @tab
+        variable length opaque data @tab
+        Chunk of file itself
+    @end multitable
+
+@item DONE
+    Signal remote side that we have successfully downloaded the file.
+@verbatim
++------+------+
+| DONE | HASH |
++------+------+
+@end verbatim
+    @multitable @columnfractions 0.2 0.3 0.5
+    @headitem @tab XDR type @tab Value
+    @item Hash @tab
+        32-byte, fixed length opaque data @tab
+        Unique file identifier, its checksum
+    @end multitable
+
+@end table
+
+Typical peer's behaviour is following:
+
+@verbatiminclude sp.utxt
+
+@enumerate
+@item Perform @emph{Noise-IK} handshake:
+
+    @table @strong
+    @item Initiator
+    Collects all @emph{tx}-related files information and prepares
+    payload filled with @emph{INFO}s for including in the @strong{first}
+    handshake message.
+    @item Responder
+    After receiving the first handshake message, it gains remote
+    identity knowledge and similarly prepares the payload for including
+    in the @strong{second} handshake message.
+    @end table
+
+    All payloads are padded to maximal message size with @emph{HALT}s.
+
+@item If queued @emph{INFO}s are not sent completely in handshake
+payloads, then send all of remaining in the transport stage.
+
+@item When @emph{INFO} packet received:
+
+    @itemize
+    @item Check that it has an acceptable niceness level.
+    Ignore it if it is too nice.
+    @item If already downloaded file exists, then queue @emph{DONE}
+    sending.
+    @item If @file{.seen} exists, then queue @emph{DONE} sending.
+    @item If @file{.part} exists, then queue @emph{FREQ} sending with
+    corresponding offset.
+    @end itemize
+
+@item When @emph{FREQ} packet received, insert it to current sending
+queue with niceness level sort: higher priority packets will be sent
+first. Sending queue contains files with offsets that are needed to be
+sent.
+
+@item While sending queue is not empty, send @emph{FILE} packets.
+@emph{FREQ} could contain offset equal to size -- anyway sent
+@emph{FILE} packet with an empty payload. @emph{FILE} sending is
+performed only if no other outgoing packets are queued: @emph{INFO}s
+have higher priority.
+
+@item When @emph{FILE} packet received, check if it is completely
+downloaded (comparing to @emph{INFO}'s packet size information). If so,
+then run background integrity checker on it. If check succeeds, then
+delete @file{.part} suffix from file's name and send @emph{DONE} packet.
+
+@item When @emph{DONE} packet received, delete corresponding file.
+@item When @emph{HALT} packet received, empty file sending queue.
+
+@item Each second, node checks: are there any new @emph{tx} packets
+appeared and queues corresponding @emph{INFO} packets.
+
+@item If no packets are sent and received during @ref{CfgOnlineDeadline,
+onlinedeadline} duration, then close the connection. There is no
+explicit indication that session is over.
+
+@end enumerate

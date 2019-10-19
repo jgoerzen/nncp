@@ -1,0 +1,146 @@
+Installation
+************
+
+Possibly NNCP package already exists for your distribution:
+
+   • FreeBSD ports (https://www.freshports.org/net/nncp/)
+   • Void Linux
+     (https://github.com/void-linux/void-packages/blob/master/srcpkgs/nncp/template)
+
+   NNCP should run on any POSIX-compatible operating system.
+
+   NNCP is written on Go (https://golang.org/) programming language and
+you have to install Go compiler (1.10+ version is highly recommended).
+_Make_ (BSD and GNU ones are fine) is recommended for convenient
+building.  Texinfo (https://www.gnu.org/software/texinfo/) is used for
+building documentation.
+
+   In general you must get *note the tarball: Tarballs, check its *note
+integrity and authenticity: Integrity. and run ‘make’.  Look for general
+and *note platform-specific: Platform-specific. installation
+instructions.
+
+Prepared tarballs
+=================
+
+You can obtain releases source code prepared tarballs on
+<http://www.nncpgo.org/>.
+Tarballs integrity check
+========================
+
+You *have to* check downloaded archives integrity and verify their
+signature to be sure that you have got trusted, untampered software.
+For integrity and authentication of downloaded binaries The GNU Privacy
+Guard (https://www.gnupg.org/) is used.  You must download signature
+(‘.sig’) provided with the tarball.
+
+   For the very first time you need to import signing public key.  It is
+provided below, but it is better to check alternative resources with it.
+
+pub   rsa2048/0x2B25868E75A1A953 2017-01-10
+      92C2 F0AE FE73 208E 46BF  F3DE 2B25 868E 75A1 A953
+uid   NNCP releases <releases at nncpgo dot org>
+
+   • % gpg --keyserver hkp://keys.gnupg.net/ --recv-keys 0x2B25868E75A1A953
+     % gpg --auto-key-locate dane --locate-keys releases at nncpgo dot org
+     % gpg --auto-key-locate wkd --locate-keys releases at nncpgo dot org
+
+   • -----BEGIN PGP PUBLIC KEY BLOCK-----
+     
+     mQENBFh0lv0BCADmquHdyjr1Mr8VHRNxzipHxmgbdK3CGJL1yzb1ntj7zbJl5UnQ
+     71cxQ968pYPOBYqsA3oqtURAXzVL6qPGajHM+OXKB5OOjmt7vbd3xP5sBCWOjlrq
+     S7yWx5ffuXf++tCGiXGkG7q+4zmXJUBuaot0fQ5ebBVLzVVIMv2C4hArZFZtK+YZ
+     GkrIU+S49joe4qeUdCIQ1KpEB2m774QFxG05fMMys9L60wkL6ZgAy0GadkvCI5jD
+     Xj5nRxa0fn+T/pcOWCpy7ka4rCR0rKCCNB8ARvpDnknTu2S9cxnWy1uOMv8JQpTb
+     nY27vprdkH9aykdPl/7uHL/X1hutFxE8FOAjABEBAAG0I05OQ1AgcmVsZWFzZXMg
+     PHJlbGVhc2VzQG5uY3Bnby5vcmc+iQFXBBMBCABBFiEEksLwrv5zII5Gv/PeKyWG
+     jnWhqVMFAlh0lv0CGwMMCwoJDQgMBwsDBAECBxUKCQgLAwIFFgIBAwACHgECF4AA
+     CgkQKyWGjnWhqVOaBggAqWywYtUddljHpiR/SK8uiYjSl8/F4QemM+tsu66GW56Y
+     ZB7VFOxNFcpEfSnWwH61cJ5lCuRRgyjJcIOptzbKbO+nvYQEtXznjQYoJMLnPqAa
+     2UPI5Seaijx8sXQWzYRq2Vzl9KUDBlhB2y4jZD4CFC1V29NRbWuPUajZn8UiZzFT
+     IUR/gjvtYQozF0jN8Sevs+oGAN1tqK5kYo8YXEeL+3NCVUJkqFmBtFVxrxzty4cE
+     ozgKpXzt9bi10a1hthKluWcZD6Zc4InqQhAGXb2JB2a5wRTs8CkJtHadwBOD3JEt
+     HjfhBAoZMYmhOBeHt87AG5OjFNRIOJ2rRacnRDA3E4h1BBARCAAdFiEEz2Domlkj
+     HnbiY2QirhqBCeSYV+8FAlh0lxYACgkQrhqBCeSYV+9i1QD/bdLAY67nf5giI/wQ
+     i6K7v6PTPFwG6TtG6jj68Cy13RgA/iMuKw7niLwyPWRKzWcMIG1YhVyCNCgKQvFL
+     vdr6yKbN
+     =R8E0
+     -----END PGP PUBLIC KEY BLOCK-----
+
+   Then you could verify tarballs signature:
+% gpg --verify nncp-3.1.tar.xz.sig nncp-3.1.tar.xz
+Platform-specific instructions
+==============================
+
+General installation instructions
+---------------------------------
+
+Look *note here: Integrity. for finding public keys for tarball
+authentication.
+
+% wget http://www.nncpgo.org/download/nncp-3.1.tar.xz
+% wget http://www.nncpgo.org/download/nncp-3.1.tar.xz.sig
+% gpg --verify nncp-3.1.tar.xz.sig nncp-3.1.tar.xz
+% xz -d nncp-3.1.tar.xz
+% tar xf nncp-3.1.tar
+% make -C nncp-3.1 all
+
+   There is ‘install’ target respecting ‘DESTDIR’.  It will install
+binaries and info-documentation.
+
+Ubuntu installation instructions
+--------------------------------
+
+Look *note here: Integrity. for finding public keys for tarball
+authentication.
+
+Ubuntu 16.04
+
+     # apt install golang
+
+     follow *note general: General. installation instructions
+
+     # make -C nncp-3.1 install PREFIX=/usr
+
+Ubuntu 14.04
+
+     # apt-get install golang-1.6
+     % wget http://www.nncpgo.org/download/nncp-3.1.tar.xz
+     % wget http://www.nncpgo.org/download/nncp-3.1.tar.xz.sig
+     % gpg --verify nncp-3.1.tar.xz.sig nncp-3.1.tar.xz
+     % tar xf nncp-3.1.tar.xz
+     % PATH=/usr/lib/go-1.6/bin:$PATH make -C nncp-3.1 all
+     # make -C nncp-3.1 install PREFIX=/usr
+
+Development source code
+=======================
+
+Development source code contains the latest version of the code.  It may
+be buggy.  It does not contain compiled documentation and dependent
+libraries source code.  Because of that, it is recommended for porters
+to use *note tarballs: Tarballs. instead.
+
+   You can obtain it by cloning Git (http://git-scm.com/) repository
+(https://git.cypherpunks.ru/cgit.cgi/nncp.git/log/) and fetching
+dependent libraries source code as git submodules:
+
+% git clone git://git.cypherpunks.ru/nncp.git nncp
+% cd nncp
+% git checkout develop
+% git submodule update --init
+
+   Also there is mirror of dependent libraries for safety if their
+native repositories will be unavailable (they are seldom updated):
+
+Software/library                     Mirror
+--------------------------------------------------------------------------
+‘github.com/davecgh/go-xdr’          <git://git.cypherpunks.ru/go-xdr.git>
+‘github.com/dustin/go-humanize’      <git://git.cypherpunks.ru/go-humanize.git>
+‘github.com/flynn/noise’             <git://git.cypherpunks.ru/noise.git>
+‘github.com/gorhill/cronexpr’        <git://git.cypherpunks.ru/cronexpr.git>
+‘golang.org/x/crypto’                <git://git.cypherpunks.ru/crypto.git>
+‘golang.org/x/net’                   <git://git.cypherpunks.ru/net.git>
+‘golang.org/x/sys’                   <git://git.cypherpunks.ru/sys.git>
+‘gopkg.in/check.v1’                  <git://git.cypherpunks.ru/check.git>
+‘gopkg.in/yaml.v2’                   <git://git.cypherpunks.ru/yaml.git>
+

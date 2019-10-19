@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Spool (NNCP)</title>
+
+<meta name="description" content="Spool (NNCP)">
+<meta name="keywords" content="Spool (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="Log.html#Log" rel="next" title="Log">
+<link href="Bundles.html#Bundles" rel="prev" title="Bundles">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="Spool"></a>
+<div class="header">
+<p>
+Next: <a href="Log.html#Log" rel="next">Log</a>, Previous: <a href="Bundles.html#Bundles" rel="prev">Bundles</a>, Up: <a href="index.html#Top" rel="up">Top</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Spool-directory"></a>
+<h2 class="unnumbered">Spool directory</h2>
+
+<p>Spool directory holds <a href="Encrypted.html#Encrypted">encrypted packets</a> received from
+remote nodes and queued for sending to them. It has the following
+example structure:
+</p>
+<pre class="verbatim">spool/tmp/
+spool/2WHB...OABQ/rx.lock
+spool/2WHB...OABQ/rx/5ZIB...UMKW.part
+spool/2WHB...OABQ/tx.lock
+spool/BYRR...CG6Q/rx.lock
+spool/BYRR...CG6Q/rx/
+spool/BYRR...CG6Q/tx.lock
+spool/BYRR...CG6Q/tx/AQUT...DGNT.seen
+spool/BYRR...CG6Q/tx/NSYY...ZUU6
+spool/BYRR...CG6Q/tx/VCSR...3VXX.seen
+spool/BYRR...CG6Q/tx/ZI5U...5RRQ
+</pre>
+<p>Except for <samp>tmp</samp>, all other directories are Base32-encoded node
+identifiers (<samp>2WHB...OABQ</samp>, <samp>BYRR...CG6Q</samp> in our example).
+Each node subdirectory has <samp>rx</samp> (received, partially received and
+currently unprocessed packets) and <samp>tx</samp> (for outbound packets)
+directories.
+</p>
+<p>Each <samp>rx</samp>/<samp>tx</samp> directory contains one file per encrypted
+packet. Its filename is Base32 encoded BLAKE2b hash of the contents. So
+it can be integrity checked at any time. <samp>5ZIB...UMKW.part</samp> is
+partially received file from <samp>2WHB...OABQ</samp> node. <samp>tx</samp>
+directory can not contain partially written files &ndash; they are moved
+atomically from <samp>tmp</samp>.
+</p>
+<p>When <a href="nncp_002dtoss.html#nncp_002dtoss">nncp-toss</a> utility is called with <samp>-seen</samp> option, it
+will create empty <samp>XXX.seen</samp> files, telling that some kind of
+packet was already tossed sometime.
+</p>
+<p>Only one process can work with <samp>rx</samp>/<samp>tx</samp> directories at once,
+so there are corresponding lock files.
+</p>
+
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>UsecasePOP (NNCP)</title>
+
+<meta name="description" content="UsecasePOP (NNCP)">
+<meta name="keywords" content="UsecasePOP (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Use-cases.html#Use-cases" rel="up" title="Use cases">
+<link href="UsecaseUnreliable.html#UsecaseUnreliable" rel="next" title="UsecaseUnreliable">
+<link href="UsecaseMail.html#UsecaseMail" rel="prev" title="UsecaseMail">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="UsecasePOP"></a>
+<div class="header">
+<p>
+Next: <a href="UsecaseUnreliable.html#UsecaseUnreliable" rel="next">UsecaseUnreliable</a>, Previous: <a href="UsecaseMail.html#UsecaseMail" rel="prev">UsecaseMail</a>, Up: <a href="Use-cases.html#Use-cases" rel="up">Use cases</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Lightweight-fast-POP3_002fIMAP4-replacement"></a>
+<h3 class="section">Lightweight fast POP3/IMAP4 replacement</h3>
+
+<p><a href="nncp_002ddaemon.html#nncp_002ddaemon">nncp-daemon</a> can be connected with <a href="nncp_002dcaller.html#nncp_002dcaller">nncp-caller</a> for a long
+time &ndash; it can create TCP connection that lasts for many hours. When
+SMTP server receives mail, it will call <a href="nncp_002dexec.html#nncp_002dexec">nncp-exec</a> creating an
+outbound encrypted packet. Daemon checks outbound directory each second
+and immediately sends notification about undelivered packets to remote
+side, that also downloads it at once.
+</p>
+<p>There are only dozens of bytes notifying about incoming packets, dozens
+of bytes telling to download those packets. Mail packets are compressed
+(POP3 and IMAP4 as a rule do not). You have lightweight, compressed,
+low-delay, reliable link for the mail with strong encryption and mutual
+sides authentication!
+</p>
+
+
+
+</body>
+</html>

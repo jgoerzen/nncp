@@ -1,0 +1,80 @@
+\input texinfo
+@documentencoding UTF-8
+@settitle NNCP
+
+@copying
+This manual is for NNCP (Node to Node copy) --  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright @copyright{} 2016-2019 @email{stargrave@@stargrave.org, Sergey Matveev}
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions".
+@end quotation
+@end copying
+
+@node Top
+@top
+
+@verbatiminclude pedro.txt
+
+@include about.texi
+
+@center Interested? @ref{Tarballs, @strong{Download it}}!
+
+@menu
+* Comparison::
+* Use cases::
+* Workflow::
+* News::
+* Информация на русском: Русский.
+* Installation::
+* Configuration::
+* Call configuration: Call.
+* Integration::
+* Commands::
+* Niceness::
+* Chunked files: Chunked.
+* Bundles::
+* Spool directory: Spool.
+* Log format: Log.
+* Packet format: Packet.
+* Sync protocol: Sync.
+* EBlob format: EBlob.
+* Thanks::
+* Contacts and feedback: Contacts.
+* Copying conditions: Copying.
+@end menu
+
+@include comparison.texi
+@include usecases.texi
+@include workflow.texi
+@include news.texi
+@include russian.texi
+@include install.texi
+@include cfg.texi
+@include call.texi
+@include integration.texi
+@include cmds.texi
+@include niceness.texi
+@include chunked.texi
+@include bundles.texi
+@include spool.texi
+@include log.texi
+@include pkt.texi
+@include sp.texi
+@include eblob.texi
+@include thanks.texi
+@include contacts.texi
+
+@node Copying
+@unnumbered Copying conditions
+
+@insertcopying
+@verbatiminclude fdl.txt
+
+@bye

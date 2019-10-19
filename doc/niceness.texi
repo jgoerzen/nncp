@@ -1,0 +1,45 @@
+@node Niceness
+@unnumbered Niceness
+
+Each transmitted packet has niceness level, as Unix has @command{nice}
+command for controlling processes priority. Higher nicer level means
+that packet is "nicer" and allows other to bypass him -- that means
+lower transmission precedence.
+
+Send big files with higher nice level! That will guarantee you that
+higher priority packets, like mail messages, will pass first, even when
+lower priority packet was already been partially downloaded.
+
+There are default niceness levels built-in for @ref{nncp-exec},
+@ref{nncp-file} and @ref{nncp-freq} commands. But pay attention that it
+can give information about underlying payload to the adversary!
+
+There are 1-255 niceness levels. They could be specified either as
+integer, or using aliases with delta modifiers:
+
+@table @emph
+@item FLASH (F)
+Urgent priority.
+@item PRIORITY (P)
+High priority. Command execution/mail use that priority by default.
+@item NORMAL (N)
+Normal priority. File requests use that priority by default.
+@item BULK (B)
+Bundles shipped on a "least effort" basis. File transmission use that
+priority by default.
+@end table
+
+@verbatim
+ 1: F-31   65: P-31  129: N-31  193: B-31
+ 2: F-30   66: P-30  130: N-30  194: B-30
+    ...        ...        ...        ...
+32: F      96: P     160: N     224: B
+33: F+1    97: P+1   161: N+1   225: B+1
+34: F+2    98: P+2   162: N+2   226: B+2
+    ...        ...        ...        ...
+64: F+32  128: P+32  192: N+32  255: B+31 | MAX
+@end verbatim
+
+Precedence could be specified both with single-letter aliases and with
+whole strings. They are case insensitive. @emph{MAX} is an alias for 255
+niceness level.

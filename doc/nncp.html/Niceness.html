@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Niceness (NNCP)</title>
+
+<meta name="description" content="Niceness (NNCP)">
+<meta name="keywords" content="Niceness (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="Chunked.html#Chunked" rel="next" title="Chunked">
+<link href="nncp_002dxfer.html#nncp_002dxfer" rel="prev" title="nncp-xfer">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="Niceness"></a>
+<div class="header">
+<p>
+Next: <a href="Chunked.html#Chunked" rel="next">Chunked</a>, Previous: <a href="Commands.html#Commands" rel="prev">Commands</a>, Up: <a href="index.html#Top" rel="up">Top</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Niceness-1"></a>
+<h2 class="unnumbered">Niceness</h2>
+
+<p>Each transmitted packet has niceness level, as Unix has <code>nice</code>
+command for controlling processes priority. Higher nicer level means
+that packet is &quot;nicer&quot; and allows other to bypass him &ndash; that means
+lower transmission precedence.
+</p>
+<p>Send big files with higher nice level! That will guarantee you that
+higher priority packets, like mail messages, will pass first, even when
+lower priority packet was already been partially downloaded.
+</p>
+<p>There are default niceness levels built-in for <a href="nncp_002dexec.html#nncp_002dexec">nncp-exec</a>,
+<a href="nncp_002dfile.html#nncp_002dfile">nncp-file</a> and <a href="nncp_002dfreq.html#nncp_002dfreq">nncp-freq</a> commands. But pay attention that it
+can give information about underlying payload to the adversary!
+</p>
+<p>There are 1-255 niceness levels. They could be specified either as
+integer, or using aliases with delta modifiers:
+</p>
+<dl compact="compact">
+<dt><em>FLASH (F)</em></dt>
+<dd><p>Urgent priority.
+</p></dd>
+<dt><em>PRIORITY (P)</em></dt>
+<dd><p>High priority. Command execution/mail use that priority by default.
+</p></dd>
+<dt><em>NORMAL (N)</em></dt>
+<dd><p>Normal priority. File requests use that priority by default.
+</p></dd>
+<dt><em>BULK (B)</em></dt>
+<dd><p>Bundles shipped on a &quot;least effort&quot; basis. File transmission use that
+priority by default.
+</p></dd>
+</dl>
+
+<pre class="verbatim"> 1: F-31   65: P-31  129: N-31  193: B-31
+ 2: F-30   66: P-30  130: N-30  194: B-30
+    ...        ...        ...        ...
+32: F      96: P     160: N     224: B
+33: F+1    97: P+1   161: N+1   225: B+1
+34: F+2    98: P+2   162: N+2   226: B+2
+    ...        ...        ...        ...
+64: F+32  128: P+32  192: N+32  255: B+31 | MAX
+</pre>
+<p>Precedence could be specified both with single-letter aliases and with
+whole strings. They are case insensitive. <em>MAX</em> is an alias for 255
+niceness level.
+</p>
+
+
+</body>
+</html>

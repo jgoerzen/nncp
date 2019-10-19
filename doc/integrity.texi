@@ -1,0 +1,36 @@
+@node Integrity
+@section Tarballs integrity check
+
+You @strong{have to} check downloaded archives integrity and verify
+their signature to be sure that you have got trusted, untampered
+software. For integrity and authentication of downloaded binaries
+@url{https://www.gnupg.org/, The GNU Privacy Guard} is used. You must
+download signature (@file{.sig}) provided with the tarball.
+
+For the very first time you need to import signing public key. It is
+provided below, but it is better to check alternative resources with it.
+
+@verbatim
+pub   rsa2048/0x2B25868E75A1A953 2017-01-10
+      92C2 F0AE FE73 208E 46BF  F3DE 2B25 868E 75A1 A953
+uid   NNCP releases <releases at nncpgo dot org>
+@end verbatim
+
+@itemize
+
+@item
+@verbatim
+% gpg --keyserver hkp://keys.gnupg.net/ --recv-keys 0x2B25868E75A1A953
+% gpg --auto-key-locate dane --locate-keys releases at nncpgo dot org
+% gpg --auto-key-locate wkd --locate-keys releases at nncpgo dot org
+@end verbatim
+
+@item
+@verbatiminclude .well-known/openpgpkey/hu/i4cdqgcarfjdjnba6y4jnf498asg8c6p.asc
+
+@end itemize
+
+Then you could verify tarballs signature:
+@verbatim
+% gpg --verify nncp-3.1.tar.xz.sig nncp-3.1.tar.xz
+@end verbatim

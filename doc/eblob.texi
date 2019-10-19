@@ -1,0 +1,68 @@
+@node EBlob
+@unnumbered EBlob format
+
+Eblob is an encrypted blob (binary large object, in the terms of
+databases), holding any kind of symmetrically encrypted data with the
+passphrase used to derive the key. It is used to secure configuration
+files, holding valuable private keys, allowing them to be transferred
+safely everywhere.
+
+In fact it uses two factors for securing the data:
+
+@itemize
+@item @strong{salt}, that is kept inside @file{eblob}, something @emph{you have}
+@item @strong{passphrase}, that is kept inside the head, something @emph{you know}
+@end itemize
+
+Whole security depends on the passphrase itself. Pay attention that this
+is @strong{not} the password. Password is a short string of high entropy
+(highly random) characters, but passphrase is (very) long string of
+low-entropy characters. Low-entropy text is much more easier to
+remember, and its length provides pretty enough entropy as a result.
+
+Password strengthening function is applied to that passphrase to
+mitigate brute-force and dictionary attacks on it. Here,
+@url{https://crypto.stanford.edu/balloon/, Balloon} memory-hard password
+hashing function is used, together with BLAKE2b-256 hash. It has proven
+memory-hardness properties, very easy to implement, resistant to cache
+attacks and seems more secure than Argon2
+(@url{https://password-hashing.net/, Password Hashing Competition}
+winner).
+
+Eblob is an @url{https://tools.ietf.org/html/rfc4506, XDR}-encoded structure:
+
+@verbatim
++-------+------------------+------+
+| MAGIC | S | T | P | SALT | BLOB |
++-------+------------------+------+
+@end verbatim
+
+@multitable @columnfractions 0.2 0.3 0.5
+@headitem @tab XDR type @tab Value
+@item Magic number @tab
+    8-byte, fixed length opaque data @tab
+    @verb{|N N C P B 0x00 0x00 0x03|}
+@item S, T, P @tab
+    unsigned integer @tab
+    Space cost, time cost and parallel jobs number
+@item Salt @tab
+    32 bytes, fixed length opaque data @tab
+    Randomly generated salt
+@item Blob @tab
+    variable length opaque data @tab
+    Authenticated and Encrypted data itself
+@end multitable
+
+@enumerate
+@item generate the main key using @code{balloon(BLAKE2b-256, S, T, P,
+salt, password)}
+@item initialize @url{https://blake2.net/, BLAKE2Xb} XOF with generated
+main key and 32-byte output length
+@item feed @verb{|N N C P B 0x00 0x00 0x03|} magic number to XOF
+@item read 32-bytes of blob AEAD encryption key
+@item encrypt and authenticate blob using
+    @url{https://cr.yp.to/chacha.html, ChaCha20}-@url{https://en.wikipedia.org/wiki/Poly1305, Poly1305}.
+    Blob is splitted on 128 KiB blocks. Each block is encrypted with
+    increasing nonce counter. Eblob packet itself, with empty blob
+    field, is fed as an additional authenticated data
+@end enumerate

@@ -1,0 +1,8 @@
+@node Contacts
+@unnumbered Contacts
+
+Please send questions regarding the use of NNCP, bug reports and patches to
+@url{https://lists.cypherpunks.ru/pipermail/nncp-devel/, nncp-devel}
+mailing list. Announcements also go to this mailing list.
+
+Official website is @url{http://www.nncpgo.org/}.

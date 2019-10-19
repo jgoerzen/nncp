@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Chunked (NNCP)</title>
+
+<meta name="description" content="Chunked (NNCP)">
+<meta name="keywords" content="Chunked (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="Bundles.html#Bundles" rel="next" title="Bundles">
+<link href="Niceness.html#Niceness" rel="prev" title="Niceness">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="Chunked"></a>
+<div class="header">
+<p>
+Next: <a href="Bundles.html#Bundles" rel="next">Bundles</a>, Previous: <a href="Niceness.html#Niceness" rel="prev">Niceness</a>, Up: <a href="index.html#Top" rel="up">Top</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Chunked-files"></a>
+<h2 class="unnumbered">Chunked files</h2>
+
+<p>There is ability to transfer huge files with splitting them into smaller
+chunks. Each chunk is treated like a separate file, producing separate
+outbound packet unrelated with other ones.
+</p>
+<p>This is useful when your removable storage device has smaller capacity
+than huge file&rsquo;s size. You can transfer those chunks on different
+storage devices, and/or at different time, reassembling the whole packet
+on the destination node.
+</p>
+<p>Splitting is done with <a href="nncp_002dfile.html#nncp_002dfile">nncp-file -chunked</a> command and
+reassembling with <a href="nncp_002dreass.html#nncp_002dreass">nncp-reass</a> command.
+</p>
+<p>Chunked <samp>FILE</samp> produces <samp>FILE.nncp.meta</samp>,
+<samp>FILE.nncp.chunk0</samp>, <samp>FILE.nncp.chunk1</samp>, ... files. All
+<samp>.nncp.chunkXXX</samp> can be concatenated together to produce original
+<samp>FILE</samp>.
+</p>
+<p><samp>.nncp.meta</samp> contains information about file/chunk
+size and their hash checksums. This is
+<a href="https://tools.ietf.org/html/rfc4506">XDR</a>-encoded structure:
+</p>
+<pre class="verbatim">+------------------------------+---------------------+
+| MAGIC | FILESIZE | CHUNKSIZE | HASH0 | HASH1 | ... |
++------------------------------+---------------------+
+</pre>
+<table>
+<thead><tr><th width="20%"></th><th width="30%">XDR type</th><th width="50%">Value</th></tr></thead>
+<tr><td width="20%">Magic number</td><td width="30%">8-byte, fixed length opaque data</td><td width="50%"><tt>N N C P M 0x00 0x00 0x01</tt></td></tr>
+<tr><td width="20%">File size</td><td width="30%">unsigned hyper integer</td><td width="50%">Whole reassembled file&rsquo;s size</td></tr>
+<tr><td width="20%">Chunk size</td><td width="30%">unsigned hyper integer</td><td width="50%">Size of each chunk (except for the last one, that could be smaller)</td></tr>
+<tr><td width="20%">Checksums</td><td width="30%">variable length array of 32 byte fixed length opaque data</td><td width="50%">BLAKE2b-256 checksum of each chunk</td></tr>
+</table>
+
+<a name="ChunkedZFS"></a><p>It is strongly advisable to reassemble incoming chunked files on
+<a href="https://en.wikipedia.org/wiki/ZFS">ZFS</a> dataset with deduplication
+feature enabled. It could be more CPU and memory hungry, but will save
+your disk&rsquo;s IO and free space from pollution (although temporary). But
+pay attention that you chunks must be either equal to, or divisible by
+dataset&rsquo;s <samp>recordsize</samp> value for deduplication workability.
+Default ZFS&rsquo;s <samp>recordsize</samp> is 128 KiBs, so it is advisable to
+chunk your files on 128, 256, 384, 512, etc KiB blocks.
+</p><hr>
+<div class="header">
+<p>
+Next: <a href="Bundles.html#Bundles" rel="next">Bundles</a>, Previous: <a href="Niceness.html#Niceness" rel="prev">Niceness</a>, Up: <a href="index.html#Top" rel="up">Top</a> &nbsp; </p>
+</div>
+
+
+
+</body>
+</html>

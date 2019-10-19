@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>EBlob (NNCP)</title>
+
+<meta name="description" content="EBlob (NNCP)">
+<meta name="keywords" content="EBlob (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="Thanks.html#Thanks" rel="next" title="Thanks">
+<link href="Sync.html#Sync" rel="prev" title="Sync">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="EBlob"></a>
+<div class="header">
+<p>
+Next: <a href="Thanks.html#Thanks" rel="next">Thanks</a>, Previous: <a href="Sync.html#Sync" rel="prev">Sync</a>, Up: <a href="index.html#Top" rel="up">Top</a> &nbsp; </p>
+</div>
+<hr>
+<a name="EBlob-format"></a>
+<h2 class="unnumbered">EBlob format</h2>
+
+<p>Eblob is an encrypted blob (binary large object, in the terms of
+databases), holding any kind of symmetrically encrypted data with the
+passphrase used to derive the key. It is used to secure configuration
+files, holding valuable private keys, allowing them to be transferred
+safely everywhere.
+</p>
+<p>In fact it uses two factors for securing the data:
+</p>
+<ul>
+<li> <strong>salt</strong>, that is kept inside <samp>eblob</samp>, something <em>you have</em>
+</li><li> <strong>passphrase</strong>, that is kept inside the head, something <em>you know</em>
+</li></ul>
+
+<p>Whole security depends on the passphrase itself. Pay attention that this
+is <strong>not</strong> the password. Password is a short string of high entropy
+(highly random) characters, but passphrase is (very) long string of
+low-entropy characters. Low-entropy text is much more easier to
+remember, and its length provides pretty enough entropy as a result.
+</p>
+<p>Password strengthening function is applied to that passphrase to
+mitigate brute-force and dictionary attacks on it. Here,
+<a href="https://crypto.stanford.edu/balloon/">Balloon</a> memory-hard password
+hashing function is used, together with BLAKE2b-256 hash. It has proven
+memory-hardness properties, very easy to implement, resistant to cache
+attacks and seems more secure than Argon2
+(<a href="https://password-hashing.net/">Password Hashing Competition</a>
+winner).
+</p>
+<p>Eblob is an <a href="https://tools.ietf.org/html/rfc4506">XDR</a>-encoded structure:
+</p>
+<pre class="verbatim">+-------+------------------+------+
+| MAGIC | S | T | P | SALT | BLOB |
++-------+------------------+------+
+</pre>
+<table>
+<thead><tr><th width="20%"></th><th width="30%">XDR type</th><th width="50%">Value</th></tr></thead>
+<tr><td width="20%">Magic number</td><td width="30%">8-byte, fixed length opaque data</td><td width="50%"><tt>N N C P B 0x00 0x00 0x03</tt></td></tr>
+<tr><td width="20%">S, T, P</td><td width="30%">unsigned integer</td><td width="50%">Space cost, time cost and parallel jobs number</td></tr>
+<tr><td width="20%">Salt</td><td width="30%">32 bytes, fixed length opaque data</td><td width="50%">Randomly generated salt</td></tr>
+<tr><td width="20%">Blob</td><td width="30%">variable length opaque data</td><td width="50%">Authenticated and Encrypted data itself</td></tr>
+</table>
+
+<ol>
+<li> generate the main key using <code>balloon(BLAKE2b-256, S, T, P,
+salt, password)</code>
+</li><li> initialize <a href="https://blake2.net/">BLAKE2Xb</a> XOF with generated
+main key and 32-byte output length
+</li><li> feed <tt>N N C P B 0x00 0x00 0x03</tt> magic number to XOF
+</li><li> read 32-bytes of blob AEAD encryption key
+</li><li> encrypt and authenticate blob using
+    <a href="https://cr.yp.to/chacha.html">ChaCha20</a>-<a href="https://en.wikipedia.org/wiki/Poly1305">Poly1305</a>.
+    Blob is splitted on 128 KiB blocks. Each block is encrypted with
+    increasing nonce counter. Eblob packet itself, with empty blob
+    field, is fed as an additional authenticated data
+</li></ol>
+<hr>
+<div class="header">
+<p>
+Next: <a href="Thanks.html#Thanks" rel="next">Thanks</a>, Previous: <a href="Sync.html#Sync" rel="prev">Sync</a>, Up: <a href="index.html#Top" rel="up">Top</a> &nbsp; </p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Release 0.2 (NNCP)</title>
+
+<meta name="description" content="Release 0.2 (NNCP)">
+<meta name="keywords" content="Release 0.2 (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="News.html#News" rel="up" title="News">
+<link href="Russkii.html#g_t_0420_0443_0441_0441_043a_0438_0439" rel="next" title="Русский">
+<link href="Release-0_002e3.html#Release-0_002e3" rel="prev" title="Release 0.3">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="Release-0_002e2"></a>
+<div class="header">
+<p>
+Previous: <a href="Release-0_002e3.html#Release-0_002e3" rel="prev">Release 0.3</a>, Up: <a href="News.html#News" rel="up">News</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Release-0_002e2-1"></a>
+<h3 class="section">Release 0.2</h3>
+<ul>
+<li> <strong>Incompatible</strong> packet&rsquo;s format change (magic number is
+changed too): size field is encrypted and is not send in plaintext
+anymore.
+</li><li> <samp>-minsize</samp> option gives ability to automatically pad
+outgoing packets to specified minimal size.
+</li><li> <code>nncp-daemon</code> and
+<code>nncp-call</code>/<code>nncp-caller</code> always check new <em>tx</em>
+packets appearance in the background while connected. Remote side is
+immediately notified.
+</li><li> <samp>-onlinedeadline</samp> option gives ability to configure timeout
+of inactivity of online connection, when it could be disconnected. It
+could be used to keep connection alive for a long time.
+</li><li> <samp>-maxonlinetime</samp> option gives ability to set maximal
+allowable online connection aliveness time.
+</li><li> <code>nncp-caller</code> command appeared: cron-ed TCP daemon caller.
+</li><li> <code>nncp-pkt</code> command can decompress the data.
+</li></ul>
+
+
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+@node Log
+@unnumbered Log format
+
+Log is a plaintext file with single log entry per line. Lines are "\n"
+separated. It is not intended to be read by human -- use @ref{nncp-log}
+utility.
+
+Each line has the following format:
+
+@verbatim
+LEVEL | DATETIME | SD | MSG
+@end verbatim
+
+Example log records:
+
+@verbatim
+I 2017-01-09T08:41:54.751732131Z [nncp-xfer node="VHMTRWDOXPLK7BR55ICZ5N32ZJUMRKZEMFNGGCEAXV66GG43PEBQ" pkt="KMG6FO5UNEK7HWVFJPWQYC7MOZ76KEZ4FWCGM62PWA2QE5755NPA" size="4162548" xx="tx"]
+I 2017-01-09T08:42:18.990005394Z [sp-infos node="BYRRQUULEHINPKEFN7CHMSHR5I5CK7PMX5HQNCYERTBAR4BOCG6Q" pkts="0" size="0" xx="tx"]
+I 2017-01-09T08:48:59.264847401Z [call-finish duration="10" node="BYRRQUULEHINPKEFN7CHMSHR5I5CK7PMX5HQNCYERTBAR4BOCG6Q" rxbytes="60" rxspeed="60" txbytes="108" txspeed="108"]
+@end verbatim
+
+@table @emph
+@item |
+    Space character.
+@item LEVEL
+    Is single character log level. As a rule is is either @verb{|I|}
+    (informational message), or @verb{|E|} (error message).
+@item DATETIME
+    UTC datetime in RFC 3339 @verb{|2006-01-02T15:04:05.999999999Z|} format.
+@item SD
+    Structured data as in RFC 5424.
+@item MSG
+    Arbitrary UTF-8 encoded text data.
+@end table

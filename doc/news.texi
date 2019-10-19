@@ -1,0 +1,301 @@
+@node News
+@unnumbered News
+
+See also this page @ref{Новости, on russian}.
+
+@node Release 4.1
+@section Release 4.1
+@itemize
+@item
+Workability on GNU/Linux systems and Go 1.10 is fixed.
+@end itemize
+
+@node Release 4.0
+@section Release 4.0
+@itemize
+@item
+@strong{Incompatible} encrypted and eblob packet format change: AEAD
+encryption mode with 128 KiB blocks is used now, because previously
+@command{nncp-toss} did not verify encrypted packet's MAC before feeding
+decrypted data to external command. Older versions are not supported.
+@item
+Available free space checking before copying in @command{nncp-xfer},
+@command{nncp-daemon}, @command{nncp-call(er)}.
+@item
+@command{nncp-call} has ability only to list packets on remote node,
+without their transmission.
+@item
+@command{nncp-call} has ability to transfer only specified packets.
+@item
+Workability of @option{xxrate} preference in @option{calls}
+configuration file section.
+@item
+Dependant libraries are updated.
+@item
+Minor bugfixes.
+@item
+Begin using of @code{go.mod} subsystem.
+@end itemize
+
+@node Release 3.4
+@section Release 3.4
+@itemize
+@item
+@command{nncp-daemon} can be run as @command{inetd}-service.
+@end itemize
+
+@node Release 3.3
+@section Release 3.3
+@itemize
+@item
+@command{nncp-daemon}, @command{nncp-call}, @command{nncp-caller} check
+if @file{.seen} exists and treat it like file was already downloaded.
+Possibly it was transferred out-of-bound and remote side needs to be
+notifier about that.
+@item
+If higher priority packet is spooled, then @command{nncp-daemon} will
+queue its sending first, interrupting lower priority transmissions.
+@item
+Simple packet rate limiter added to online-related tools
+(@command{nncp-daemon}, @command{nncp-call}, @command{nncp-caller}).
+@item
+Ability to specify niceness with symbolic notation:
+@verb{|NORMAL|}, @verb{|BULK+10|}, @verb{|PRIORITY-5|}, etc.
+@item
+Changed default niceness levels:
+for @command{nncp-exec} from 64 to 96,
+for @command{nncp-freq} from 64 to 160,
+for @command{nncp-file} from 196 to 224.
+@end itemize
+
+@node Release 3.2
+@section Release 3.2
+@itemize
+@item
+@strong{Incompatible} @emph{bundle} archive format changes and
+@command{nncp-bundle} workability with Go 1.10+. Bundles must be
+valid tar archives, but Go 1.9 made them invalid because of long paths
+inside. NNCP accidentally was dependant on that bug. Explicit adding of
+@file{NNCP/} directory in archive restores workability with valid tar
+archives.
+@end itemize
+
+@node Release 3.1
+@section Release 3.1
+@itemize
+@item
+Ability to disable relaying at all using @verb{|-via -|} command line option.
+@end itemize
+
+@node Release 3.0
+@section Release 3.0
+@itemize
+@item
+@strong{Incompatible} plain packet format changes. Older versions are
+not supported.
+@item
+Ability to queue remote command execution, by configuring @option{exec}
+option in configuration file and using @command{nncp-exec} command:
+    @itemize
+    @item
+    @command{nncp-mail} command is replaced with more flexible
+    @command{nncp-exec}. Instead of @verb{|nncp-mail NODE RECIPIENT|}
+    you must use @verb{|nncp-exec NODE sendmail RECIPIENT|}.
+    @item
+    @option{sendmail} configuration file option is replaced with
+    @option{exec}. @verb{|sendmail: [...]|} must be replaced with
+    @verb{|exec: sendmail: [...]|}.
+    @end itemize
+@item
+Ability to override @option{via} configuration option for destination
+node via @option{-via} command line option for following commands:
+@command{nncp-file}, @command{nncp-freq}, @command{nncp-exec}.
+@item
+Chunked files, having size less than specified chunk size, will be sent
+as an ordinary single file.
+@item
+Exec commands are invoked with additional @env{NNCP_NICE} and
+@env{NNCP_SELF} environment variables.
+@item
+Files, that are sent as a reply to freq, have niceness level taken from
+the freq packet. You can set desired niceness during @command{nncp-freq}
+invocation using @option{-replynice} option.
+@item
+@command{nncp-toss} command can ignore specified packet types during
+processing: @option{-nofile}, @option{-nofreq}, @option{-noexec},
+@option{-notrns}.
+@item
+@command{nncp-file} command uses
+@option{FreqMinSize}/@option{FreqChunked} configuration file options
+for @option{-minsize}/@option{-chunked} by default. You can turn this
+off by specifying zero value.
+@end itemize
+
+@node Release 2.0
+@section Release 2.0
+@itemize
+@item
+@strong{Incompatible} encrypted/eblob packet format changes. Older
+versions are not supported.
+@item
+Twofish encryption algorithm is replaced with ChaCha20. It is much more
+faster. One cryptographic primitive less.
+@item
+HKDF-BLAKE2b-256 KDF algorithm is replaced with BLAKE2Xb XOF. Yet
+another cryptographic primitive less (assuming that BLAKE2X is nearly
+identical to BLAKE2).
+@end itemize
+
+@node Release 1.0
+@section Release 1.0
+@itemize
+@item
+@strong{Incompatible} encrypted packet format changes. Older versions
+are not supported.
+@item
+@command{nncp-bundle} command can either create stream of encrypted
+packets, or digest it. It is useful when dealing with stdin/stdout based
+transmission methods (like writing to CD-ROM without intermediate
+prepared ISO image and working with tape drives).
+@item
+@command{nncp-toss} is able to create @file{.seen} files preventing
+duplicate packets receiving.
+@item
+Single background checksum verifier worker is allowed in
+@command{nncp-call}. This is helpful when thousands of small inbound
+packets could create many goroutines.
+@item
+Ability to override path to spool directory and logfile through either
+command line argument, or environment variable.
+@item
+@command{nncp-rm} is able to delete outbound/inbound, @file{.seen},
+@file{.part}, @file{.lock} and temporary files.
+@end itemize
+
+@node Release 0.12
+@section Release 0.12
+@itemize
+@item
+Sendmail command is called with @env{NNCP_SENDER} environment variable.
+@end itemize
+
+@node Release 0.11
+@section Release 0.11
+@itemize
+@item
+@command{nncp-stat}'s command output is sorted by node name.
+@end itemize
+
+@node Release 0.10
+@section Release 0.10
+@itemize
+@item
+@command{nncp-freq}'s @file{DST} argument is optional now. Last
+@file{SRC} path's element will be used by default.
+@end itemize
+
+@node Release 0.9
+@section Release 0.9
+@itemize
+@item
+Fix @option{-rx}/@option{-tx} arguments processing in
+@command{nncp-call} command. They were ignored.
+@end itemize
+
+@node Release 0.8
+@section Release 0.8
+@itemize
+@item
+Little bugfix in @command{nncp-file} command, where @option{-minsize}
+option for unchunked transfer was not in KiBs, but in bytes.
+@end itemize
+
+@node Release 0.7
+@section Release 0.7
+@itemize
+@item
+Ability to feed @command{nncp-file} from stdin, that uses an encrypted
+temporary file for that.
+
+@item
+Chunked files transmission appeared with corresponding
+@command{nncp-reass} command and @option{freqchunked} configuration file
+entry. Useful for transferring big files over small storage devices.
+
+@item
+@option{freqminsize} configuration file option, analogue to
+@option{-minsize} one.
+
+@item
+@command{nncp-xfer}'s @option{-force} option is renamed to
+@option{-mkdir} for clarity.
+
+@item
+@option{-minsize} option is specified in KiBs, not bytes, for
+convenience.
+
+@item
+@command{nncp-newcfg} command is renamed to @command{nncp-cfgnew},
+and @command{nncp-mincfg} to @command{nncp-cfgmin} -- now they have
+common prefix and are grouped together for convenience.
+
+@item
+@command{nncp-cfgenc} command appeared, allowing configuration file
+encryption/decryption, for keeping it safe without any either OpenPGP or
+similar tools usage.
+
+@item
+Cryptographic libraries (dependencies) are updated.
+@end itemize
+
+@node Release 0.6
+@section Release 0.6
+@itemize
+@item Small @command{nncp-rm} command appeared.
+@item Cryptographic libraries (dependencies) are updated.
+@end itemize
+
+@node Release 0.5
+@section Release 0.5
+@itemize
+@item Trivial small fix in default niceness level of @command{nncp-file}
+and @command{nncp-freq} commands.
+@end itemize
+
+@node Release 0.4
+@section Release 0.4
+@itemize
+@item Small fix in @command{nncp-call}, @command{nncp-caller},
+@command{nncp-daemon}: they can segmentation fail sometimes (no data is
+lost).
+@item @command{nncp-newnode} renamed to @command{nncp-newcfg} -- it is
+shorter and more convenient to use.
+@item @command{nncp-mincfg} command appeared: helper allowing to create
+minimalistic stripped down configuration file without private keys,
+that is useful during @command{nncp-xfer} usage.
+@end itemize
+
+@node Release 0.3
+@section Release 0.3
+Fixed compatibility with Go 1.6.
+
+@node Release 0.2
+@section Release 0.2
+@itemize
+@item @strong{Incompatible} packet's format change (magic number is
+changed too): size field is encrypted and is not send in plaintext
+anymore.
+@item @option{-minsize} option gives ability to automatically pad
+outgoing packets to specified minimal size.
+@item @command{nncp-daemon} and
+@command{nncp-call}/@command{nncp-caller} always check new @emph{tx}
+packets appearance in the background while connected. Remote side is
+immediately notified.
+@item @option{-onlinedeadline} option gives ability to configure timeout
+of inactivity of online connection, when it could be disconnected. It
+could be used to keep connection alive for a long time.
+@item @option{-maxonlinetime} option gives ability to set maximal
+allowable online connection aliveness time.
+@item @command{nncp-caller} command appeared: cron-ed TCP daemon caller.
+@item @command{nncp-pkt} command can decompress the data.
+@end itemize

@@ -1,0 +1,112 @@
+@node Comparison
+@unnumbered Comparison with existing solutions
+
+Here is comparison with @url{https://en.wikipedia.org/wiki/UUCP, UUCP}
+(Unix to Unix copy), FTN (@url{https://en.wikipedia.org/wiki/FidoNet,
+FidoNet} Technology Networks) and @url{https://en.wikipedia.org/wiki/SMTP, SMTP}
+(because it is also store-and-forward solution).
+
+@multitable @columnfractions 0.40 0.15 0.15 0.15 0.15
+@headitem @tab UUCP @tab FTN @tab NNCP @tab SMTP
+
+@item Ease of setup @tab Medium @tab Hard @tab Easy @tab Hard
+@item Mail transmission @tab @strong{Yes} @tab @strong{Yes} @tab @strong{Yes} @tab @strong{Yes}
+@item News transmission @tab @strong{Yes} @tab @strong{Yes} @tab No @tab No
+@item File transmission @tab @strong{Yes} @tab @strong{Yes} @tab @strong{Yes} @tab No
+@item Chunked files @tab No @tab @strong{Yes} @tab @strong{Yes} @tab No
+@item Remote command execution @tab @strong{Yes} @tab No @tab @strong{Yes} @tab No
+@item Resumable downloads @tab @strong{Yes} @tab @strong{Yes} @tab @strong{Yes} @tab No
+@item Packets prioritizing @tab @strong{Yes} @tab No @tab @strong{Yes} @tab No
+@item Mail compression @tab No @tab @strong{Yes} @tab @strong{Yes} @tab No
+@item SMTP integration @tab @strong{Yes} @tab No @tab @strong{Yes} @tab N/A
+@item Push/poll @tab @strong{Both} @tab @strong{Both} @tab @strong{Both} @tab Push
+@item DTN @tab @strong{Yes} @tab @strong{Yes} @tab @strong{Yes} @tab No
+@item Intended network size @tab Dozens @tab Global @tab Dozens @tab Global
+@item Routing @tab Manual/static @tab Federated @tab Manual/static @tab Federated
+@item PSTN support @tab @strong{Yes} @tab @strong{Yes} @tab Possible @tab No
+@item Anonymous peers @tab @strong{Yes} @tab No @tab No @tab @strong{Yes}
+@item Peers authentication @tab PAP @tab PAP/CHAP @tab public-key @tab No
+@item Packets encryption @tab No @tab No @tab @strong{Yes} @tab No
+@item Metadata privacy @tab No @tab No @tab @strong{Yes} @tab No
+@item Packets integrity check @tab No @tab No @tab @strong{Yes} @tab No
+@item Sneakernet friendliness @tab No @tab No @tab @strong{Yes} @tab No
+
+@end multitable
+
+@table @strong
+
+@item Ease of setup
+    UUCP can be setup rather easily with few configuration files
+    and few lines in each of them. But you have to add some encryption
+    and authentication overlay for securing you data transmission.
+
+    FTN is hard to setup because it is totally different world of
+    software comparing to Unix one. Even mail editor will be something
+    like GoldEd, not an ordinary email client. Moreover, there is no
+    out-of-box encryption and strong authentication involved.
+
+    NNCP requires editing of single YAML @ref{Configuration,
+    configuration file}.
+
+@item News transmission
+    SMTP does not know anything about news, NNTP and so forth. Neither
+    does NNCP, because they are not used very much nowadays.
+
+@item File transmission
+    SMTP could transfer files only Base64-encoding them -- this is very
+    inefficient.
+
+@item Chunked files
+    FTN software can automatically split huge files on smaller chunks,
+    to reassemble it on the destination node. NNCP also supports
+    @ref{Chunked, that feature}, especially important when dealing with
+    small capacity removable storage devices.
+
+@item Packets prioritizing
+    UUCP and NNCP will push higher priority ("grade" in UUCP
+    terminology) packets first. You mail will pass, even when many
+    gigabytes files are queued in parallel.
+
+@item SMTP integration
+    Mail servers like @url{http://www.postfix.org/, Postfix} offers
+    documentation and configuration file examples how to use it with
+    UUCP. @url{http://www.exim.org/, Exim} and
+    @url{http://www.sendmail.com/sm/open_source/, Sendmail} could be
+    integrated with UUCP rather easily too. For using NNCP, just replace
+    UUCP commands with NNCP ones.
+
+@item Push/poll
+    With SMTP, you have to wait online when remote peers will push you
+    the messages. There are extensions to the protocol allowing
+    poll-model, but they are not used everywhere. This is very important
+    to be independent from specified model and be able to exchange the
+    data with possibility you have.
+
+@item @url{https://en.wikipedia.org/wiki/Delay-tolerant_networking, DTN} (delay tolerant networking)
+    SMTP will drop messages that can not be delivered for a long time
+    (several days). Others are tolerant for the long delays.
+
+@item Routing
+    UUCP and NNCP does not known nothing about routing. You have to
+    explicitly tell how to send (what hops to use) packets to each node.
+
+@item PSTN support
+    UUCP and FidoNet always have been working with modems out-of-box.
+    Only many years later they gained support for working over TCP/IP
+    connections. SMTP works only over TCP/IP. NNCP currently has only
+    TCP daemon, but nothing prohibits using of another 8-bit aware
+    online transport.
+
+@item Anonymous peers
+    NNCP and FTN are friend-to-friend networks exclusively. This is very
+    secure and mitigates many possible man-in-the-middle (MitM) and
+    @url{https://en.wikipedia.org/wiki/Sybil_attack, Sybil} attacks.
+
+@item Sneakernet friendliness
+    No one, except NNCP, supports data exchanging via removable storages
+    likes flash drives, CD-ROMs, tapes and hard drives out-of-box. It
+    can be emulated for many FTN software, by manually copying files in
+    its inbound/outbound directories. But UUCP and SMTP software
+    requires more manual work to do so.
+
+@end table

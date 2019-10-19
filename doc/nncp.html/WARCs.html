@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>WARCs (NNCP)</title>
+
+<meta name="description" content="WARCs (NNCP)">
+<meta name="keywords" content="WARCs (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="May 1, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Integration.html#Integration" rel="up" title="Integration">
+<link href="BitTorrent.html#BitTorrent" rel="next" title="BitTorrent">
+<link href="Feeds.html#Feeds" rel="prev" title="Feeds">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+
+</head>
+
+<body lang="en">
+<a name="WARCs"></a>
+<div class="header">
+<p>
+Next: <a href="BitTorrent.html#BitTorrent" rel="next">BitTorrent</a>, Previous: <a href="Feeds.html#Feeds" rel="prev">Feeds</a>, Up: <a href="Integration.html#Integration" rel="up">Integration</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Integration-with-Web-pages"></a>
+<h3 class="section">Integration with Web pages</h3>
+
+<p>Simple HTML web page can be downloaded very easily for sending and
+viewing it offline after:
+</p><pre class="verbatim">% wget http://www.example.com/page.html
+</pre>
+<p>But most web pages contain links to images, CSS and JavaScript files,
+required for complete rendering.
+<a href="https://www.gnu.org/software/wget/">GNU Wget</a> supports that
+documents parsing and understanding page dependencies. You can download
+the whole page with dependencies the following way:
+</p><pre class="verbatim">% wget \
+    --page-requisites \
+    --convert-links \
+    --adjust-extension \
+    --restrict-file-names=ascii \
+    --span-hosts \
+    --random-wait \
+    --execute robots=off \
+    http://www.example.com/page.html
+</pre><p>that will create <samp>www.example.com</samp> directory with all files
+necessary to view <samp>page.html</samp> web page. You can create single file
+compressed tarball with that directory and send it to remote node:
+</p><pre class="verbatim">% tar cf - www.example.com | xz -9 |
+    nncp-file - remote.node:www.example.com-page.tar.xz
+</pre>
+<p>But there are multi-paged articles, there are the whole interesting
+sites you want to get in a single package. You can mirror the whole web
+site by utilizing <code>wget</code>&rsquo;s recursive feature:
+</p><pre class="verbatim">% wget \
+    --recursive \
+    --timestamping \
+    -l inf \
+    --no-remove-listing \
+    --no-parent \
+    [...]
+    http://www.example.com/
+</pre>
+<p>There is a standard for creating
+<a href="https://en.wikipedia.org/wiki/Web_ARChive">Web ARChives</a>:
+<strong>WARC</strong>. Fortunately again, <code>wget</code> supports it as an
+output format.
+</p><pre class="verbatim">% wget \
+    --warc-file www.example_com-$(date '+%Y%M%d%H%m%S') \
+    --no-warc-compression \
+    --no-warc-keep-log \
+    [...]
+    http://www.example.com/
+</pre><p>That command will create uncompressed <samp>www.example_com-XXX.warc</samp>
+web archive. By default, WARCs are compressed using
+<a href="https://en.wikipedia.org/wiki/Gzip">gzip</a>, but, in example above,
+we have disabled it to compress with stronger <code>xz</code>, before
+sending via <code>nncp-file</code>.
+</p>
+<p>There are plenty of software acting like HTTP proxy for your browser,
+allowing to view that WARC files. However you can extract files from
+that archive using <a href="https://pypi.python.org/pypi/Warcat">warcat</a>
+utility, producing usual directory hierarchy:
+</p><pre class="verbatim">% python3 -m warcat extract \
+    www.example_com-XXX.warc \
+    --output-dir www.example.com-XXX \
+    --progress
+</pre>
+
+
+
+</body>
+</html>
