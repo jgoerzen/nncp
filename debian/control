@@ -1,0 +1,15 @@
+Source: nncp
+Section: unknown
+Priority: optional
+Maintainer: jgoerzen <jgoerzen@complete.org>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.0
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Browser: https://salsa.debian.org/debian/nncp
+#Vcs-Git: https://salsa.debian.org/debian/nncp.git
+
+Package: nncp
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>

@@ -1,0 +1,5 @@
+nncp (4.1-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- jgoerzen <jgoerzen@complete.org>  Sat, 19 Oct 2019 23:03:55 +0000
