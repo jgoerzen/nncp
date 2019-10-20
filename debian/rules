@@ -3,6 +3,7 @@
 # output every command that modifies files on the build system.
 #export DH_VERBOSE = 1
 
+# Upstream makefile relies on $(PWD), which needs bash.
 SHELL = /bin/bash
 
 # see FEATURE AREAS in dpkg-buildflags(1)
@@ -14,6 +15,7 @@ SHELL = /bin/bash
 # package maintainers to append LDFLAGS
 #export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
+export PREFIX = /usr
 
 %:
 	dh $@
@@ -27,6 +29,10 @@ SHELL = /bin/bash
 override_dh_auto_build:
 	dh_auto_build
 	pandoc --standalone --to man debian/nncp.1.md -o debian/nncp.1
+
+override_dh_auto_install:
+	dh_auto_install
+	rm -r debian/nncp/usr/info
 
 override_dh_auto_clean:
 	dh_auto_clean
