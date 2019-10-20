@@ -20,6 +20,15 @@ set -e
 
 case "$1" in
     configure)
+	    adduser --system --group nncp
+	    if [ ! -d /var/spool/nncp ]; then
+		    mkdir /var/spool/nncp
+		    chown nncp:nncp /var/spool/nncp 
+	    fi
+	    if [ ! -f /var/log/nncp ]; then
+		    touch /var/log/nncp
+		    chown nncp:nncp /var/log/nncp
+	    fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
