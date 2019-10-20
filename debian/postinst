@@ -20,7 +20,7 @@ set -e
 
 case "$1" in
     configure)
-	    adduser --system --group nncp
+	    adduser --no-create-home --home /var/spool/nncp --system --group nncp
 	    if [ ! -d /var/spool/nncp ]; then
 		    mkdir /var/spool/nncp
 		    chown nncp:nncp /var/spool/nncp 
