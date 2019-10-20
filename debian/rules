@@ -16,6 +16,7 @@ SHELL = /bin/bash
 #export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
 export PREFIX = /usr
+export CFGPATH = /etc/nncp.yaml
 
 %:
 	dh $@
@@ -38,4 +39,6 @@ override_dh_auto_clean:
 	dh_auto_clean
 	rm -f debian/nncp.1
 
+override_dh_dwz:
+	true
 
