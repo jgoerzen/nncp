@@ -7,4 +7,6 @@ NNCP documentation is available by running "info nncp" or in
 NNCP can be installed in lots of configurations; therefore, it is not
 enabled by default in any configuration.
 
+The NOTICE file pertains to the included yaml.v2 software.
+
  -- jgoerzen <jgoerzen@complete.org>  Sat, 19 Oct 2019 23:03:55 +0000
