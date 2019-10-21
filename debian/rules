@@ -23,8 +23,10 @@ export CFGPATH = /etc/nncp.yaml
 
 
 override_dh_auto_build:
-	# Don't rebuild the HTML docs; we just tweaked them for Debian
+	# Don't rebuild the HTML docs; we just tweaked them for Debian info only
 	touch doc/nncp.html
+	# Save off upstream nncp.inf; we'll rebuild for the Debian tweak
+	mv doc/nncp.info doc/nncp.info.upstream
 	dh_auto_build
 	pandoc --standalone --to man debian/nncp.1.md -o debian/nncp.1
 
@@ -38,6 +40,7 @@ override_dh_installman:
 		ln -s nncp.1.gz "debian/nncp/usr/share/man/man1/$$FILE.1.gz"; done
 
 override_dh_auto_clean:
+	-mv doc/nncp.info.upstream doc/nncp.info
 	dh_auto_clean
 	rm -f debian/nncp.1
 
