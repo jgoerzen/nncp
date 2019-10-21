@@ -1,0 +1,9 @@
+Document: nncp
+Title: NNCP Manual
+Author: Sergey Matveev <stargrave@stargrave.org>
+Abstract: This manual describes NNCP
+Section: comm
+
+Format: HTML
+Index: /usr/share/doc/nncp/nncp.html/index.html
+Files: /usr/share/doc/nncp/nncp.html/*.html
