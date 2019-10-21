@@ -23,6 +23,8 @@ export CFGPATH = /etc/nncp.yaml
 
 
 override_dh_auto_build:
+	# Don't rebuild the HTML docs; we just tweaked them for Debian
+	touch doc/nncp.html
 	dh_auto_build
 	pandoc --standalone --to man debian/nncp.1.md -o debian/nncp.1
 
