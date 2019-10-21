@@ -22,11 +22,6 @@ export CFGPATH = /etc/nncp.yaml
 	dh $@
 
 
-# dh_make generated override targets
-# This is example for Cmake (See https://bugs.debian.org/641051 )
-#override_dh_auto_configure:
-#	dh_auto_configure -- #	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
-
 override_dh_auto_build:
 	dh_auto_build
 	pandoc --standalone --to man debian/nncp.1.md -o debian/nncp.1
@@ -34,6 +29,9 @@ override_dh_auto_build:
 override_dh_auto_install:
 	dh_auto_install
 	rm -r debian/nncp/usr/info
+
+override_dh_installman:
+	dh_installman
 	for FILE in `cd debian/nncp/usr/bin && echo *`; do \
 		ln -s nncp.1.gz "debian/nncp/usr/share/man/man1/$$FILE.1.gz"; done
 
