@@ -34,11 +34,14 @@ override_dh_auto_build:
 override_dh_auto_install:
 	dh_auto_install
 	rm -r debian/nncp/usr/info
+	for FILE in `cd debian/nncp/usr/bin && echo *`; do \
+		ln -s nncp.1.gz "debian/nncp/usr/share/man/man1/$$FILE.1.gz"; done
 
 override_dh_auto_clean:
 	dh_auto_clean
 	rm -f debian/nncp.1
 
+# dwz generates errors for the go-built executables
 override_dh_dwz:
 	true
 
