@@ -1,6 +1,10 @@
 nncp for Debian
 --------------
 
-<possible notes regarding this package - if none, delete this file>
+NNCP documentation is available by running "info nncp" or in
+/usr/share/doc/nncp/nncp.html/index.html.
+
+NNCP can be installed in lots of configurations; therefore, it is not
+enabled by default in any configuration.
 
  -- jgoerzen <jgoerzen@complete.org>  Sat, 19 Oct 2019 23:03:55 +0000

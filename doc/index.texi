@@ -2,6 +2,11 @@
 @documentencoding UTF-8
 @settitle NNCP
 
+@dircategory Networking tools
+@direntry
+* NNCP: (nncp).                Secure Node to Node Copy.
+@end direntry
+
 @copying
 This manual is for NNCP (Node to Node copy) --  collection of utilities
 simplifying secure store-and-forward files and mail exchanging.

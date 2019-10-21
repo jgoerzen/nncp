@@ -10,7 +10,7 @@ Vcs-Git: https://github.com/jgoerzen/nncp.git
 
 Package: nncp
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, adduser
 Description: Secure store-and-forward files, mail, and commands
  NNCP is a package facilitating secure store-and-forward file and mail
  exchange.  It can be thought of as a modern UUCP with Internet smarts.
