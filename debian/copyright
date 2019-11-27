@@ -35,7 +35,7 @@ Files: src/golang.org/*
 Copyright: 2009 The Go Authors
 License: BSD-3-clause-google
 
-File: src/github.com/klauspost/compress/*
+Files: src/github.com/klauspost/compress/*
 Copyright: Copyright (c) 2012 The Go Authors. All rights reserved. Copyright (c) 2019 Klaus Post. All rights reserved.
 License: BSD-3-clause-google
 

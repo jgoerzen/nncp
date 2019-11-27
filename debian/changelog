@@ -8,4 +8,4 @@ nncp (4.1-1) unstable; urgency=low
 
   * Initial release (Closes: #942689)
 
- -- jgoerzen <jgoerzen@complete.org>  Sat, 19 Oct 2019 23:03:55 +0000
+ -- John Goerzen <jgoerzen@complete.org>  Sat, 19 Oct 2019 23:03:55 +0000

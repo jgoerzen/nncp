@@ -1,7 +1,7 @@
 Source: nncp
 Section: comm
 Priority: optional
-Maintainer: jgoerzen <jgoerzen@complete.org>
+Maintainer: John Goerzen <jgoerzen@complete.org>
 Build-Depends: debhelper-compat (= 12), golang, pandoc
 Standards-Version: 4.4.0
 Homepage: http://www.nncpgo.org/
