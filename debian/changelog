@@ -1,3 +1,9 @@
+nncp (4.1-1.1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- John Goerzen <jgoerzen@complete.org>  Tue, 26 Nov 2019 20:12:29 -0600
+
 nncp (4.1-1) unstable; urgency=low
 
   * Initial release (Closes: #942689)

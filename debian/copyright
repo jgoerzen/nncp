@@ -7,37 +7,37 @@ Files: *
 Copyright: 2016-2019 Sergey Matveev <stargrave@stargrave.org>
 License: GPL-3.0+
 
-Files: src/cypherpunks.ru/nncp/vendor/cypherpunks.ru/balloon/*
+Files: src/go.cypherpunks.ru/balloon/*
 Copyright: 2016-2019 Sergey Matveev <stargrave@stargrave.org>
 License: LGPL-3.0+
 
-Files: src/cypherpunks.ru/nncp/vendor/github.com/davecgh/go-xdr/*
+Files: src/github.com/hjson/json-go/*
+Copyright: Copyright (c) 2016, 2017 Christian Zangl
+License: Expat
+
+Files: src/github.com/davecgh/go-xdr/*
 Copyright: 2012-2014 Dave Collins <dave@davec.name>
 License: ISC
 
-Files: src/cypherpunks.ru/nncp/vendor/github.com/dustin/go-humanize/*
+Files: src/github.com/dustin/go-humanize/*
 Copyright: 2005-2008  Dustin Sallings <dustin@spy.net>
 License: Expat
 
-Files: src/cypherpunks.ru/nncp/vendor/github.com/flynn/noise/*
+Files: src/github.com/flynn/noise/*
 Copyright: 2015 Prime Directive, Inc.
 License: BSD-3-clause-PD
 
-Files: src/cypherpunks.ru/nncp/vendor/github.com/gorhill/cronexpr/*
+Files: src/github.com/gorhill/cronexpr/*
 Copyright: 2013 Raymond Hill
 License: GPL-3.0
 
-Files: src/cypherpunks.ru/nncp/vendor/golang.org/*
+Files: src/golang.org/*
 Copyright: 2009 The Go Authors
 License: BSD-3-clause-google
 
-Files: src/cypherpunks.ru/nncp/vendor/gopkg.in/check.v1/*
-Copyright: 2010-2013 Gustavo Niemeyer <gustavo@niemeyer.net>
-License: BSD-2-clause
-
-Files: src/cypherpunks.ru/nncp/vendor/gopkg.in/yaml.v2/*
-Copyright: 2011-2016 Canonical Ltd.
-License: Apache-2.0
+File: src/github.com/klauspost/compress/*
+Copyright: Copyright (c) 2012 The Go Authors. All rights reserved. Copyright (c) 2019 Klaus Post. All rights reserved.
+License: BSD-3-clause-google
 
 Files: doc/*
 Copyright: 2016-2019 Sergey Matveev <stargrave@stargrave.org>
