@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
+simplifying secure store-and-forward files and mail exchanging.
+
+Copyright (C) 2016-2019 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Релиз 5.0.0 (NNCP)</title>
+
+<meta name="description" content="Релиз 5.0.0 (NNCP)">
+<meta name="keywords" content="Релиз 5.0.0 (NNCP)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="November 24, 2019">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Novosti.html#g_t_041d_043e_0432_043e_0441_0442_0438" rel="up" title="Новости">
+<link href="Reliz-4_002e1.html#g_t_0420_0435_043b_0438_0437-4_002e1" rel="next" title="Релиз 4.1">
+<link href="Reliz-5_002e1_002e0.html#g_t_0420_0435_043b_0438_0437-5_002e1_002e0" rel="prev" title="Релиз 5.1.0">
+<style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
+<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">
+</head>
+
+<body lang="en">
+<a name="g_t_0420_0435_043b_0438_0437-5_002e0_002e0"></a>
+<div class="header">
+<p>
+Next: <a href="Reliz-4_002e1.html#g_t_0420_0435_043b_0438_0437-4_002e1" rel="next">Релиз 4.1</a>, Previous: <a href="Reliz-5_002e1_002e0.html#g_t_0420_0435_043b_0438_0437-5_002e1_002e0" rel="prev">Релиз 5.1.0</a>, Up: <a href="Novosti.html#g_t_041d_043e_0432_043e_0441_0442_0438" rel="up">Новости</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Reliz-5_002e0_002e0"></a>
+<h4 class="subsection">Релиз 5.0.0</h4>
+<ul>
+<li> <strong>Несовместимое</strong> изменение формата конфигурационного файла:
+YAML заменён на Hjson, из-за его гораздо большей простоты, без
+заметной потери функционала и удобства.
+
+</li><li> <strong>Несовместимое</strong> изменение формата простых пакетов. Работа со
+старыми версиями не поддерживается. <code>zlib</code> сжатие заменено на
+<code>Zstandard</code>, так как оно значительно быстрее и эффективнее, не
+смотря на то, что версия библиотеки ещё не проверена временем.
+
+</li><li> Возможность соединяться с удалёнными нодами не только по TCP, но и через
+pipe вызов сторонней команды.
+
+</li><li> <code>nncp-cfgnew</code> генерирует конфигурационный файл с множеством
+комментариев. Можно использовать <samp>-nocomments</samp> опцию для старого
+поведения.
+
+</li><li> Дубликаты имён файлов имеют суффикс <samp>.CTR</samp>, вместо <samp>CTR</samp>,
+чтобы избежать возможных коллизий с <samp>.nncp.chunkCTR</samp>.
+
+</li><li> Возможность переопределить umask процесса через опцию конфигурационного
+файла.
+
+</li><li> По умолчанию файлы и директории создаются с 666/777 правами доступа,
+позволяя управлять ими <code>umask</code>-ом.
+
+</li><li> Обновлены зависимости.
+
+</li><li> Полное использование go модулей для управления зависимостями
+(используется <code>go.cypherpunks.ru/nncp/v5</code> namespace).
+
+</li><li> Отмена автоматического использования более новых версий GNU GPL
+(лицензия проекта GNU GPLv3-только).
+
+</li></ul>
+
+
+
+
+</body>
+</html>

@@ -5,30 +5,31 @@ Possibly NNCP package already exists for your distribution:
 
 @itemize
 @item @url{https://www.freshports.org/net/nncp/, FreeBSD ports}
+@item @url{https://github.com/DragonFlyBSD/DPorts/tree/master/net/nncp, DragonFly BSD ports}
 @item @url{https://github.com/void-linux/void-packages/blob/master/srcpkgs/nncp/template, Void Linux}
 @end itemize
 
 NNCP should run on any POSIX-compatible operating system.
 
 NNCP is written on @url{https://golang.org/, Go} programming language
-and you have to install Go compiler (1.10+ version is highly
-recommended). @emph{Make} (BSD and GNU ones are fine) is recommended for
-convenient building. @url{https://www.gnu.org/software/texinfo/,
-Texinfo} is used for building documentation.
+and you have to install Go compiler 1.10+ version. @command{Make} (BSD
+and GNU versions are fine) is recommended for convenient building.
+@url{https://www.gnu.org/software/texinfo/, Texinfo} is used for
+building documentation (although tarballs already include it).
 
 In general you must get @ref{Tarballs, the tarball}, check its
 @ref{Integrity, integrity and authenticity} and run @command{make}.
-Look for general and @ref{Platform-specific, platform-specific}
-installation instructions.
+Look for general and platform-specific @ref{Build-instructions, build
+instructions}.
 
 @menu
 * Prepared tarballs: Tarballs.
 * Tarballs integrity check: Integrity.
-* Platform-specific instructions: Platform-specific.
+* Build instructions: Build-instructions.
 * Development source code: Sources.
 @end menu
 
 @include download.texi
 @include integrity.texi
-@include platforms.texi
+@include building.texi
 @include sources.texi

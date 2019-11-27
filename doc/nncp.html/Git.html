@@ -6,8 +6,7 @@ simplifying secure store-and-forward files and mail exchanging.
 Copyright (C) 2016-2019 Sergey Matveev
 
 Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.3
-or any later version published by the Free Software Foundation;
+under the terms of the GNU Free Documentation License, Version 1.3;
 with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
 A copy of the license is included in the section entitled "Copying conditions". -->
 <!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
@@ -20,13 +19,13 @@ A copy of the license is included in the section entitled "Copying conditions". 
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
-<meta name="date" content="May 1, 2019">
+<meta name="date" content="November 24, 2019">
 <link href="index.html#Top" rel="start" title="Top">
 <link href="Integration.html#Integration" rel="up" title="Integration">
 <link href="Multimedia.html#Multimedia" rel="next" title="Multimedia">
 <link href="DownloadService.html#DownloadService" rel="prev" title="DownloadService">
 <style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
-
+<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">
 </head>
 
 <body lang="en">
@@ -45,24 +44,24 @@ necessary tools for store-and-forward networking.
 everything you need.
 </p>
 <p>Use it to create bundles containing all required blobs/trees/commits and tags:
-</p><pre class="verbatim">% git bundle create repo-initial.bundle master --tags --branches
-% git tag -f last-bundle
-% nncp-file repo-initial.bundle remote.node:repo-$(date % '+%Y%M%d%H%m%S').bundle
+</p><pre class="verbatim">$ git bundle create repo-initial.bundle master --tags --branches
+$ git tag -f last-bundle
+$ nncp-file repo-initial.bundle remote.node:repo-$(date % '+%Y%M%d%H%m%S').bundle
 </pre>
 <p>Do usual working with the Git: commit, add, branch, checkout, etc. When
 you decide to queue your changes for sending, create diff-ed bundle and
 transfer them:
-</p><pre class="verbatim">% git bundle create repo-$(date '+%Y%M%d%H%m%S').bundle last-bundle..master
+</p><pre class="verbatim">$ git bundle create repo-$(date '+%Y%M%d%H%m%S').bundle last-bundle..master
 or maybe
-% git bundle create repo-$(date '+%Y%M%d').bundle --since=10.days master
+$ git bundle create repo-$(date '+%Y%M%d').bundle --since=10.days master
 </pre>
 <p>Received bundle on remote machine acts like usual remote:
-</p><pre class="verbatim">% git clone -b master repo-XXX.bundle
+</p><pre class="verbatim">$ git clone -b master repo-XXX.bundle
 </pre><p>overwrite <samp>repo.bundle</samp> file with newer bundles you retrieve and
 fetch all required branches and commits:
-</p><pre class="verbatim">% git pull # assuming that origin remote points to repo.bundle
-% git fetch repo.bundle master:localRef
-% git ls-remote repo.bundle
+</p><pre class="verbatim">$ git pull # assuming that origin remote points to repo.bundle
+$ git fetch repo.bundle master:localRef
+$ git ls-remote repo.bundle
 </pre>
 <p>Bundles are also useful when cloning huge repositories (like Linux has).
 Git&rsquo;s native protocol does not support any kind of interrupted download
@@ -71,6 +70,24 @@ Bundles, being an ordinary files, can be downloaded with native
 HTTP/FTP/NNCP resuming capabilities. After you fetch repository via the
 bundle, you can add an ordinary <samp>git://</samp> remote and fetch the
 difference.
+</p>
+<p>Also you can find the following exec-handler useful:
+</p><pre class="verbatim">#!/bin/sh -ex
+
+tmp=$(mktemp)
+
+cleanup()
+{
+    rm -f $tmp
+}
+trap cleanup HUP PIPE INT QUIT TERM EXIT
+
+read revs
+cd $HOME/git/$1.git
+git bundle create $tmp $revs
+nncp-file -nice $NNCP_NICE $tmp $NNCP_SENDER:$1-$(date '+%Y%M%d%H%m%S').bundle
+</pre><p>And it allows you to request for bundles like that:
+<code>echo some-old-commit..master | nncp-exec REMOTE bundler REPONAME</code>.
 </p>
 
 

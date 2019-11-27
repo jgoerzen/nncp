@@ -1,6 +1,59 @@
 News
 ****
 
+Release 5.1.0
+=============
+
+   • ‘nncp-file’ can send directories, automatically creating pax
+     archive on the fly.
+
+   • Free disk space is checked during outbound packets creation.
+
+   • ‘freq’, ‘freqminsize’, ‘freqchunked’ configuration file options
+     replaced with the structure: ‘freq: {path: ..., minsize: ...,
+     chunked: ...}’.
+
+   • Added ‘freq.maxsize’ configuration file option, forbidding of freq
+     sending larger than specified size.
+
+   • Ability to notify about successfully executed commands (exec) with
+     ‘notify.exec’ configuration file option.
+
+Release 5.0.0
+=============
+
+   • *Incompatible* configuration file format change: YAML is replaced
+     with Hjson, due to its simplicity, without noticeable lack of
+     either functionality or convenience.
+
+   • *Incompatible* plain packet format changes.  Older versions are not
+     supported.  ‘zlib’ compression is replaced with ‘Zstandard’, due to
+     its speed and efficiency, despite library version is not mature
+     enough.
+
+   • Ability to call remote nodes via pipe call of external command, not
+     only through TCP.
+
+   • ‘nncp-cfgnew’ generates configuration file with many comments.
+     ‘-nocomments’ option can be used for an old behaviour.
+
+   • Duplicate filenames have ‘.CTR’ suffix, instead of ‘CTR’, to avoid
+     possible collisions with ‘.nncp.chunkCTR’.
+
+   • Ability to override process umask through configuration file
+     option.
+
+   • Files and directories are created with 666/777 permissions by
+     default, allowing control with ‘umask’.
+
+   • Updated dependencies.
+
+   • Full usage of go modules for dependencies management
+     (‘go.cypherpunks.ru/nncp/v5’ namespace is used).
+
+   • Forbid any later GNU GPL version autousage (project’s licence now
+     is GNU GPLv3-only).
+
 Release 4.1
 ===========
 
@@ -14,15 +67,22 @@ Release 4.0
      ‘nncp-toss’ did not verify encrypted packet’s MAC before feeding
      decrypted data to external command.  Older versions are not
      supported.
+
    • Available free space checking before copying in ‘nncp-xfer’,
      ‘nncp-daemon’, ‘nncp-call(er)’.
+
    • ‘nncp-call’ has ability only to list packets on remote node,
      without their transmission.
+
    • ‘nncp-call’ has ability to transfer only specified packets.
+
    • Workability of ‘xxrate’ preference in ‘calls’ configuration file
      section.
+
    • Dependant libraries are updated.
+
    • Minor bugfixes.
+
    • Begin using of ‘go.mod’ subsystem.
 
 Release 3.4
@@ -37,12 +97,16 @@ Release 3.3
      and treat it like file was already downloaded.  Possibly it was
      transferred out-of-bound and remote side needs to be notifier about
      that.
+
    • If higher priority packet is spooled, then ‘nncp-daemon’ will queue
      its sending first, interrupting lower priority transmissions.
+
    • Simple packet rate limiter added to online-related tools
      (‘nncp-daemon’, ‘nncp-call’, ‘nncp-caller’).
+
    • Ability to specify niceness with symbolic notation: NORMAL,
      BULK+10, PRIORITY-5, etc.
+
    • Changed default niceness levels: for ‘nncp-exec’ from 64 to 96, for
      ‘nncp-freq’ from 64 to 160, for ‘nncp-file’ from 196 to 224.
 
@@ -66,6 +130,7 @@ Release 3.0
 
    • *Incompatible* plain packet format changes.  Older versions are not
      supported.
+
    • Ability to queue remote command execution, by configuring ‘exec’
      option in configuration file and using ‘nncp-exec’ command:
         • ‘nncp-mail’ command is replaced with more flexible
@@ -73,18 +138,24 @@ Release 3.0
           nncp-exec NODE sendmail RECIPIENT.
         • ‘sendmail’ configuration file option is replaced with ‘exec’.
           sendmail: [...] must be replaced with exec: sendmail: [...].
+
    • Ability to override ‘via’ configuration option for destination node
      via ‘-via’ command line option for following commands: ‘nncp-file’,
      ‘nncp-freq’, ‘nncp-exec’.
+
    • Chunked files, having size less than specified chunk size, will be
      sent as an ordinary single file.
+
    • Exec commands are invoked with additional ‘NNCP_NICE’ and
      ‘NNCP_SELF’ environment variables.
+
    • Files, that are sent as a reply to freq, have niceness level taken
      from the freq packet.  You can set desired niceness during
      ‘nncp-freq’ invocation using ‘-replynice’ option.
+
    • ‘nncp-toss’ command can ignore specified packet types during
      processing: ‘-nofile’, ‘-nofreq’, ‘-noexec’, ‘-notrns’.
+
    • ‘nncp-file’ command uses ‘FreqMinSize’/‘FreqChunked’ configuration
      file options for ‘-minsize’/‘-chunked’ by default.  You can turn
      this off by specifying zero value.
@@ -94,8 +165,10 @@ Release 2.0
 
    • *Incompatible* encrypted/eblob packet format changes.  Older
      versions are not supported.
+
    • Twofish encryption algorithm is replaced with ChaCha20.  It is much
      more faster.  One cryptographic primitive less.
+
    • HKDF-BLAKE2b-256 KDF algorithm is replaced with BLAKE2Xb XOF. Yet
      another cryptographic primitive less (assuming that BLAKE2X is
      nearly identical to BLAKE2).
@@ -105,17 +178,22 @@ Release 1.0
 
    • *Incompatible* encrypted packet format changes.  Older versions are
      not supported.
+
    • ‘nncp-bundle’ command can either create stream of encrypted
      packets, or digest it.  It is useful when dealing with stdin/stdout
      based transmission methods (like writing to CD-ROM without
      intermediate prepared ISO image and working with tape drives).
+
    • ‘nncp-toss’ is able to create ‘.seen’ files preventing duplicate
      packets receiving.
+
    • Single background checksum verifier worker is allowed in
      ‘nncp-call’.  This is helpful when thousands of small inbound
      packets could create many goroutines.
+
    • Ability to override path to spool directory and logfile through
      either command line argument, or environment variable.
+
    • ‘nncp-rm’ is able to delete outbound/inbound, ‘.seen’, ‘.part’,
      ‘.lock’ and temporary files.
 
@@ -191,8 +269,10 @@ Release 0.4
 
    • Small fix in ‘nncp-call’, ‘nncp-caller’, ‘nncp-daemon’: they can
      segmentation fail sometimes (no data is lost).
+
    • ‘nncp-newnode’ renamed to ‘nncp-newcfg’ – it is shorter and more
      convenient to use.
+
    • ‘nncp-mincfg’ command appeared: helper allowing to create
      minimalistic stripped down configuration file without private keys,
      that is useful during ‘nncp-xfer’ usage.
@@ -200,23 +280,29 @@ Release 0.4
 Release 0.3
 ===========
 
-Fixed compatibility with Go 1.6.
+   • Fixed compatibility with Go 1.6.
 
 Release 0.2
 ===========
 
    • *Incompatible* packet’s format change (magic number is changed
      too): size field is encrypted and is not send in plaintext anymore.
+
    • ‘-minsize’ option gives ability to automatically pad outgoing
      packets to specified minimal size.
+
    • ‘nncp-daemon’ and ‘nncp-call’/‘nncp-caller’ always check new _tx_
      packets appearance in the background while connected.  Remote side
      is immediately notified.
+
    • ‘-onlinedeadline’ option gives ability to configure timeout of
      inactivity of online connection, when it could be disconnected.  It
      could be used to keep connection alive for a long time.
+
    • ‘-maxonlinetime’ option gives ability to set maximal allowable
      online connection aliveness time.
+
    • ‘nncp-caller’ command appeared: cron-ed TCP daemon caller.
+
    • ‘nncp-pkt’ command can decompress the data.
 

@@ -7,8 +7,7 @@ simplifying secure store-and-forward files and mail exchanging.
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
-     Version 1.3 or any later version published by the Free Software
-     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     Version 1.3; with no Invariant Sections, no Front-Cover Texts, and
      no Back-Cover Texts.  A copy of the license is included in the
      section entitled "Copying conditions".
 
@@ -18,19 +17,7 @@ File: nncp.info,  Node: Top,  Next: Comparison,  Up: (dir)
 NNCP
 ****
 
-    ____/\____
-   (__________)
-       (oo)\_______
-       (__)\  . .  )\/\
-        U  ||----v||
-           ||     ||
- _   _ _   /+ ____/+___
-| \ | | \ | |/ ___|  _ \
-|  \| |  \| | |   | |_) |
-| |\  | |\  | |___|  __/
-|_| \_|_| \_|\____|_|
-
-   *NNCP* (Node to Node copy) is a collection of utilities simplifying
+*NNCP* (Node to Node copy) is a collection of utilities simplifying
 secure store-and-forward files, mail and command exchanging.
 
    See also this page *note on russian: Об утилитах.
@@ -61,11 +48,11 @@ exists.
 
    NNCP is copylefted (https://www.gnu.org/philosophy/pragmatic.html)
 free software (https://www.gnu.org/philosophy/free-sw.html) licenced
-under GNU GPLv3+ (https://www.gnu.org/licenses/gpl-3.0.html).  It should
+under GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.html).  It should
 work on all POSIX (https://en.wikipedia.org/wiki/POSIX)-compatible
 systems.  Easy *note integration: Integration. with existing SMTP
-(https://en.wikipedia.org/wiki/SMTP) servers.  Single YAML
-(http://yaml.org/) configuration file.
+(https://en.wikipedia.org/wiki/SMTP) servers.  Single Hjson
+(https://hjson.org/) configuration file.
 
    Why create yet another store-and-forward solution when UUCP, FTN and
 even SMTP exists?  Look in *note comparison: Comparison. section!
@@ -132,7 +119,7 @@ Peers authentication          PAP         PAP/CHAP    public-key  No
 Packets encryption            No          No          *Yes*       No
 Metadata privacy              No          No          *Yes*       No
 Packets integrity check       No          No          *Yes*       No
-Sneakernet friendliness       No          No          *Yes*       No
+Sneakernet friendliness       No          Partially   *Yes*       No
                                                                   
 
 *Ease of setup*
@@ -145,7 +132,7 @@ Sneakernet friendliness       No          No          *Yes*       No
      like GoldEd, not an ordinary email client.  Moreover, there is no
      out-of-box encryption and strong authentication involved.
 
-     NNCP requires editing of single YAML *note configuration file:
+     NNCP requires editing of single Hjson *note configuration file:
      Configuration.
 
 *News transmission*
@@ -301,8 +288,8 @@ nncp-daemon.
 
    The command:
 
-% nncp-file file_i_want_to_send bob:
-% nncp-file another_file bob:movie.avi
+$ nncp-file file_i_want_to_send bob:
+$ nncp-file another_file bob:movie.avi
 
    will queue two files for sending to _bob_ node.  Fire and forget!
 Now this is daemon’s job (or offline transfer) to send this files part
@@ -326,9 +313,9 @@ niceness level, that will guarantee that it will be processed earlier or
 later than the other ones.  Nearly all commands has corresponding
 option:
 
-% nncp-file -nice FLASH myfile node:dst
-% nncp-xfer -nice PRIORITY /mnt/shared
-% nncp-call -nice NORMAL bob
+$ nncp-file -nice FLASH myfile node:dst
+$ nncp-xfer -nice PRIORITY /mnt/shared
+$ nncp-call -nice NORMAL bob
 [...]
 
    Huge files could be split on smaller *note chunks: Chunked, giving
@@ -337,8 +324,8 @@ storages.
 
    You can also use CD-ROM and tape drives:
 
-% nncp-bundle -tx bob | cdrecord -tao -
-% nncp-bundle -tx bob | dd of=/dev/sa0 bs=10240
+$ nncp-bundle -tx bob | cdrecord -tao -
+$ nncp-bundle -tx bob | dd of=/dev/sa0 bs=10240
 
 
 File: nncp.info,  Node: UsecaseNoLink,  Next: UsecaseBroadcast,  Prev: UsecaseQoS,  Up: Use cases
@@ -353,7 +340,7 @@ removable media for transferring packets to other nodes.
    Assume that you send two files to _bob_ node.  Insert USB storage
 device (SD is preferable!), mount it and run *note nncp-xfer:::
 
-% nncp-xfer -node bob /media/usbstick
+$ nncp-xfer -node bob /media/usbstick
 
    to copy all outbound packets related to _bob_.  Use ‘-mkdir’ option
 to create related directory on USB/SD storage if they are missing (for
@@ -363,12 +350,12 @@ example when running for the first time).
 _alice_, then just omit ‘-node’ option to copy all available outgoing
 packets.
 
-% nncp-xfer /media/usbstick
+$ nncp-xfer /media/usbstick
 
    Unmount it and transfer storage to Bob and Alice.  When they will
 insert it in their computers, they will use exactly the same command:
 
-% nncp-xfer /media/usbstick
+$ nncp-xfer /media/usbstick
 
    to find all packets related to their node and copy them locally for
 further processing.  ‘nncp-xfer’ is the only command used with removable
@@ -388,8 +375,8 @@ interaction.
    You can use *note bundles: Bundles. and stream them above.  They are
 just a sequence of *note encrypted packets: Encrypted. you can catch on.
 
-% nncp-bundle -tx alice bob eve ... | command to send broadcast
-% command to receive broadcast | nncp-bundle -rx
+$ nncp-bundle -tx alice bob eve ... | command to send broadcast
+$ command to receive broadcast | nncp-bundle -rx
 
    With built-in packet duplicates detection ability, you can retransmit
 your broadcasts from time to time, to increase chances the recipient
@@ -456,11 +443,11 @@ more time to be done right.
 provide effective (both participants send payload in the very first
 packet) secure transport with forward secrecy property.
 
-% nncp-daemon -bind [::]:5400
+$ nncp-daemon -bind [::]:5400
    will start TCP daemon listening on all interfaces for incoming
 connections.
 
-% nncp-call bob
+$ nncp-call bob
    will try to connect to _bob_’s node known TCP addresses (taken from
 configuration file) and send all related outbound packets and retrieve
 those the Bob has.  All interrupted transfers will be automatically
@@ -485,14 +472,18 @@ devices, possibly by rewriting the data from USB/hard drives to CD-RWs.
 
    NNCP supports packets relying (transitioning) out-of-box.
 
-neigh:
-  bob:
+neigh: {
+  bob: {
     [...]
-    addrs:
-      lan: [fe80::5400%igb0]:5400
+    addrs: {
+      lan: "[fe80::5400%igb0]:5400"
+    }
+  }
   bob-airgap:
     [...]
-    via: [bob]
+    via: ["bob"]
+  }
+}
 
    That *note configuration file: Configuration. tells that we have got
 two known neighbours: _bob_ and _bob-airgap_.  _bob_ can be reached via
@@ -584,30 +575,37 @@ when the node is available through the LAN.
    You can easily set your preferences in *note call configurations:
 Call. for *note nncp-caller:: command used in online communications.
 
-neigh:
+neigh: {
   [...]
-  some-node:
+  some-node: {
     [...]
-    addrs:
+    addrs: {
       lan: "[fe80::be5f:f4ff:fedd:2752%igb0]:5400"
       wan: "some-node.com:5400"
-    calls:
-      -
+    }
+    calls: [
+      {
         cron: "*/1 * * * *"
         addr: lan
         nice: MAX
         onlinedeadline: 3600
-      -
+      },
+      {
         cron: "*/10 * * * *"
         addr: wan
         nice: PRIORITY
         xx: rx
-      -
+      },
+      {
         cron: "*/1 0-7 * * *"
         addr: wan
         nice: BULK
         onlinedeadline: 3600
         maxonlinetime: 3600
+      },
+    ]
+  }
+}
 
 
 File: nncp.info,  Node: Workflow,  Next: News,  Prev: Use cases,  Up: Top
@@ -662,6 +660,8 @@ See also this page *note on russian: Новости.
 
 * Menu:
 
+* Release 5.1.0::
+* Release 5.0.0::
 * Release 4.1::
 * Release 4.0::
 * Release 3.4::
@@ -684,7 +684,66 @@ See also this page *note on russian: Новости.
 * Release 0.2::
 
 
-File: nncp.info,  Node: Release 4.1,  Next: Release 4.0,  Up: News
+File: nncp.info,  Node: Release 5.1.0,  Next: Release 5.0.0,  Up: News
+
+Release 5.1.0
+=============
+
+   • ‘nncp-file’ can send directories, automatically creating pax
+     archive on the fly.
+
+   • Free disk space is checked during outbound packets creation.
+
+   • ‘freq’, ‘freqminsize’, ‘freqchunked’ configuration file options
+     replaced with the structure: ‘freq: {path: ..., minsize: ...,
+     chunked: ...}’.
+
+   • Added ‘freq.maxsize’ configuration file option, forbidding of freq
+     sending larger than specified size.
+
+   • Ability to notify about successfully executed commands (exec) with
+     ‘notify.exec’ configuration file option.
+
+
+File: nncp.info,  Node: Release 5.0.0,  Next: Release 4.1,  Prev: Release 5.1.0,  Up: News
+
+Release 5.0.0
+=============
+
+   • *Incompatible* configuration file format change: YAML is replaced
+     with Hjson, due to its simplicity, without noticeable lack of
+     either functionality or convenience.
+
+   • *Incompatible* plain packet format changes.  Older versions are not
+     supported.  ‘zlib’ compression is replaced with ‘Zstandard’, due to
+     its speed and efficiency, despite library version is not mature
+     enough.
+
+   • Ability to call remote nodes via pipe call of external command, not
+     only through TCP.
+
+   • ‘nncp-cfgnew’ generates configuration file with many comments.
+     ‘-nocomments’ option can be used for an old behaviour.
+
+   • Duplicate filenames have ‘.CTR’ suffix, instead of ‘CTR’, to avoid
+     possible collisions with ‘.nncp.chunkCTR’.
+
+   • Ability to override process umask through configuration file
+     option.
+
+   • Files and directories are created with 666/777 permissions by
+     default, allowing control with ‘umask’.
+
+   • Updated dependencies.
+
+   • Full usage of go modules for dependencies management
+     (‘go.cypherpunks.ru/nncp/v5’ namespace is used).
+
+   • Forbid any later GNU GPL version autousage (project’s licence now
+     is GNU GPLv3-only).
+
+
+File: nncp.info,  Node: Release 4.1,  Next: Release 4.0,  Prev: Release 5.0.0,  Up: News
 
 Release 4.1
 ===========
@@ -702,15 +761,22 @@ Release 4.0
      ‘nncp-toss’ did not verify encrypted packet’s MAC before feeding
      decrypted data to external command.  Older versions are not
      supported.
+
    • Available free space checking before copying in ‘nncp-xfer’,
      ‘nncp-daemon’, ‘nncp-call(er)’.
+
    • ‘nncp-call’ has ability only to list packets on remote node,
      without their transmission.
+
    • ‘nncp-call’ has ability to transfer only specified packets.
+
    • Workability of ‘xxrate’ preference in ‘calls’ configuration file
      section.
+
    • Dependant libraries are updated.
+
    • Minor bugfixes.
+
    • Begin using of ‘go.mod’ subsystem.
 
 
@@ -731,12 +797,16 @@ Release 3.3
      and treat it like file was already downloaded.  Possibly it was
      transferred out-of-bound and remote side needs to be notifier about
      that.
+
    • If higher priority packet is spooled, then ‘nncp-daemon’ will queue
      its sending first, interrupting lower priority transmissions.
+
    • Simple packet rate limiter added to online-related tools
      (‘nncp-daemon’, ‘nncp-call’, ‘nncp-caller’).
+
    • Ability to specify niceness with symbolic notation: NORMAL,
      BULK+10, PRIORITY-5, etc.
+
    • Changed default niceness levels: for ‘nncp-exec’ from 64 to 96, for
      ‘nncp-freq’ from 64 to 160, for ‘nncp-file’ from 196 to 224.
 
@@ -769,6 +839,7 @@ Release 3.0
 
    • *Incompatible* plain packet format changes.  Older versions are not
      supported.
+
    • Ability to queue remote command execution, by configuring ‘exec’
      option in configuration file and using ‘nncp-exec’ command:
         • ‘nncp-mail’ command is replaced with more flexible
@@ -776,18 +847,24 @@ Release 3.0
           nncp-exec NODE sendmail RECIPIENT.
         • ‘sendmail’ configuration file option is replaced with ‘exec’.
           sendmail: [...] must be replaced with exec: sendmail: [...].
+
    • Ability to override ‘via’ configuration option for destination node
      via ‘-via’ command line option for following commands: ‘nncp-file’,
      ‘nncp-freq’, ‘nncp-exec’.
+
    • Chunked files, having size less than specified chunk size, will be
      sent as an ordinary single file.
+
    • Exec commands are invoked with additional ‘NNCP_NICE’ and
      ‘NNCP_SELF’ environment variables.
+
    • Files, that are sent as a reply to freq, have niceness level taken
      from the freq packet.  You can set desired niceness during
      ‘nncp-freq’ invocation using ‘-replynice’ option.
+
    • ‘nncp-toss’ command can ignore specified packet types during
      processing: ‘-nofile’, ‘-nofreq’, ‘-noexec’, ‘-notrns’.
+
    • ‘nncp-file’ command uses ‘FreqMinSize’/‘FreqChunked’ configuration
      file options for ‘-minsize’/‘-chunked’ by default.  You can turn
      this off by specifying zero value.
@@ -800,8 +877,10 @@ Release 2.0
 
    • *Incompatible* encrypted/eblob packet format changes.  Older
      versions are not supported.
+
    • Twofish encryption algorithm is replaced with ChaCha20.  It is much
      more faster.  One cryptographic primitive less.
+
    • HKDF-BLAKE2b-256 KDF algorithm is replaced with BLAKE2Xb XOF. Yet
      another cryptographic primitive less (assuming that BLAKE2X is
      nearly identical to BLAKE2).
@@ -814,17 +893,22 @@ Release 1.0
 
    • *Incompatible* encrypted packet format changes.  Older versions are
      not supported.
+
    • ‘nncp-bundle’ command can either create stream of encrypted
      packets, or digest it.  It is useful when dealing with stdin/stdout
      based transmission methods (like writing to CD-ROM without
      intermediate prepared ISO image and working with tape drives).
+
    • ‘nncp-toss’ is able to create ‘.seen’ files preventing duplicate
      packets receiving.
+
    • Single background checksum verifier worker is allowed in
      ‘nncp-call’.  This is helpful when thousands of small inbound
      packets could create many goroutines.
+
    • Ability to override path to spool directory and logfile through
      either command line argument, or environment variable.
+
    • ‘nncp-rm’ is able to delete outbound/inbound, ‘.seen’, ‘.part’,
      ‘.lock’ and temporary files.
 
@@ -927,8 +1011,10 @@ Release 0.4
 
    • Small fix in ‘nncp-call’, ‘nncp-caller’, ‘nncp-daemon’: they can
      segmentation fail sometimes (no data is lost).
+
    • ‘nncp-newnode’ renamed to ‘nncp-newcfg’ – it is shorter and more
      convenient to use.
+
    • ‘nncp-mincfg’ command appeared: helper allowing to create
      minimalistic stripped down configuration file without private keys,
      that is useful during ‘nncp-xfer’ usage.
@@ -939,7 +1025,7 @@ File: nncp.info,  Node: Release 0.3,  Next: Release 0.2,  Prev: Release 0.4,  Up
 Release 0.3
 ===========
 
-Fixed compatibility with Go 1.6.
+   • Fixed compatibility with Go 1.6.
 
 
 File: nncp.info,  Node: Release 0.2,  Prev: Release 0.3,  Up: News
@@ -949,17 +1035,23 @@ Release 0.2
 
    • *Incompatible* packet’s format change (magic number is changed
      too): size field is encrypted and is not send in plaintext anymore.
+
    • ‘-minsize’ option gives ability to automatically pad outgoing
      packets to specified minimal size.
+
    • ‘nncp-daemon’ and ‘nncp-call’/‘nncp-caller’ always check new _tx_
      packets appearance in the background while connected.  Remote side
      is immediately notified.
+
    • ‘-onlinedeadline’ option gives ability to configure timeout of
      inactivity of online connection, when it could be disconnected.  It
      could be used to keep connection alive for a long time.
+
    • ‘-maxonlinetime’ option gives ability to set maximal allowable
      online connection aliveness time.
+
    • ‘nncp-caller’ command appeared: cron-ed TCP daemon caller.
+
    • ‘nncp-pkt’ command can decompress the data.
 
 
@@ -981,20 +1073,8 @@ File: nncp.info,  Node: Об утилитах,  Next: Сравнение,  Up: �
 Подробнее об утилитах NNCP
 ==========================
 
-    ____/\____
-   (__________)
-       (oo)\_______
-       (__)\  . .  )\/\
-        U  ||----v||
-           ||     ||
- _   _ _   /+ ____/+___
-| \ | | \ | |/ ___|  _ \
-|  \| |  \| | |   | |_) |
-| |\  | |\  | |___|  __/
-|_| \_|_| \_|\____|_|
-
-   *NNCP* (Node to Node copy) это набор утилит упрощающий безопасный
-обмен файлами, почтой и командами в режиме сохранить-и-переслать.
+*NNCP* (Node to Node copy) это набор утилит упрощающий безопасный обмен
+файлами, почтой и командами в режиме сохранить-и-переслать.
 
    Эти утилиты предназначены помочь с построением однораговых устойчивых
 к разрывам (https://ru.wikipedia.org/wiki/DTN) сетей небольшого размера
@@ -1027,12 +1107,12 @@ CD-ROM (https://ru.wikipedia.org/wiki/CD-ROM)/ленточных
    NNCP это копилефт (https://www.gnu.org/philosophy/pragmatic.ru.html)
 свободное программное обеспечение
 (https://www.gnu.org/philosophy/free-sw.ru.html): лицензировано под
-условиями GNU GPLv3+ (https://www.gnu.org/licenses/gpl-3.0.ru.html).
-Оно должно работать на всех POSIX
+условиями GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.ru.html).  Оно
+должно работать на всех POSIX
 (https://ru.wikipedia.org/wiki/POSIX)-совместимых системах.  Лёгкая
 *note интеграция: Integration. с существующими SMTP
 (https://ru.wikipedia.org/wiki/SMTP) серверами.  Единственный
-конфигурационный YAML (http://yaml.org/) файл.
+конфигурационный Hjson (https://hjson.org/) файл.
 
    Зачем создавать ещё одно решение с принципом сохранить-и-переслать
 когда уже существуют UUCP, FTN и даже SMTP? Посмотрите *note сравнение:
@@ -1077,7 +1157,7 @@ DTN                           *Да*        *Да*        *Да*        Нет
 Приватность метаданных        Нет         Нет         *Да*        Нет
 Проверка целостности          Нет         Нет         *Да*        Нет
 пакетов
-Дружелюбность к флоппинету    Нет         Нет         *Да*        Нет
+Дружелюбность к флоппинету    Нет         Частично    *Да*        Нет
                                                                   
 
 *Простота установки*
@@ -1092,7 +1172,7 @@ DTN                           *Да*        *Да*        *Да*        Нет
      Более того, из коробки не предоставляется никакого шифрования и
      сильной аутентификации.
 
-     NNCP требует редактирование единственного YAML *note
+     NNCP требует редактирование единственного Hjson *note
      конфигурационного файла: Configuration.
 
 *Передача новостей*
@@ -1194,7 +1274,7 @@ File: nncp.info,  Node: UsecaseMailRU,  Next: UsecasePOPRU,  Up: Сценари�
 ожидающих сообщений когда ноутбук подключён?
 
    Одна из возможностей это войти на сервер и сделать что-то типа
-‘postqueue -f’, но по-умолчанию у вас есть только несколько дней на это,
+‘postqueue -f’, но по умолчанию у вас есть только несколько дней на это,
 плюс отправитель будет получать уведомления о том, что его сообщение всё
 ещё не доставлено.  Кроме того, вы должны использовать безопасный канал
 связи (SSH, VPN, итд).
@@ -1252,8 +1332,8 @@ nncp-file. через NNCP. Вы сможете использовать или 
 
    Команды:
 
-% nncp-file file_i_want_to_send bob:
-% nncp-file another_file bob:movie.avi
+$ nncp-file file_i_want_to_send bob:
+$ nncp-file another_file bob:movie.avi
 
    добавят в очередь отправки два файла для узла _bob_.
 Выстрелил-и-забыл!  Теперь это работа демона (или offline передачи)
@@ -1278,9 +1358,9 @@ File: nncp.info,  Node: UsecaseQoSRU,  Next: UsecaseNoLinkRU,  Prev: UsecaseUnre
 обработан раньше или позднее остальных.  Почти все команды имеют
 соответствующую опцию:
 
-% nncp-file -nice FLASH myfile node:dst
-% nncp-xfer -nice PRIORITY /mnt/shared
-% nncp-call -nice NORMAL bob
+$ nncp-file -nice FLASH myfile node:dst
+$ nncp-xfer -nice PRIORITY /mnt/shared
+$ nncp-call -nice NORMAL bob
 [...]
 
    Огромные файлы могут быть разбиты на маленькие *note части: Chunked,
@@ -1289,8 +1369,8 @@ File: nncp.info,  Node: UsecaseQoSRU,  Next: UsecaseNoLinkRU,  Prev: UsecaseUnre
 
    Вы также можете использовать CD-ROM и ленточные накопители:
 
-% nncp-bundle -tx bob | cdrecord -tao -
-% nncp-bundle -tx bob | dd of=/dev/sa0 bs=10240
+$ nncp-bundle -tx bob | cdrecord -tao -
+$ nncp-bundle -tx bob | dd of=/dev/sa0 bs=10240
 
 
 File: nncp.info,  Node: UsecaseNoLinkRU,  Next: UsecaseBroadcastRU,  Prev: UsecaseQoSRU,  Up: Сценарии
@@ -1307,7 +1387,7 @@ File: nncp.info,  Node: UsecaseNoLinkRU,  Next: UsecaseBroadcastRU,  Prev: Useca
 устройство (SD гораздо предпочтительнее!)  хранения, подмонтируйте и
 запустите *note nncp-xfer:::
 
-% nncp-xfer -node bob /media/usbstick
+$ nncp-xfer -node bob /media/usbstick
 
    чтобы скопировать все исходящие пакеты относящиеся к _bob_.
 Используйте ‘-mkdir’ опцию чтобы создать все необходимые директории на
@@ -1317,12 +1397,12 @@ File: nncp.info,  Node: UsecaseNoLinkRU,  Next: UsecaseBroadcastRU,  Prev: Useca
 _bob_ и к _alice_, то тогда просто не указывайте ‘-node’ опцию, чтобы
 скопировать все доступные исходящие пакеты.
 
-% nncp-xfer /media/usbstick
+$ nncp-xfer /media/usbstick
 
    Размонтируйте и передайте накопитель Бобу и Алисе.  Когда они вставят
 накопитель в свои компьютеры, то выполнят точно такую же команду:
 
-% nncp-xfer /media/usbstick
+$ nncp-xfer /media/usbstick
 
    чтобы найти все пакеты относящиеся к их узлу и локально скопируют для
 дальнейшей обработки.  ‘nncp-xfer’ это единственная команда используемая
@@ -1343,8 +1423,8 @@ File: nncp.info,  Node: UsecaseBroadcastRU,  Next: UsecaseSatelliteLinksRU,  Pre
 потоково отсылать их.  Они – всего-лишь последовательность *note
 зашифрованных пакетов: Encrypted, которые вы можете принять.
 
-% nncp-bundle -tx alice bob eve ... | команда для отправки широковещательной рассылки
-% команда для приёма широковещательной рассылки | nncp-bundle -rx
+$ nncp-bundle -tx alice bob eve ... | команда для отправки широковещательной рассылки
+$ команда для приёма широковещательной рассылки | nncp-bundle -rx
 
    Встроенная возможность определять дубляжи пакетов позволит вам
 переотправлять широковещательные рассылки время от времени, повышая
@@ -1416,11 +1496,11 @@ online сессии.  Когда вы запускаете свой новый �
 нагрузку сразу же в самом первом пакете) безопасный транспорт с
 свойством совершенной прямой секретности.
 
-% nncp-daemon -bind [::]:5400
+$ nncp-daemon -bind [::]:5400
    запустит TCP демон, который будет слушать входящие соединения на всех
 интерфейсах.
 
-% nncp-call bob
+$ nncp-call bob
    попытается подключиться к известному TCP-адресу узла _bob_ (взятого
 из конфигурационного файла), послать все связанные с ним исходящие
 пакеты и получить от него.  Все прерванные передачи будут автоматически
@@ -1448,14 +1528,18 @@ SD, лент и USB накопителей (*худший* вариант, из-
 
    NNCP из коробки поддерживает ретрансляцию пакетов.
 
-neigh:
-  bob:
+neigh: {
+  bob: {
     [...]
-    addrs:
-      lan: [fe80::5400%igb0]:5400
+    addrs: {
+      lan: "[fe80::5400%igb0]:5400"
+    }
+  }
   bob-airgap:
     [...]
-    via: [bob]
+    via: ["bob"]
+  }
+}
 
    Такой *note конфигурационный файл: Configuration. говорит что у нас
 есть два известных соседа: _bob_ и _bob-airgap_.  _bob_ доступен через
@@ -1555,30 +1639,37 @@ File: nncp.info,  Node: UsecaseCallerRU,  Prev: UsecaseSpyRU,  Up: Сценар�
 звонков: Call. для *note nncp-caller:: команды, используемой при online
 связи.
 
-neigh:
+neigh: {
   [...]
-  some-node:
+  some-node: {
     [...]
-    addrs:
+    addrs: {
       lan: "[fe80::be5f:f4ff:fedd:2752%igb0]:5400"
       wan: "some-node.com:5400"
-    calls:
-      -
+    }
+    calls: [
+      {
         cron: "*/1 * * * *"
         addr: lan
         nice: MAX
         onlinedeadline: 3600
-      -
+      },
+      {
         cron: "*/10 * * * *"
         addr: wan
         nice: PRIORITY
         xx: rx
-      -
+      },
+      {
         cron: "*/1 0-7 * * *"
         addr: wan
         nice: BULK
         onlinedeadline: 3600
         maxonlinetime: 3600
+      },
+    ]
+  }
+}
 
 
 File: nncp.info,  Node: Новости,  Prev: Сценарии,  Up: Русский
@@ -1588,6 +1679,8 @@ File: nncp.info,  Node: Новости,  Prev: Сценарии,  Up: Русск
 
 * Menu:
 
+* Релиз 5.1.0::
+* Релиз 5.0.0::
 * Релиз 4.1::
 * Релиз 4.0::
 * Релиз 3.4::
@@ -1610,7 +1703,68 @@ File: nncp.info,  Node: Новости,  Prev: Сценарии,  Up: Русск
 * Релиз 0.2::
 
 
-File: nncp.info,  Node: Релиз 4.1,  Next: Релиз 4.0,  Up: Новости
+File: nncp.info,  Node: Релиз 5.1.0,  Next: Релиз 5.0.0,  Up: Новости
+
+Релиз 5.1.0
+-----------
+
+   • ‘nncp-file’ может отправлять директории, автоматически на лету
+     создавая pax архив.
+
+   • Во время создания исходящих сообщений проверяется наличие
+     свободного места на файловой системе.
+
+   • ‘freq’, ‘freqminsize’, ‘freqchunked’ опции конфигурационного файла
+     заменены на структуру ‘freq: {path: ..., minsize: ..., chunked:
+     ...}’.
+
+   • Добавлена ‘freq.maxsize’ опция конфигурационного файл, запрещающая
+     ответ на файловый запрос больше заданного размера.
+
+   • Возможность оповещения об успешно выполненных командах (exec) через
+     ‘notify.exec’ опцию конфигурационного файла.
+
+
+File: nncp.info,  Node: Релиз 5.0.0,  Next: Релиз 4.1,  Prev: Релиз 5.1.0,  Up: Новости
+
+Релиз 5.0.0
+-----------
+
+   • *Несовместимое* изменение формата конфигурационного файла: YAML
+     заменён на Hjson, из-за его гораздо большей простоты, без заметной
+     потери функционала и удобства.
+
+   • *Несовместимое* изменение формата простых пакетов.  Работа со
+     старыми версиями не поддерживается.  ‘zlib’ сжатие заменено на
+     ‘Zstandard’, так как оно значительно быстрее и эффективнее, не
+     смотря на то, что версия библиотеки ещё не проверена временем.
+
+   • Возможность соединяться с удалёнными нодами не только по TCP, но и
+     через pipe вызов сторонней команды.
+
+   • ‘nncp-cfgnew’ генерирует конфигурационный файл с множеством
+     комментариев.  Можно использовать ‘-nocomments’ опцию для старого
+     поведения.
+
+   • Дубликаты имён файлов имеют суффикс ‘.CTR’, вместо ‘CTR’, чтобы
+     избежать возможных коллизий с ‘.nncp.chunkCTR’.
+
+   • Возможность переопределить umask процесса через опцию
+     конфигурационного файла.
+
+   • По умолчанию файлы и директории создаются с 666/777 правами
+     доступа, позволяя управлять ими ‘umask’-ом.
+
+   • Обновлены зависимости.
+
+   • Полное использование go модулей для управления зависимостями
+     (используется ‘go.cypherpunks.ru/nncp/v5’ namespace).
+
+   • Отмена автоматического использования более новых версий GNU GPL
+     (лицензия проекта GNU GPLv3-только).
+
+
+File: nncp.info,  Node: Релиз 4.1,  Next: Релиз 4.0,  Prev: Релиз 5.0.0,  Up: Новости
 
 Релиз 4.1
 ---------
@@ -1629,16 +1783,23 @@ File: nncp.info,  Node: Релиз 4.0,  Next: Релиз 3.4,  Prev: Релиз
      раньше ‘nncp-toss’ не проверял MAC зашифрованного пакета прежде чем
      отсылать дешифрованные данные внешней команде.  Старые версии не
      поддерживаются.
+
    • Проверка доступного места перед копированием во время работы
      ‘nncp-xfer’, ‘nncp-daemon’, ‘nncp-call(er)’.
+
    • ‘nncp-call’ имеет возможность только показывать список пакетов на
      удалённой машине, без их передачи.
+
    • ‘nncp-call’ имеет возможность передавать только чётко указанные
      пакеты.
+
    • Восстановлена работоспособность ‘xxrate’ настройки в ‘calls’ секции
      конфигурационного файла.
+
    • Зависимые библиотеки обновлены.
+
    • Небольшие исправления ошибок.
+
    • Начало использования ‘go.mod’ подсистемы.
 
 
@@ -1659,13 +1820,17 @@ File: nncp.info,  Node: Релиз 3.3,  Next: Релиз 3.2,  Prev: Релиз
      ‘.seen’ файла и расценивают его как то, что файл уже был скачан.
      Возможно передача данных была осуществлена сторонним способом и
      удалённая сторона должна быть оповещена об этом.
+
    • Если более высокоприоритетный пакет попадает в спул, то
      ‘nncp-daemon’ добавит его в очередь отправки первым, прерывая
      низкоприоритетные передачи.
+
    • К средствам связанным с online-соединениями (‘nncp-daemon’,
      ‘nncp-call’, ‘nncp-caller’) добавлен простой ограничитель скорости.
+
    • Возможность задания приоритета символьными обозначениями: NORMAL,
      BULK+10, PRIORITY-5, итд.
+
    • Изменены значения приоритетов по-умолчанию: для ‘nncp-exec’ с 64 на
      96, для ‘nncp-freq’ с 64 на 160, для ‘nncp-file’ с 196 на 224.
 
@@ -1699,6 +1864,7 @@ File: nncp.info,  Node: Релиз 3.0,  Next: Релиз 2.0,  Prev: Релиз
 
    • *Несовместимое* изменение формата простых пакетов.  Работа со
      старыми версиями не поддерживается.
+
    • Добавлена возможность удалённого исполнения команд, путём
      конфигурирования ‘exec’ опции конфигурационного файла и
      использования команды ‘nncp-exec’:
@@ -1708,18 +1874,24 @@ File: nncp.info,  Node: Релиз 3.0,  Next: Релиз 2.0,  Prev: Релиз
         • ‘sendmail’ опция конфигурационного файла заменена на более
           гибкую ‘exec’.  sendmail: [...] нужно заменить на exec:
               sendmail: [...].
+
    • Возможность переопределить ‘via’ опцию конфигурации для целевого
      узла через ‘-via’ опцию командной строки для следующих команд:
      ‘nncp-file’, ‘nncp-freq’, ‘nncp-exec’.
+
    • Chunked файлы, меньшего размера чем указанный chunk, отправляются
      просто в виде одного файла.
+
    • Exec команды вызываются с дополнительными переменными окружения
      ‘NNCP_NICE’ и ‘NNCP_SELF’.
+
    • Отправляемые файлы в ответ на запрос имеют приоритет указанный в
      запросе.  Указать их желаемый приоритет во время вызова ‘nncp-freq’
      можно аргументом ‘-replynice’.
+
    • Команде ‘nncp-toss’ можно сказать не обрабатывать определённые типы
      пакетов, за счёт опций ‘-nofile’, ‘-nofreq’, ‘-noexec’, ‘-notrns’.
+
    • По-умолчанию ‘nncp-file’ команда для ‘-minsize’/‘-chunked’ опций
      использует ‘FreqMinSize’/‘FreqChunked’ из конфигурационного файла.
      Это можно отключить указав нулевое значение.
@@ -1732,8 +1904,10 @@ File: nncp.info,  Node: Релиз 2.0,  Next: Релиз 1.0,  Prev: Релиз
 
    • *Несовместимое* изменение формата зашифрованных и eblob пакетов.
      Работа со старыми версиями не поддерживается.
+
    • Алгоритм шифрования Twofish заменён на ChaCha20.  Он намного
      быстрее.  Одним криптографическим примитивом меньше.
+
    • HKDF-BLAKE2b-256 KDF алгоритм заменён на BLAKE2Xb XOF. Ещё одним
      криптографическим примитивом меньше (предполагая, что BLAKE2X
      практически идентичен BLAKE2).
@@ -1746,18 +1920,23 @@ File: nncp.info,  Node: Релиз 1.0,  Next: Релиз 0.12,  Prev: Рели�
 
    • *Несовместимое* изменение формата зашифрованных пакетов.  Работа со
      старыми версиями не поддерживается.
+
    • ‘nncp-bundle’ команда может создавать потоки зашифрованных пакетов
      или потреблять их.  Это полезно когда речь идёт о stdin/stdout
      методах передачи (например запись на CD-ROM без создания
      промежуточного подготовленного ISO образа или работа с ленточными
      накопителями).
+
    • ‘nncp-toss’ команда может создавать ‘.seen’ файлы, предотвращая
      приём дублированных пакетов.
+
    • В команде ‘nncp-call’ разрешается иметь только одного обработчика
      контрольной суммы в фоне.  Это полезно когда тысячи маленьких
      входящих пакетов могут создать много горутин.
+
    • Возможность переопределить путь до spool директории и файла журнала
      через аргумент командной строки или переменную окружения.
+
    • ‘nncp-rm’ команда может удалять все исходящие/входящие, ‘.seen’,
      ‘.part’, ‘.lock’ и временные файлы.
 
@@ -1864,8 +2043,10 @@ File: nncp.info,  Node: Релиз 0.4,  Next: Релиз 0.3,  Prev: Релиз
    • Небольшое исправление в ‘nncp-call’, ‘nncp-caller’, ‘nncp-daemon’:
      иногда они могли падать с segmentation fault ошибкой (данные не
      терялись).
+
    • ‘nncp-newnode’ переименована в ‘nncp-newcfg’ – это короче и удобнее
      для использования.
+
    • Появилась команда ‘nncp-mincfg’: вспомогательная утилита
      позволяющая создать минималистичный урезанный конфигурационный файл
      без приватных ключей, что полезно во время использования
@@ -1877,7 +2058,7 @@ File: nncp.info,  Node: Релиз 0.3,  Next: Релиз 0.2,  Prev: Релиз
 Релиз 0.3
 ---------
 
-Исправлена совместимость с Go 1.6.
+   • Исправлена совместимость с Go 1.6.
 
 
 File: nncp.info,  Node: Релиз 0.2,  Prev: Релиз 0.3,  Up: Новости
@@ -1888,19 +2069,25 @@ File: nncp.info,  Node: Релиз 0.2,  Prev: Релиз 0.3,  Up: Новост
    • *Несовместимое* изменение формата пакета (магическое число тоже
      изменено): поле размера пакета шифруется и не посылается в открытом
      виде.
+
    • ‘-minsize’ опция даёт возможность автоматически дополнять исходящие
      пакеты до указанного минимального размера.
+
    • ‘nncp-daemon’ и ‘nncp-call’/‘nncp-caller’ всегда в фоне проверяют
      появление исходящих _tx_ пакетов пока подключены.  Удалённая
      сторона сразу же оповещается об этом.
+
    • ‘-onlinedeadline’ опция даёт возможность выставления timeout-а на
      неактивность в online соединении, когда оно должно быть отключено.
      Она может быть использована для сохранения соединения на долгое
      время.
+
    • ‘-maxonlinetime’ опция даёт возможность указания максимального
      возможного времени жизни соединения.
+
    • Появилась ‘nncp-caller’ команда: клиент TCP-демона работающий по
      cron-у.
+
    • ‘nncp-pkt’ команда может разжимать данные.
 
 
@@ -1912,27 +2099,28 @@ Installation
 Possibly NNCP package already exists for your distribution:
 
    • FreeBSD ports (https://www.freshports.org/net/nncp/)
+   • DragonFly BSD ports
+     (https://github.com/DragonFlyBSD/DPorts/tree/master/net/nncp)
    • Void Linux
      (https://github.com/void-linux/void-packages/blob/master/srcpkgs/nncp/template)
 
    NNCP should run on any POSIX-compatible operating system.
 
    NNCP is written on Go (https://golang.org/) programming language and
-you have to install Go compiler (1.10+ version is highly recommended).
-_Make_ (BSD and GNU ones are fine) is recommended for convenient
-building.  Texinfo (https://www.gnu.org/software/texinfo/) is used for
-building documentation.
+you have to install Go compiler 1.10+ version.  ‘Make’ (BSD and GNU
+versions are fine) is recommended for convenient building.  Texinfo
+(https://www.gnu.org/software/texinfo/) is used for building
+documentation (although tarballs already include it).
 
    In general you must get *note the tarball: Tarballs, check its *note
 integrity and authenticity: Integrity. and run ‘make’.  Look for general
-and *note platform-specific: Platform-specific. installation
-instructions.
+and platform-specific *note build instructions: Build-instructions.
 
 * Menu:
 
 * Prepared tarballs: Tarballs.
 * Tarballs integrity check: Integrity.
-* Platform-specific instructions: Platform-specific.
+* Build instructions: Build-instructions.
 * Development source code: Sources.
 
 
@@ -1945,7 +2133,7 @@ You can obtain releases source code prepared tarballs on
 <http://www.nncpgo.org/>.
 
 
-File: nncp.info,  Node: Integrity,  Next: Platform-specific,  Prev: Tarballs,  Up: Installation
+File: nncp.info,  Node: Integrity,  Next: Build-instructions,  Prev: Tarballs,  Up: Installation
 
 Tarballs integrity check
 ========================
@@ -1963,9 +2151,8 @@ pub   rsa2048/0x2B25868E75A1A953 2017-01-10
       92C2 F0AE FE73 208E 46BF  F3DE 2B25 868E 75A1 A953
 uid   NNCP releases <releases at nncpgo dot org>
 
-   • % gpg --keyserver hkp://keys.gnupg.net/ --recv-keys 0x2B25868E75A1A953
-     % gpg --auto-key-locate dane --locate-keys releases at nncpgo dot org
-     % gpg --auto-key-locate wkd --locate-keys releases at nncpgo dot org
+   • $ gpg --auto-key-locate dane --locate-keys releases at nncpgo dot org
+     $ gpg --auto-key-locate wkd --locate-keys releases at nncpgo dot org
 
    • -----BEGIN PGP PUBLIC KEY BLOCK-----
      
@@ -1990,67 +2177,35 @@ uid   NNCP releases <releases at nncpgo dot org>
      -----END PGP PUBLIC KEY BLOCK-----
 
    Then you could verify tarballs signature:
-% gpg --verify nncp-3.1.tar.xz.sig nncp-3.1.tar.xz
+$ gpg --verify nncp-5.1.0.tar.xz.sig nncp-5.1.0.tar.xz
 
 
-File: nncp.info,  Node: Platform-specific,  Next: Sources,  Prev: Integrity,  Up: Installation
+File: nncp.info,  Node: Build-instructions,  Next: Sources,  Prev: Integrity,  Up: Installation
 
-Platform-specific instructions
-==============================
+Build instructions
+==================
 
-* Menu:
+Make sure that Go is installed.  For example to install it from
+packages:
 
-* General::
-* Ubuntu::
+FreeBSD
+     pkg install go
+Debian, Ubuntu
+     apt install golang
 
-
-File: nncp.info,  Node: General,  Next: Ubuntu,  Up: Platform-specific
+$ [fetch|wget] http://www.nncpgo.org/download/nncp-5.1.0.tar.xz
+$ [fetch|wget] http://www.nncpgo.org/download/nncp-5.1.0.tar.xz.sig
+$ gpg --verify nncp-5.1.0.tar.xz.sig nncp-5.1.0.tar.xz
+$ xz --decompress --stdout nncp-5.1.0.tar.xz | tar xf -
+$ make -C nncp-5.1.0 all
 
-General installation instructions
----------------------------------
+   There is ‘install’ make-target respecting ‘DESTDIR’.  It will install
+binaries and info-documentation:
 
-Look *note here: Integrity. for finding public keys for tarball
-authentication.
-
-% wget http://www.nncpgo.org/download/nncp-3.1.tar.xz
-% wget http://www.nncpgo.org/download/nncp-3.1.tar.xz.sig
-% gpg --verify nncp-3.1.tar.xz.sig nncp-3.1.tar.xz
-% xz -d nncp-3.1.tar.xz
-% tar xf nncp-3.1.tar
-% make -C nncp-3.1 all
-
-   There is ‘install’ target respecting ‘DESTDIR’.  It will install
-binaries and info-documentation.
+# make -C nncp-5.1.0 install PREFIX=/usr/local
 
 
-File: nncp.info,  Node: Ubuntu,  Prev: General,  Up: Platform-specific
-
-Ubuntu installation instructions
---------------------------------
-
-Look *note here: Integrity. for finding public keys for tarball
-authentication.
-
-Ubuntu 16.04
-
-     # apt install golang
-
-     follow *note general: General. installation instructions
-
-     # make -C nncp-3.1 install PREFIX=/usr
-
-Ubuntu 14.04
-
-     # apt-get install golang-1.6
-     % wget http://www.nncpgo.org/download/nncp-3.1.tar.xz
-     % wget http://www.nncpgo.org/download/nncp-3.1.tar.xz.sig
-     % gpg --verify nncp-3.1.tar.xz.sig nncp-3.1.tar.xz
-     % tar xf nncp-3.1.tar.xz
-     % PATH=/usr/lib/go-1.6/bin:$PATH make -C nncp-3.1 all
-     # make -C nncp-3.1 install PREFIX=/usr
-
-
-File: nncp.info,  Node: Sources,  Prev: Platform-specific,  Up: Installation
+File: nncp.info,  Node: Sources,  Prev: Build-instructions,  Up: Installation
 
 Development source code
 =======================
@@ -2060,14 +2215,9 @@ be buggy.  It does not contain compiled documentation and dependent
 libraries source code.  Because of that, it is recommended for porters
 to use *note tarballs: Tarballs. instead.
 
-   You can obtain it by cloning Git (http://git-scm.com/) repository
-(https://git.cypherpunks.ru/cgit.cgi/nncp.git/log/) and fetching
-dependent libraries source code as git submodules:
-
-% git clone git://git.cypherpunks.ru/nncp.git nncp
-% cd nncp
-% git checkout develop
-% git submodule update --init
+$ git clone git://git.cypherpunks.ru/nncp.git
+$ cd nncp
+$ git checkout develop
 
    Also there is mirror of dependent libraries for safety if their
 native repositories will be unavailable (they are seldom updated):
@@ -2077,12 +2227,14 @@ Software/library                     Mirror
 ‘github.com/davecgh/go-xdr’          <git://git.cypherpunks.ru/go-xdr.git>
 ‘github.com/dustin/go-humanize’      <git://git.cypherpunks.ru/go-humanize.git>
 ‘github.com/flynn/noise’             <git://git.cypherpunks.ru/noise.git>
+‘github.com/google/go-cmp’           <git://git.cypherpunks.ru/go-cmp.git>
 ‘github.com/gorhill/cronexpr’        <git://git.cypherpunks.ru/cronexpr.git>
+‘github.com/hjson/hjson-go’          <git://git.cypherpunks.ru/hjson-go.git>
+‘github.com/klauspost/compress’      <git://git.cypherpunks.ru/compress.git>
 ‘golang.org/x/crypto’                <git://git.cypherpunks.ru/crypto.git>
 ‘golang.org/x/net’                   <git://git.cypherpunks.ru/net.git>
 ‘golang.org/x/sys’                   <git://git.cypherpunks.ru/sys.git>
 ‘gopkg.in/check.v1’                  <git://git.cypherpunks.ru/check.git>
-‘gopkg.in/yaml.v2’                   <git://git.cypherpunks.ru/yaml.git>
 
 
 File: nncp.info,  Node: Configuration,  Next: Call,  Prev: Installation,  Up: Top
@@ -2090,74 +2242,113 @@ File: nncp.info,  Node: Configuration,  Next: Call,  Prev: Installation,  Up: To
 Configuration file
 ******************
 
-Example YAML configuration file:
+Example Hjson (https://hjson.org/) configuration file:
 
-spool: /var/spool/nncp
-log: /var/spool/nncp/log
-notify:
-  file:
-    from: nncp@localhost
-    to: user+file@example.com
-  freq:
-    from: nncp@localhost
-    to: user+freq@example.com
-self:
-  id: TIJQL...2NGIA
-  exchpub: CYVGQ...PSEWQ
-  exchprv: 65PUY...MPZ3Q
-  signpub: 2NMVC...CMH5Q
-  signprv: 555JD...RGD6Y
-  noiseprv: D62XU...NKYPA
-  noisepub: KIBKK...ESM7Q
-neigh:
-  self:
+{
+  spool: /var/spool/nncp
+  log: /var/spool/nncp/log
+  umask: "022"
+
+  notify: {
+    file: {
+      from: nncp@localhost
+      to: user+file@example.com
+    }
+    freq: {
+      from: nncp@localhost
+      to: user+freq@example.com
+    }
+    exec: {
+      "*.warcer": {
+        from: nncp@localhost
+        to: user+warcer@example.com
+      }
+      "eve.warcer": {
+        from: nncp@localhost
+        to: user+warcer-overriden@example.com
+      }
+    }
+  }
+
+  self: {
     id: TIJQL...2NGIA
     exchpub: CYVGQ...PSEWQ
+    exchprv: 65PUY...MPZ3Q
     signpub: 2NMVC...CMH5Q
+    signprv: 555JD...RGD6Y
+    noiseprv: D62XU...NKYPA
     noisepub: KIBKK...ESM7Q
-    exec:
-      sendmail: [/usr/sbin/sendmail]
-  alice:
-    id: XJZBK...65IJQ
-    exchpub: MJACJ...FAI6A
-    signpub: T4AFC...N2FRQ
-    noisepub: UBM5K...VI42A
-    exec:
-      flag: ["/usr/bin/touch", "-t"]
-    incoming: /home/alice/incoming
-    onlinedeadline: 1800
-    maxonlinetime: 3600
-    addrs:
-      lan: "[fe80::1234%igb0]:5400"
-      internet: alice.com:3389
-    calls:
-      -
-        cron: "*/2 * * * *"
-  bob:
-    id: 2IZNP...UYGYA
-    exchpub: WFLMZ...B7NHA
-    signpub: GTGXG...IE3OA
-    exec:
-      sendmail: [/usr/sbin/sendmail]
-      warcer: [/path/to/warcer.sh]
-      wgeter: [/path/to/wgeter.sh]
-    freq: /home/bob/pub
-    freqchunked: 1024
-    freqminsize: 2048
-    via: [alice]
-    rxrate: 10
-    txrate: 20
+  }
+
+  neigh: {
+    self: {
+      id: TIJQL...2NGIA
+      exchpub: CYVGQ...PSEWQ
+      signpub: 2NMVC...CMH5Q
+      noisepub: KIBKK...ESM7Q
+      exec: {sendmail: ["/usr/sbin/sendmail"]}
+    }
+    alice: {
+      id: "XJZBK...65IJQ"
+      exchpub: MJACJ...FAI6A
+      signpub: T4AFC...N2FRQ
+      noisepub: UBM5K...VI42A
+      exec: {flag: ["/usr/bin/touch", "-t"]}
+      incoming: "/home/alice/incoming"
+      onlinedeadline: 1800
+      maxonlinetime: 3600
+      addrs: {
+        lan: "[fe80::1234%igb0]:5400"
+        internet: alice.com:3389
+        proxied: "|ssh remote.host nncp-daemon -inetd"
+      }
+      calls: [
+        {
+          cron: "*/2 * * * *"
+        },
+      ]
+    }
+    bob: {
+      id: 2IZNP...UYGYA
+      exchpub: WFLMZ...B7NHA
+      signpub: GTGXG...IE3OA
+      exec: {
+        sendmail: ["/usr/sbin/sendmail"]
+        warcer: ["/path/to/warcer.sh"]
+        wgeter: ["/path/to/wgeter.sh"]
+      }
+      freq: {
+        path: "/home/bob/pub"
+        chunked: 1024
+        minsize: 2048
+      }
+      via: ["alice"]
+      rxrate: 10
+      txrate: 20
+    }
+  }
+}
 
    *spool* field contains an absolute path to *note spool: Spool.
 directory.  *log* field contains an absolute path to *note log: Log.
 file.
 
+   Non-empty optional *umask* will force all invoked commands to
+override their umask to specified octal mask.  Useful for using with
+*note shared spool directories: Shared spool.
+
    *notify* section contains notification settings for successfully
-tossed file and freq packets.  Corresponding *from* and *to* fields will
-be substituted in notification email message.
-_neigh/self/exec/sendmail_ will be used as a local mailer.  You can omit
-either of those two _from_/_to_ sections to omit corresponding
+tossed file, freq and exec packets.  Corresponding *from* and *to*
+fields will be substituted in notification email message.
+‘neigh.self.exec.sendmail’ will be used as a local mailer.  You can omit
+either of those two ‘from’/‘to’ sections to omit corresponding
 notifications, or the whole section at once.
+
+   ‘notify.exec’ section is a mapping of exec handles and corresponding
+‘from’/‘to’ sections.  Each handle has either ‘NODE.HANDLE’ or
+‘*.HANDLE’ syntax.  You can override notification options for some node
+with the first type of name.  Handle command’s output will be included
+in notification messages.
 
    *self* section contains our node’s private keypairs.  *exch** and
 *sign** are used during *note encrypted: Encrypted. packet creation.
@@ -2169,7 +2360,7 @@ has *self* neighbour that is copy of our node’s public data (public
 keys).  It is useful for copy-paste sharing with your friends.  Each
 section’s key is a human-readable name of the neighbour.
 
-   Except for _id_, _exchpub_ and _signpub_ each neighbour node has the
+   Except for ‘id’, ‘exchpub’ and ‘signpub’ each neighbour node has the
 following fields:
 
 *noisepub*
@@ -2188,40 +2379,45 @@ following fields:
      echo hello world | nncp-exec OURNODE sendmail ARG0 ARG1 ARG2
      command, will execute:
 
-     echo hello world |
-         NNCP_SELF=OURNODE \
-         NNCP_SENDER=REMOTE \
-         NNCP_NICE=64 \
-         /usr/sbin/sendmail -t ARG0 ARG1 ARG2
+     NNCP_SELF=OURNODE \
+     NNCP_SENDER=REMOTE \
+     NNCP_NICE=64 \
+     /usr/sbin/sendmail -t ARG0 ARG1 ARG2
+
+     feeding hello world\n to that started ‘sendmail’ process.
 
 *incoming*
      Full path to directory where all file uploads will be saved.  May
      be omitted to forbid file uploading on that node.
 
-*freq*
+*freq.path*
      Full path to directory from where file requests will queue files
      for transmission.  May be omitted to forbid freqing from that node.
 
-*freqchunked*
+*freq.chunked*
      If set, then enable *note chunked: Chunked. file transmission
      during freqing.  This is the desired chunk size in KiBs.
 
-*freqminsize*
+*freq.minsize*
      If set, then apply *note -minsize: OptMinSize. option during file
      transmission.
 
 *via*
      An array of node identifiers that will be used as a relay to that
-     node.  For example [foo,bar] means that packet can reach current
-     node by transitioning through _foo_ and then _bar_ nodes.  May be
-     omitted if direct connection exists and no relaying is required.
+     node.  For example ["foo","bar"] means that packet can reach
+     current node by transitioning through ‘foo’ and then ‘bar’ nodes.
+     May be omitted if direct connection exists and no relaying is
+     required.
 
 *addrs*
      Dictionary containing known network addresses of the node.  Each
-     key is human-readable name of the link/address.  Values are
-     addr:port pairs pointing to *note nncp-daemon::’s listening
-     instance.  May be omitted if either no direct connection exists, or
-     *note nncp-call:: is used with forced address specifying.
+     key is human-readable name of the address.  For direct TCP
+     connections use host:port format, pointing to *note nncp-daemon::’s
+     listening instance.  Also you can pipe connection through the
+     external command using |some command format.  ‘/bin/sh -c "some
+     command"’ will start and its stdin/stdout used as a connection.
+     May be omitted if either no direct connection exists, or *note
+     nncp-call:: is used with forced address specifying.
 
 *rxrate/txrate*
      If greater than zero, then at most *rate packets per second will be
@@ -2247,6 +2443,26 @@ following fields:
      List of *note call configuration: Call.s.  Can be omitted if *note
      nncp-caller:: won’t be used to call that node.
 
+* Menu:
+
+* Shared spool directory: Shared spool.
+
+
+File: nncp.info,  Node: Shared spool,  Up: Configuration
+
+Shared spool directory
+======================
+
+If you want to share single spool directory with multiple grouped Unix
+users, then you can ‘setgid’ it and assure that umask is group friendly.
+For convenience you can set ‘umask’ globally for invoked NNCP commands
+in the configuration file.  For example:
+
+$ chgrp nncp /usr/local/etc/nncp.hjson /var/spool/nncp
+$ chmod g+r /usr/local/etc/nncp.hjson
+$ chmod g+rwxs /var/spool/nncp
+$ echo 'umask: "007"' >> /usr/local/etc/nncp.hjson
+
 
 File: nncp.info,  Node: Call,  Next: Integration,  Prev: Configuration,  Up: Top
 
@@ -2257,22 +2473,26 @@ Call is a rule when and how node can be called.
 
    Example list of call structures:
 
-calls:
-  -
-    cron: "*/1 * * * MON-FRI"
-    onlinedeadline: 3600
-    nice: PRIORITY+10
-  -
-    cron: "30 * * * SAT,SUN"
-    onlinedeadline: 1800
-    maxonlinetime: 1750
-    nice: NORMAL
-    rxrate: 10
-    txrate: 20
-  -
-    cron: "0 * * * SAT,SUN"
-    xx: rx
-    addr: lan
+calls: [
+    {
+        cron: "*/1 * * * MON-FRI"
+        onlinedeadline: 3600
+        nice: PRIORITY+10
+    },
+    {
+        cron: "30 * * * SAT,SUN"
+        onlinedeadline: 1800
+        maxonlinetime: 1750
+        nice: NORMAL
+        rxrate: 10
+        txrate: 20
+    },
+    {
+        cron: "0 * * * SAT,SUN"
+        xx: rx
+        addr: lan
+    },
+]
 
    tells that on work days of the week call that node every minute,
 disconnect after an hour of inactivity and process only relatively high
@@ -2542,11 +2762,11 @@ feeds without any user interaction.  Also this program supports ETags
 and won’t pollute the channel if remote server supports them too.
 
    After installing ‘rss2email’, create configuration file:
-% r2e new rss-robot@address.com
+$ r2e new rss-robot@address.com
    and add feeds you want to retrieve:
-% r2e add https://git.cypherpunks.ru/cgit.cgi/nncp.git/atom/?h=master
+$ r2e add https://git.cypherpunks.ru/cgit.cgi/nncp.git/atom/?h=master
    and run the process:
-% r2e run
+$ r2e run
 
 
 File: nncp.info,  Node: WARCs,  Next: BitTorrent,  Prev: Feeds,  Up: Integration
@@ -2556,14 +2776,14 @@ Integration with Web pages
 
 Simple HTML web page can be downloaded very easily for sending and
 viewing it offline after:
-% wget http://www.example.com/page.html
+$ wget http://www.example.com/page.html
 
    But most web pages contain links to images, CSS and JavaScript files,
 required for complete rendering.  GNU Wget
 (https://www.gnu.org/software/wget/) supports that documents parsing and
 understanding page dependencies.  You can download the whole page with
 dependencies the following way:
-% wget \
+$ wget \
     --page-requisites \
     --convert-links \
     --adjust-extension \
@@ -2575,13 +2795,13 @@ dependencies the following way:
    that will create ‘www.example.com’ directory with all files necessary
 to view ‘page.html’ web page.  You can create single file compressed
 tarball with that directory and send it to remote node:
-% tar cf - www.example.com | xz -9 |
-    nncp-file - remote.node:www.example.com-page.tar.xz
+$ tar cf - www.example.com | zstd |
+    nncp-file - remote.node:www.example.com-page.tar.zst
 
    But there are multi-paged articles, there are the whole interesting
 sites you want to get in a single package.  You can mirror the whole web
 site by utilizing ‘wget’’s recursive feature:
-% wget \
+$ wget \
     --recursive \
     --timestamping \
     -l inf \
@@ -2593,7 +2813,7 @@ site by utilizing ‘wget’’s recursive feature:
    There is a standard for creating Web ARChives
 (https://en.wikipedia.org/wiki/Web_ARChive): *WARC*. Fortunately again,
 ‘wget’ supports it as an output format.
-% wget \
+$ wget \
     --warc-file www.example_com-$(date '+%Y%M%d%H%m%S') \
     --no-warc-compression \
     --no-warc-keep-log \
@@ -2602,14 +2822,14 @@ site by utilizing ‘wget’’s recursive feature:
    That command will create uncompressed ‘www.example_com-XXX.warc’ web
 archive.  By default, WARCs are compressed using gzip
 (https://en.wikipedia.org/wiki/Gzip), but, in example above, we have
-disabled it to compress with stronger ‘xz’, before sending via
-‘nncp-file’.
+disabled it to compress with stronger and faster zstd
+(https://en.wikipedia.org/wiki/Zstd), before sending via ‘nncp-file’.
 
    There are plenty of software acting like HTTP proxy for your browser,
 allowing to view that WARC files.  However you can extract files from
 that archive using warcat (https://pypi.python.org/pypi/Warcat) utility,
 producing usual directory hierarchy:
-% python3 -m warcat extract \
+$ python3 -m warcat extract \
     www.example_com-XXX.warc \
     --output-dir www.example.com-XXX \
     --progress
@@ -2662,12 +2882,12 @@ fi
    Also you can prepare input file
 (http://aria2.github.io/manual/en/html/aria2c.html#files) with the jobs
 you want to download:
-% cat jobs
+$ cat jobs
 http://www.nncpgo.org/download/nncp-0.11.tar.xz
     out=nncp.txz
 http://www.nncpgo.org/download/nncp-0.11.tar.xz.sig
     out=nncp.txz.sig
-% aria2c \
+$ aria2c \
     --on-download-complete aria2-downloaded.sh \
     --input-file jobs
    and all that downloaded (‘nncp.txz’, ‘nncp.txz.sig’) files will be
@@ -2683,7 +2903,7 @@ Previous sections tell about manual downloading and sending results to
 remote node.  But one wish to remotely initiate downloading.  That can
 be easily solved with *note exec: CfgExec. handles.
 
-exec:
+exec: {
   warcer: ["/bin/sh", "/path/to/warcer.sh"]
   wgeter: ["/bin/sh", "/path/to/wgeter.sh"]
   aria2c: [
@@ -2691,6 +2911,7 @@ exec:
     "--on-download-complete", "aria2-downloaded.sh",
     "--on-bt-download-complete", "aria2-downloaded.sh"
   ]
+}
 
    ‘warcer.sh’ contents:
 #!/bin/sh -ex
@@ -2714,8 +2935,8 @@ wget \
     --no-warc-compression \
     --no-warc-keep-log \
     $cmdline || :
-xz -9 "$name".warc
-nncp-file -nice $NNCP_NICE "$name".warc.xz $NNCP_SENDER:
+zstd --rm "$name".warc
+nncp-file -nice $NNCP_NICE "$name".warc.zst $NNCP_SENDER:
 rm -r $tmp
 
    ‘wgeter.sh’ contents:
@@ -2726,18 +2947,18 @@ read cmdline
 
 tmp=$(mktemp)
 wget --output-document=$tmp $cmdline
-xz -9 $tmp
-nncp-file -nice $NNCP_NICE $tmp.xz $NNCP_SENDER:$name.xz
-rm $tmp.xz
+zstd --rm $tmp
+nncp-file -nice $NNCP_NICE $tmp.zst $NNCP_SENDER:$name.zst
+rm $tmp.zst
 
    Now you can queue that node to send you some website’s page, file or
 BitTorrents:
 
-% echo http://www.nncpgo.org/Postfix.html |
+$ echo http://www.nncpgo.org/Postfix.html |
     nncp-exec remote.node warcer postfix-whole-page
-% echo http://www.nncpgo.org/Postfix.html |
+$ echo http://www.nncpgo.org/Postfix.html |
     nncp-exec remote.node wgeter postfix-html-page
-% echo \
+$ echo \
     http://www.nncpgo.org/download/nncp-0.11.tar.xz
     http://www.nncpgo.org/download/nncp-0.11.tar.xz.sig |
     nncp-exec remote.node aria2c
@@ -2754,24 +2975,24 @@ necessary tools for store-and-forward networking.  git-bundle
 
    Use it to create bundles containing all required blobs/trees/commits
 and tags:
-% git bundle create repo-initial.bundle master --tags --branches
-% git tag -f last-bundle
-% nncp-file repo-initial.bundle remote.node:repo-$(date % '+%Y%M%d%H%m%S').bundle
+$ git bundle create repo-initial.bundle master --tags --branches
+$ git tag -f last-bundle
+$ nncp-file repo-initial.bundle remote.node:repo-$(date % '+%Y%M%d%H%m%S').bundle
 
    Do usual working with the Git: commit, add, branch, checkout, etc.
 When you decide to queue your changes for sending, create diff-ed bundle
 and transfer them:
-% git bundle create repo-$(date '+%Y%M%d%H%m%S').bundle last-bundle..master
+$ git bundle create repo-$(date '+%Y%M%d%H%m%S').bundle last-bundle..master
 or maybe
-% git bundle create repo-$(date '+%Y%M%d').bundle --since=10.days master
+$ git bundle create repo-$(date '+%Y%M%d').bundle --since=10.days master
 
    Received bundle on remote machine acts like usual remote:
-% git clone -b master repo-XXX.bundle
+$ git clone -b master repo-XXX.bundle
    overwrite ‘repo.bundle’ file with newer bundles you retrieve and
 fetch all required branches and commits:
-% git pull # assuming that origin remote points to repo.bundle
-% git fetch repo.bundle master:localRef
-% git ls-remote repo.bundle
+$ git pull # assuming that origin remote points to repo.bundle
+$ git fetch repo.bundle master:localRef
+$ git ls-remote repo.bundle
 
    Bundles are also useful when cloning huge repositories (like Linux
 has).  Git’s native protocol does not support any kind of interrupted
@@ -2780,6 +3001,24 @@ lost.  Bundles, being an ordinary files, can be downloaded with native
 HTTP/FTP/NNCP resuming capabilities.  After you fetch repository via the
 bundle, you can add an ordinary ‘git://’ remote and fetch the
 difference.
+
+   Also you can find the following exec-handler useful:
+#!/bin/sh -ex
+
+tmp=$(mktemp)
+
+cleanup()
+{
+    rm -f $tmp
+}
+trap cleanup HUP PIPE INT QUIT TERM EXIT
+
+read revs
+cd $HOME/git/$1.git
+git bundle create $tmp $revs
+nncp-file -nice $NNCP_NICE $tmp $NNCP_SENDER:$1-$(date '+%Y%M%d%H%m%S').bundle
+   And it allows you to request for bundles like that: ‘echo
+some-old-commit..master | nncp-exec REMOTE bundler REPONAME’.
 
 
 File: nncp.info,  Node: Multimedia,  Prev: Git,  Up: Integration
@@ -2794,7 +3033,7 @@ are supported, including _Dailymotion_, _Vimeo_ and _YouTube_.
 
    When you multimedia becomes an ordinary file, you can transfer it
 easily.
-% youtube-dl \
+$ youtube-dl \
     --exec 'nncp-file {} remote.node:' \
     'https://www.youtube.com/watch?list=PLd2Cw8x5CytxPAEBwzilrhQUHt_UN10FJ'
 
@@ -2867,9 +3106,9 @@ File: nncp.info,  Node: nncp-bundle,  Next: nncp-call,  Up: Commands
 nncp-bundle
 ===========
 
-% nncp-bundle [options] -tx [-delete] NODE [NODE ...] > ...
-% nncp-bundle [options] -rx -delete [-dryrun] [NODE ...] < ...
-% nncp-bundle [options] -rx [-check] [-dryrun] [NODE ...] < ...
+$ nncp-bundle [options] -tx [-delete] NODE [NODE ...] > ...
+$ nncp-bundle [options] -rx -delete [-dryrun] [NODE ...] < ...
+$ nncp-bundle [options] -rx [-check] [-dryrun] [NODE ...] < ...
 
    With ‘-tx’ option, this command creates *note bundle: Bundles. of
 *note encrypted packets: Encrypted. from the spool directory and writes
@@ -2899,8 +3138,8 @@ with ‘-rx’ and ‘-delete’ options – in that mode, stream packets
 integrity will be checked and they will be deleted from the spool if
 everything is good.  So it is advisable to recheck your streams:
 
-% nncp-bundle -tx ALICE BOB WHATEVER | cdrecord -tao -
-% dd if=/dev/cd0 bs=2048 | nncp-bundle -rx -delete
+$ nncp-bundle -tx ALICE BOB WHATEVER | cdrecord -tao -
+$ dd if=/dev/cd0 bs=2048 | nncp-bundle -rx -delete
 
    ‘-dryrun’ option prevents any writes to the spool.  This is useful
 when you need to see what packets will pass by and possibly check their
@@ -2912,7 +3151,7 @@ File: nncp.info,  Node: nncp-call,  Next: nncp-caller,  Prev: nncp-bundle,  Up: 
 nncp-call
 =========
 
-% nncp-call [options]
+$ nncp-call [options]
     [-onlinedeadline INT]
     [-maxonlinetime INT]
     [-rx|-tx]
@@ -2939,28 +3178,12 @@ remote node, without any transmission.
    You can specify what packets your want to download, by specifying
 ‘-pkts’ option with comma-separated list of packets identifiers.
 
-
-File: nncp.info,  Node: nncp-caller,  Next: nncp-cfgenc,  Prev: nncp-call,  Up: Commands
-
-nncp-caller
-===========
-
-% nncp-caller [options] [NODE ...]
-
-   Croned daemon that calls remote nodes from time to time, according to
-their *note _calls_: CfgCalls. configuration field.
-
-   Optional number of ‘NODE’s tells to ignore other ones.  Otherwise all
-nodes with specified _calls_ configuration field will be called.
-
-   ‘-onlinedeadline’ overrides *note _onlinedeadline_:
-CfgOnlineDeadline. configuration option.
-
    Each ‘NODE’ can contain several uniquely identified ‘ADDR’esses in
 *note configuration: CfgAddrs. file.  If you do not specify the exact
 one, then all will be tried until the first success.  Optionally you can
 force ‘FORCEADDR’ address usage, instead of addresses taken from
-configuration file.
+configuration file.  You can specify both host:port and |some command
+formats.
 
    Pay attention that this command runs integrity check for each
 completely received packet in the background.  This can be time
@@ -2970,15 +3193,31 @@ check that file is renamed from ‘.part’ one and when you rerun
 ‘nncp-call’ again, remote node will receive completion notification.
 
 
+File: nncp.info,  Node: nncp-caller,  Next: nncp-cfgenc,  Prev: nncp-call,  Up: Commands
+
+nncp-caller
+===========
+
+$ nncp-caller [options] [NODE ...]
+
+   Croned daemon that calls remote nodes from time to time, according to
+their *note _calls_: CfgCalls. configuration field.
+
+   Optional number of ‘NODE’s tells to ignore other ones.  Otherwise all
+nodes with specified _calls_ configuration field will be called.
+
+   Look *note nncp-call:: for more information.
+
+
 File: nncp.info,  Node: nncp-cfgenc,  Next: nncp-cfgmin,  Prev: nncp-caller,  Up: Commands
 
 nncp-cfgenc
 ===========
 
-% nncp-cfgmin [options] [-s INT] [-t INT] [-p INT] cfg.yaml > cfg.yaml.eblob
-% nncp-cfgmin [options] -d cfg.yaml.eblob > cfg.yaml
+$ nncp-cfgmin [options] [-s INT] [-t INT] [-p INT] cfg.hjson > cfg.hjson.eblob
+$ nncp-cfgmin [options] -d cfg.hjson.eblob > cfg.hjson
 
-   This command allows you to encrypt provided ‘cfg.yaml’ file with the
+   This command allows you to encrypt provided ‘cfg.hjson’ file with the
 passphrase, producing *note eblob: EBlob, to safely keep your
 configuration file with private keys.  This utility was written for
 users who do not want (or can not) to use either GnuPG
@@ -3000,7 +3239,7 @@ passphrase can not decrypt ‘eblob’.
 
    ‘-dump’ options parses ‘eblob’ and prints parameters used during its
 creation.  For example:
-% nncp-cfgenc -dump /usr/local/etc/nncp.yaml.eblob
+$ nncp-cfgenc -dump /usr/local/etc/nncp.hjson.eblob
 Strengthening function: Balloon with BLAKE2b-256
 Memory space cost: 1048576 bytes
 Number of rounds: 16
@@ -3013,7 +3252,7 @@ File: nncp.info,  Node: nncp-cfgmin,  Next: nncp-cfgnew,  Prev: nncp-cfgenc,  Up
 nncp-cfgmin
 ===========
 
-% nncp-cfgmin [options] > stripped.yaml
+$ nncp-cfgmin [options] > stripped.hjson
 
    Print out stripped configuration version: only path to *note spool:
 Spool, path to log file, neighbours public keys are stayed.  This is
@@ -3026,11 +3265,12 @@ File: nncp.info,  Node: nncp-cfgnew,  Next: nncp-check,  Prev: nncp-cfgmin,  Up:
 nncp-cfgnew
 ===========
 
-% nncp-cfgnew [options] > new.yaml
+$ nncp-cfgnew [options] [-nocomments] > new.hjson
 
    Generate new node configuration: private keys, example configuration
 file and print it to stdout.  You must use this command when you setup
-the new node.
+the new node.  ‘-nocomments’ will create configuration file without
+descriptive huge comments – useful for advanced users.
 
    Pay attention that private keys generation consumes an entropy from
 your operating system.
@@ -3041,7 +3281,7 @@ File: nncp.info,  Node: nncp-check,  Next: nncp-daemon,  Prev: nncp-cfgnew,  Up:
 nncp-check
 ==========
 
-% nncp-check [options]
+$ nncp-check [options]
 
    Perform *note spool: Spool. directory integrity check.  Read all
 files that has Base32-encoded filenames and compare it with recalculated
@@ -3054,7 +3294,7 @@ File: nncp.info,  Node: nncp-daemon,  Next: nncp-exec,  Prev: nncp-check,  Up: C
 nncp-daemon
 ===========
 
-% nncp-daemon [options] [-maxconn INT] [-bind ADDR] [-inetd]
+$ nncp-daemon [options] [-maxconn INT] [-bind ADDR] [-inetd]
 
    Start listening TCP daemon, wait for incoming connections and run
 *note synchronization protocol: Sync. with each of them.  You can run
@@ -3076,7 +3316,7 @@ File: nncp.info,  Node: nncp-exec,  Next: nncp-file,  Prev: nncp-daemon,  Up: Co
 nncp-exec
 =========
 
-% nncp-exec [options] NODE HANDLE [ARG0 ARG1 ...]
+$ nncp-exec [options] NODE HANDLE [ARG0 ARG1 ...]
 
    Send execution command to ‘NODE’ for specified ‘HANDLE’.  Body is
 read from stdin and compressed.  After receiving, remote side will
@@ -3086,9 +3326,10 @@ and decompressed body fed to command’s stdin.
    For example, if remote side has following configuration file for your
 node:
 
-exec:
+exec: {
   sendmail: [/usr/sbin/sendmail, "-t"]
   appender: ["/bin/sh", "-c", "cat >> /append"]
+}
 
    then executing echo My message | nncp-exec -replynice 123 REMOTE
 sendmail root@localhost will lead to execution of:
@@ -3099,13 +3340,17 @@ echo My message |
     NNCP_NICE=123 \
     /usr/sbin/sendmail -t root@localhost
 
+   If *note notification: CfgNotify. is enabled on the remote side for
+exec handles, then it will sent simple letter after successful command
+execution with its output in message body.
+
 
 File: nncp.info,  Node: nncp-file,  Next: nncp-freq,  Prev: nncp-exec,  Up: Commands
 
 nncp-file
 =========
 
-% nncp-file [options] [-chunked INT] SRC NODE:[DST]
+$ nncp-file [options] [-chunked INT] SRC NODE:[DST]
 
    Send ‘SRC’ file to remote ‘NODE’.  ‘DST’ specifies destination file
 name in remote’s *note incoming: CfgIncoming. directory.  If this file
@@ -3127,6 +3372,15 @@ Encryption is performed in AEAD mode with ChaCha20
 on 128 KiB blocks.  Each block is encrypted with increasing nonce
 counter.
 
+   If ‘SRC’ points to directory, then pax archive
+(https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html#tag_20_92_13_01)
+will be created on the fly with directory contents and destination
+filename ‘.tar’ appended.  It *won’t* contain any entities
+metainformation, but modification time with the names.  UID/GID are set
+to zero.  Directories have 777 permissions, files have 666, for being
+friendly with ‘umask’.  Also each entity will have comment like
+Autogenerated by NNCP version X.Y.Z built with goXXX.
+
    If ‘-chunked’ is specified, then source file will be split *note on
 chunks: Chunked.  ‘INT’ is the desired chunk size in KiBs.  This mode is
 more CPU hungry.  Pay attention that chunk is saved in spool directory
@@ -3144,12 +3398,12 @@ File: nncp.info,  Node: nncp-freq,  Next: nncp-log,  Prev: nncp-file,  Up: Comma
 nncp-freq
 =========
 
-% nncp-freq [options] NODE:SRC [DST]
+$ nncp-freq [options] NODE:SRC [DST]
 
    Send file request to ‘NODE’, asking it to send its ‘SRC’ file from
-*note freq: CfgFreq. directory to our node under ‘DST’ filename in our
-*note incoming: CfgIncoming. one.  If ‘DST’ is not specified, then last
-element of ‘SRC’ will be used.
+*note freq.path: CfgFreq. directory to our node under ‘DST’ filename in
+our *note incoming: CfgIncoming. one.  If ‘DST’ is not specified, then
+last element of ‘SRC’ will be used.
 
    If *note notification: CfgNotify. is enabled on the remote side for
 file request, then it will sent simple letter after successful file
@@ -3161,7 +3415,7 @@ File: nncp.info,  Node: nncp-log,  Next: nncp-pkt,  Prev: nncp-freq,  Up: Comman
 nncp-log
 ========
 
-% nncp-log [options]
+$ nncp-log [options]
 
    Parse *note log: Log. file and print out its records in
 human-readable form.
@@ -3172,9 +3426,9 @@ File: nncp.info,  Node: nncp-pkt,  Next: nncp-reass,  Prev: nncp-log,  Up: Comma
 nncp-pkt
 ========
 
-% nncp-pkt [options] < pkt
-% nncp-pkt [options] [-decompress] -dump < pkt > payload
-% nncp-pkt -overheads
+$ nncp-pkt [options] < pkt
+$ nncp-pkt [options] [-decompress] -dump < pkt > payload
+$ nncp-pkt -overheads
 
    Low level packet parser.  Normally it should not be used, but can
 help in debugging.
@@ -3199,7 +3453,7 @@ Path: stargrave@stargrave.org
 
    And with the ‘-dump’ option it will give you the actual payload (the
 whole file, mail message, and so on).  ‘-decompress’ option tries to
-zlib-decompress the data from plain packet (useful for mail packets).
+zstd-decompress the data from plain packet (useful for mail packets).
 
    ‘-overheads’ options print encrypted, plain and size header
 overheads.
@@ -3210,8 +3464,8 @@ File: nncp.info,  Node: nncp-reass,  Next: nncp-rm,  Prev: nncp-pkt,  Up: Comman
 nncp-reass
 ==========
 
-% nncp-reass [options] [-dryrun] [-keep] [-dump] [-stdout] FILE.nncp.meta
-% nncp-reass [options] [-dryrun] [-keep] {-all | -node NODE}
+$ nncp-reass [options] [-dryrun] [-keep] [-dump] [-stdout] FILE.nncp.meta
+$ nncp-reass [options] [-dryrun] [-keep] {-all | -node NODE}
 
    Reassemble *note chunked file: Chunked. after *note tossing:
 nncp-toss.
@@ -3268,12 +3522,12 @@ File: nncp.info,  Node: nncp-rm,  Next: nncp-stat,  Prev: nncp-reass,  Up: Comma
 nncp-rm
 =======
 
-% nncp-rm [options] -tmp
-% nncp-rm [options] -lock
-% nncp-rm [options] -node NODE -part
-% nncp-rm [options] -node NODE -seen
-% nncp-rm [options] -node NODE [-rx] [-tx]
-% nncp-rm [options] -node NODE -pkt PKT
+$ nncp-rm [options] -tmp
+$ nncp-rm [options] -lock
+$ nncp-rm [options] -node NODE -part
+$ nncp-rm [options] -node NODE -seen
+$ nncp-rm [options] -node NODE [-rx] [-tx]
+$ nncp-rm [options] -node NODE -pkt PKT
 
    This command is aimed to delete various files from your spool
 directory:
@@ -3297,7 +3551,7 @@ File: nncp.info,  Node: nncp-stat,  Next: nncp-toss,  Prev: nncp-rm,  Up: Comman
 nncp-stat
 =========
 
-% nncp-stat [options] [-node NODE]
+$ nncp-stat [options] [-node NODE]
 
    Print current *note spool: Spool. statistics about unsent and
 unprocessed packets.  For each node (unless ‘-node’ specified) and each
@@ -3310,7 +3564,7 @@ File: nncp.info,  Node: nncp-toss,  Next: nncp-xfer,  Prev: nncp-stat,  Up: Comm
 nncp-toss
 =========
 
-% nncp-toss [options]
+$ nncp-toss [options]
     [-node NODE]
     [-dryrun]
     [-cycle INT]
@@ -3347,7 +3601,7 @@ File: nncp.info,  Node: nncp-xfer,  Prev: nncp-toss,  Up: Commands
 nncp-xfer
 =========
 
-% nncp-xfer [options] [-node NODE] [-mkdir] [-keep] [-rx|-tx] DIR
+$ nncp-xfer [options] [-node NODE] [-mkdir] [-keep] [-rx|-tx] DIR
 
    Search for directory in ‘DIR’ containing inbound packets for us and
 move them to local *note spool: Spool. directory.  Also search for known
@@ -3492,19 +3746,19 @@ sequentially streamed for recording and digested back.
 
    • They do not require intermediate storage before recording on either
      CD-ROM or tape drive.
-     % nncp-bundle -tx SOMENODE | cdrecord -tao -         # record directly to CD
-     % nncp-bundle -tx SOMENODE | dd of=/dev/sa0 bs=10240 # record directly to tape
+     $ nncp-bundle -tx SOMENODE | cdrecord -tao -         # record directly to CD
+     $ nncp-bundle -tx SOMENODE | dd of=/dev/sa0 bs=10240 # record directly to tape
      
-     % dd if=/dev/cd0 bs=2048 | nncp-bundle -rx  # read directly from CD
-     % dd if=/dev/sa0 bs=10240 | nncp-bundle -rx # read directly from tape
+     $ dd if=/dev/cd0 bs=2048 | nncp-bundle -rx  # read directly from CD
+     $ dd if=/dev/sa0 bs=10240 | nncp-bundle -rx # read directly from tape
 
    • They do not require filesystem existence to deal with, simplifying
      administration when operating in heterogeneous systems with varying
      filesystems.  No ‘mount’/‘umount’, ‘zpool import’/‘zpool export’
      and struggling with file permissions.
-     % nncp-bundle -tx SOMENODE | dd of=/dev/da0 bs=1M # record directly to
+     $ nncp-bundle -tx SOMENODE | dd of=/dev/da0 bs=1M # record directly to
                                                        # hard/flash drive
-     % dd if=/dev/da0 bs=1M | nncp-bundle -rx # read directly from drive
+     $ dd if=/dev/da0 bs=1M | nncp-bundle -rx # read directly from drive
 
    • This is the fastest way to record outbound packets for offline
      transmission – sequential write is always faster, when no
@@ -3517,8 +3771,8 @@ sequentially streamed for recording and digested back.
      *note Sync protocol: Sync. requires interactive connection, but
      bundles can contain mix of various recipients.
 
-   Technically bundle is valid POSIX.1-2001 (pax) tar archive
-(http://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html),
+   Technically bundle is valid POSIX.1-2001 pax archive
+(https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html#tag_20_92_13_01)
 with directory/files hierarchy identical to that is used in *note
 nncp-xfer::: ‘NNCP/RECIPIENT/SENDER/PACKET’.  So bundle can also be
 created by manual tar-ing of ‘nncp-xfer’ resulting directory.
@@ -3627,7 +3881,7 @@ drive.
 
                XDR type               Value
 ---------------------------------------------------------------------------
-Magic number   8-byte, fixed length   N N C P P 0x00 0x00 0x02
+Magic number   8-byte, fixed length   N N C P P 0x00 0x00 0x03
                opaque data
 Payload type   unsigned integer       0 (file), 1 (freq), 2 (exec), 3
                                       (transition)
@@ -3653,7 +3907,7 @@ memory.
 
    • File contents
    • Destination path for freq
-   • zlib (http://zlib.net/) compressed exec body
+   • Zstandard (https://facebook.github.io/zstd/) compressed exec body
    • Whole encrypted packet we need to relay on
 
    Also depending on packet’s type, niceness level means:
@@ -4003,6 +4257,8 @@ There are people deserving to be thanked for helping this project:
 
    • Shawn K. Quinn for his descriptive instructions about building NNCP
      under Ubuntu GNU/Linux distributions and bug reports.
+   • John Goerzen (mailto:jgoerzen@complete.org) for his feature
+     suggestions and Debian package maintenance.
 
 
 File: nncp.info,  Node: Contacts,  Next: Copying,  Prev: Thanks,  Up: Top
@@ -4029,8 +4285,7 @@ simplifying secure store-and-forward files and mail exchanging.
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
-     Version 1.3 or any later version published by the Free Software
-     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     Version 1.3; with no Invariant Sections, no Front-Cover Texts, and
      no Back-Cover Texts.  A copy of the license is included in the
      section entitled "Copying conditions".
 
@@ -4488,141 +4743,144 @@ to permit their use in free software.
 
 
 Tag Table:
-Node: Top663
-Node: Comparison3634
-Node: Use cases9127
-Node: UsecaseMail9975
-Node: UsecasePOP11356
-Node: UsecaseUnreliable12247
-Node: UsecaseQoS13302
-Node: UsecaseNoLink14505
-Node: UsecaseBroadcast15759
-Node: UsecaseSatelliteLinks16614
-Node: UsecaseF2F18049
-Node: UsecaseAirgap19912
-Node: UsecaseCensor21600
-Node: UsecaseSpy22651
-Node: UsecaseCaller24733
-Node: Workflow25785
-Node: News27897
-Node: Release 4.128377
-Node: Release 4.028535
-Node: Release 3.429446
-Node: Release 3.329622
-Node: Release 3.230503
-Node: Release 3.130983
-Node: Release 3.031180
-Node: Release 2.032852
-Node: Release 1.033372
-Node: Release 0.1234394
-Node: Release 0.1134593
-Node: Release 0.1034780
-Node: Release 0.935026
-Node: Release 0.835248
-Node: Release 0.735500
-Node: Release 0.636617
-Node: Release 0.536837
-Node: Release 0.437058
-Node: Release 0.337608
-Node: Release 0.237757
-Node: Русский38744
-Node: Об утилитах39151
-Node: Сравнение43545
-Node: Сценарии52610
-Node: UsecaseMailRU53952
-Node: UsecasePOPRU56365
-Node: UsecaseUnreliableRU57810
-Node: UsecaseQoSRU59561
-Node: UsecaseNoLinkRU61522
-Node: UsecaseBroadcastRU63865
-Node: UsecaseSatelliteLinksRU65433
-Node: UsecaseF2FRU68010
-Node: UsecaseAirgapRU71334
-Node: UsecaseCensorRU74608
-Node: UsecaseSpyRU76406
-Node: UsecaseCallerRU80232
-Node: Новости81705
-Node: Релиз 4.182210
-Node: Релиз 4.082454
-Node: Релиз 3.484013
-Node: Релиз 3.384242
-Node: Релиз 3.285691
-Node: Релиз 3.186477
-Node: Релиз 3.086803
-Node: Релиз 2.089413
-Node: Релиз 1.090235
-Node: Релиз 0.1292003
-Node: Релиз 0.1192257
-Node: Релиз 0.1092498
-Node: Релиз 0.992854
-Node: Релиз 0.893144
-Node: Релиз 0.793530
-Node: Релиз 0.695397
-Node: Релиз 0.595710
-Node: Релиз 0.496048
-Node: Релиз 0.396949
-Node: Релиз 0.297144
-Node: Installation98809
-Node: Tarballs99916
-Node: Integrity100110
-Node: Platform-specific102437
-Node: General102631
-Node: Ubuntu103198
-Node: Sources103929
-Node: Configuration105577
-Ref: CfgNotify107088
-Ref: CfgExec108225
-Ref: CfgIncoming108881
-Ref: CfgFreq109019
-Ref: CfgVia109419
-Ref: CfgAddrs109708
-Ref: CfgXxRate110055
-Ref: CfgOnlineDeadline110338
-Ref: CfgMaxOnlineTime110885
-Ref: CfgCalls111034
-Node: Call111169
-Node: Integration117653
-Node: Postfix118099
-Node: Feeds121763
-Node: WARCs122547
-Node: BitTorrent124945
-Node: DownloadService126810
-Node: Git128578
-Node: Multimedia130270
-Node: Commands130862
-Ref: OptMinSize131324
-Node: nncp-bundle132727
-Node: nncp-call134806
-Node: nncp-caller136067
-Node: nncp-cfgenc137313
-Node: nncp-cfgmin139011
-Node: nncp-cfgnew139425
-Node: nncp-check139832
-Node: nncp-daemon140221
-Node: nncp-exec140964
-Node: nncp-file141818
-Node: nncp-freq143628
-Node: nncp-log144188
-Node: nncp-pkt144396
-Node: nncp-reass145555
-Node: nncp-rm147964
-Node: nncp-stat149145
-Node: nncp-toss149552
-Node: nncp-xfer150774
-Node: Niceness152039
-Node: Chunked153731
-Ref: ChunkedZFS155526
-Node: Bundles156070
-Node: Spool158539
-Node: Log160068
-Node: Packet161223
-Node: Plain161464
-Node: Encrypted163730
-Node: Sync167157
-Node: EBlob176644
-Node: Thanks179402
-Node: Contacts179695
-Node: Copying180041
+Node: Top595
+Node: Comparison3325
+Node: Use cases8819
+Node: UsecaseMail9667
+Node: UsecasePOP11048
+Node: UsecaseUnreliable11939
+Node: UsecaseQoS12994
+Node: UsecaseNoLink14197
+Node: UsecaseBroadcast15451
+Node: UsecaseSatelliteLinks16306
+Node: UsecaseF2F17741
+Node: UsecaseAirgap19604
+Node: UsecaseCensor21318
+Node: UsecaseSpy22369
+Node: UsecaseCaller24451
+Node: Workflow25556
+Node: News27668
+Node: Release 5.1.028184
+Node: Release 5.0.028875
+Node: Release 4.130244
+Node: Release 4.030424
+Node: Release 3.431342
+Node: Release 3.331518
+Node: Release 3.232403
+Node: Release 3.132883
+Node: Release 3.033080
+Node: Release 2.034759
+Node: Release 1.035281
+Node: Release 0.1236308
+Node: Release 0.1136507
+Node: Release 0.1036694
+Node: Release 0.936940
+Node: Release 0.837162
+Node: Release 0.737414
+Node: Release 0.638531
+Node: Release 0.538751
+Node: Release 0.438972
+Node: Release 0.339524
+Node: Release 0.239680
+Node: Русский40673
+Node: Об утилитах41080
+Node: Сравнение45234
+Node: Сценарии54305
+Node: UsecaseMailRU55647
+Node: UsecasePOPRU58060
+Node: UsecaseUnreliableRU59505
+Node: UsecaseQoSRU61256
+Node: UsecaseNoLinkRU63217
+Node: UsecaseBroadcastRU65560
+Node: UsecaseSatelliteLinksRU67128
+Node: UsecaseF2FRU69705
+Node: UsecaseAirgapRU73029
+Node: UsecaseCensorRU76329
+Node: UsecaseSpyRU78127
+Node: UsecaseCallerRU81953
+Node: Новости83479
+Node: Релиз 5.1.084026
+Node: Релиз 5.0.085148
+Node: Релиз 4.187508
+Node: Релиз 4.087777
+Node: Релиз 3.489343
+Node: Релиз 3.389572
+Node: Релиз 3.291025
+Node: Релиз 3.191811
+Node: Релиз 3.092137
+Node: Релиз 2.094754
+Node: Релиз 1.095578
+Node: Релиз 0.1297351
+Node: Релиз 0.1197605
+Node: Релиз 0.1097846
+Node: Релиз 0.998202
+Node: Релиз 0.898492
+Node: Релиз 0.798878
+Node: Релиз 0.6100745
+Node: Релиз 0.5101058
+Node: Релиз 0.4101396
+Node: Релиз 0.3102299
+Node: Релиз 0.2102501
+Node: Installation104172
+Node: Tarballs105379
+Node: Integrity105573
+Node: Build-instructions107829
+Node: Sources108542
+Node: Configuration110134
+Ref: CfgNotify112374
+Ref: CfgExec113868
+Ref: CfgIncoming114552
+Ref: CfgFreq114690
+Ref: CfgVia115097
+Ref: CfgAddrs115402
+Ref: CfgXxRate115954
+Ref: CfgOnlineDeadline116237
+Ref: CfgMaxOnlineTime116784
+Ref: CfgCalls116933
+Node: Shared spool117118
+Node: Call117666
+Node: Integration124229
+Node: Postfix124675
+Node: Feeds128339
+Node: WARCs129123
+Node: BitTorrent131565
+Node: DownloadService133430
+Node: Git135214
+Node: Multimedia137329
+Node: Commands137921
+Ref: OptMinSize138383
+Node: nncp-bundle139786
+Node: nncp-call141865
+Node: nncp-caller143908
+Node: nncp-cfgenc144379
+Node: nncp-cfgmin146083
+Node: nncp-cfgnew146498
+Node: nncp-check147035
+Node: nncp-daemon147424
+Node: nncp-exec148167
+Node: nncp-file149211
+Node: nncp-freq151558
+Node: nncp-log152123
+Node: nncp-pkt152331
+Node: nncp-reass153490
+Node: nncp-rm155899
+Node: nncp-stat157080
+Node: nncp-toss157487
+Node: nncp-xfer158709
+Node: Niceness159974
+Node: Chunked161666
+Ref: ChunkedZFS163461
+Node: Bundles164005
+Node: Spool166484
+Node: Log168013
+Node: Packet169168
+Node: Plain169409
+Node: Encrypted171696
+Node: Sync175123
+Node: EBlob184610
+Node: Thanks187368
+Node: Contacts187777
+Node: Copying188123
 
 End Tag Table
 

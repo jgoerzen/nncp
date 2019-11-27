@@ -28,7 +28,7 @@ drive.
 @headitem @tab XDR type @tab Value
 @item Magic number @tab
     8-byte, fixed length opaque data @tab
-    @verb{|N N C P P 0x00 0x00 0x02|}
+    @verb{|N N C P P 0x00 0x00 0x03|}
 @item Payload type @tab
     unsigned integer @tab
     0 (file), 1 (freq), 2 (exec), 3 (transition)
@@ -58,7 +58,7 @@ Depending on the packet's type, payload could store:
 @itemize
 @item File contents
 @item Destination path for freq
-@item @url{http://zlib.net/, zlib} compressed exec body
+@item @url{https://facebook.github.io/zstd/, Zstandard} compressed exec body
 @item Whole encrypted packet we need to relay on
 @end itemize
 

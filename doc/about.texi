@@ -29,11 +29,11 @@ Look for possible @ref{Use cases, use cases}!
 
 NNCP is @url{https://www.gnu.org/philosophy/pragmatic.html, copylefted}
 @url{https://www.gnu.org/philosophy/free-sw.html, free software}
-licenced under @url{https://www.gnu.org/licenses/gpl-3.0.html, GNU GPLv3+}.
+licenced under @url{https://www.gnu.org/licenses/gpl-3.0.html, GNU GPLv3}.
 It should work on all @url{https://en.wikipedia.org/wiki/POSIX,
 POSIX}-compatible systems. Easy @ref{Integration, integration} with existing
 @url{https://en.wikipedia.org/wiki/SMTP, SMTP} servers. Single
-@url{http://yaml.org/, YAML} configuration file.
+@url{https://hjson.org/, Hjson} configuration file.
 
 Why create yet another store-and-forward solution when UUCP, FTN and
 even SMTP exists? Look in @ref{Comparison, comparison} section!
