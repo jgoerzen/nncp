@@ -6,22 +6,26 @@ Call is a rule when and how node can be called.
 Example list of call structures:
 
 @verbatim
-calls:
-  -
-    cron: "*/1 * * * MON-FRI"
-    onlinedeadline: 3600
-    nice: PRIORITY+10
-  -
-    cron: "30 * * * SAT,SUN"
-    onlinedeadline: 1800
-    maxonlinetime: 1750
-    nice: NORMAL
-    rxrate: 10
-    txrate: 20
-  -
-    cron: "0 * * * SAT,SUN"
-    xx: rx
-    addr: lan
+calls: [
+    {
+        cron: "*/1 * * * MON-FRI"
+        onlinedeadline: 3600
+        nice: PRIORITY+10
+    },
+    {
+        cron: "30 * * * SAT,SUN"
+        onlinedeadline: 1800
+        maxonlinetime: 1750
+        nice: NORMAL
+        rxrate: 10
+        txrate: 20
+    },
+    {
+        cron: "0 * * * SAT,SUN"
+        xx: rx
+        addr: lan
+    },
+]
 @end verbatim
 
 tells that on work days of the week call that node every minute,

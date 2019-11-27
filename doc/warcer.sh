@@ -19,6 +19,6 @@ wget \
     --no-warc-compression \
     --no-warc-keep-log \
     $cmdline || :
-xz -9 "$name".warc
-nncp-file -nice $NNCP_NICE "$name".warc.xz $NNCP_SENDER:
+zstd --rm "$name".warc
+nncp-file -nice $NNCP_NICE "$name".warc.zst $NNCP_SENDER:
 rm -r $tmp

@@ -6,8 +6,7 @@ simplifying secure store-and-forward files and mail exchanging.
 Copyright (C) 2016-2019 Sergey Matveev
 
 Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.3
-or any later version published by the Free Software Foundation;
+under the terms of the GNU Free Documentation License, Version 1.3;
 with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
 A copy of the license is included in the section entitled "Copying conditions". -->
 <!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
@@ -20,13 +19,13 @@ A copy of the license is included in the section entitled "Copying conditions". 
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
-<meta name="date" content="May 1, 2019">
+<meta name="date" content="November 24, 2019">
 <link href="index.html#Top" rel="start" title="Top">
 <link href="Packet.html#Packet" rel="up" title="Packet">
 <link href="Encrypted.html#Encrypted" rel="next" title="Encrypted">
 <link href="Packet.html#Packet" rel="prev" title="Packet">
 <style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
-
+<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">
 </head>
 
 <body lang="en">
@@ -51,7 +50,7 @@ drive.
 </pre>
 <table>
 <thead><tr><th width="20%"></th><th width="30%">XDR type</th><th width="50%">Value</th></tr></thead>
-<tr><td width="20%">Magic number</td><td width="30%">8-byte, fixed length opaque data</td><td width="50%"><tt>N N C P P 0x00 0x00 0x02</tt></td></tr>
+<tr><td width="20%">Magic number</td><td width="30%">8-byte, fixed length opaque data</td><td width="50%"><tt>N N C P P 0x00 0x00 0x03</tt></td></tr>
 <tr><td width="20%">Payload type</td><td width="30%">unsigned integer</td><td width="50%">0 (file), 1 (freq), 2 (exec), 3 (transition)</td></tr>
 <tr><td width="20%">Niceness</td><td width="30%">unsigned integer</td><td width="50%">1-255, preferred packet <a href="Niceness.html#Niceness">niceness</a> level</td></tr>
 <tr><td width="20%">Path length</td><td width="30%">unsigned integer</td><td width="50%">actual length of <em>path</em> field&rsquo;s payload</td></tr>
@@ -73,7 +72,7 @@ memory.
 <ul>
 <li> File contents
 </li><li> Destination path for freq
-</li><li> <a href="http://zlib.net/">zlib</a> compressed exec body
+</li><li> <a href="https://facebook.github.io/zstd/">Zstandard</a> compressed exec body
 </li><li> Whole encrypted packet we need to relay on
 </li></ul>
 

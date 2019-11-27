@@ -143,15 +143,15 @@ supports them too.
 
 After installing @command{rss2email}, create configuration file:
 @verbatim
-% r2e new rss-robot@address.com
+$ r2e new rss-robot@address.com
 @end verbatim
 and add feeds you want to retrieve:
 @verbatim
-% r2e add https://git.cypherpunks.ru/cgit.cgi/nncp.git/atom/?h=master
+$ r2e add https://git.cypherpunks.ru/cgit.cgi/nncp.git/atom/?h=master
 @end verbatim
 and run the process:
 @verbatim
-% r2e run
+$ r2e run
 @end verbatim
 
 @node WARCs
@@ -160,7 +160,7 @@ and run the process:
 Simple HTML web page can be downloaded very easily for sending and
 viewing it offline after:
 @verbatim
-% wget http://www.example.com/page.html
+$ wget http://www.example.com/page.html
 @end verbatim
 
 But most web pages contain links to images, CSS and JavaScript files,
@@ -169,7 +169,7 @@ required for complete rendering.
 documents parsing and understanding page dependencies. You can download
 the whole page with dependencies the following way:
 @verbatim
-% wget \
+$ wget \
     --page-requisites \
     --convert-links \
     --adjust-extension \
@@ -183,15 +183,15 @@ that will create @file{www.example.com} directory with all files
 necessary to view @file{page.html} web page. You can create single file
 compressed tarball with that directory and send it to remote node:
 @verbatim
-% tar cf - www.example.com | xz -9 |
-    nncp-file - remote.node:www.example.com-page.tar.xz
+$ tar cf - www.example.com | zstd |
+    nncp-file - remote.node:www.example.com-page.tar.zst
 @end verbatim
 
 But there are multi-paged articles, there are the whole interesting
 sites you want to get in a single package. You can mirror the whole web
 site by utilizing @command{wget}'s recursive feature:
 @verbatim
-% wget \
+$ wget \
     --recursive \
     --timestamping \
     -l inf \
@@ -206,7 +206,7 @@ There is a standard for creating
 @strong{WARC}. Fortunately again, @command{wget} supports it as an
 output format.
 @verbatim
-% wget \
+$ wget \
     --warc-file www.example_com-$(date '+%Y%M%d%H%m%S') \
     --no-warc-compression \
     --no-warc-keep-log \
@@ -216,15 +216,16 @@ output format.
 That command will create uncompressed @file{www.example_com-XXX.warc}
 web archive. By default, WARCs are compressed using
 @url{https://en.wikipedia.org/wiki/Gzip, gzip}, but, in example above,
-we have disabled it to compress with stronger @command{xz}, before
-sending via @command{nncp-file}.
+we have disabled it to compress with stronger and faster
+@url{https://en.wikipedia.org/wiki/Zstd, zstd}, before sending via
+@command{nncp-file}.
 
 There are plenty of software acting like HTTP proxy for your browser,
 allowing to view that WARC files. However you can extract files from
 that archive using @url{https://pypi.python.org/pypi/Warcat, warcat}
 utility, producing usual directory hierarchy:
 @verbatim
-% python3 -m warcat extract \
+$ python3 -m warcat extract \
     www.example_com-XXX.warc \
     --output-dir www.example.com-XXX \
     --progress
@@ -255,12 +256,12 @@ Also you can prepare
 @url{http://aria2.github.io/manual/en/html/aria2c.html#files, input file}
 with the jobs you want to download:
 @verbatim
-% cat jobs
+$ cat jobs
 http://www.nncpgo.org/download/nncp-0.11.tar.xz
     out=nncp.txz
 http://www.nncpgo.org/download/nncp-0.11.tar.xz.sig
     out=nncp.txz.sig
-% aria2c \
+$ aria2c \
     --on-download-complete aria2-downloaded.sh \
     --input-file jobs
 @end verbatim
@@ -275,7 +276,7 @@ remote node. But one wish to remotely initiate downloading. That can be
 easily solved with @ref{CfgExec, exec} handles.
 
 @verbatim
-exec:
+exec: {
   warcer: ["/bin/sh", "/path/to/warcer.sh"]
   wgeter: ["/bin/sh", "/path/to/wgeter.sh"]
   aria2c: [
@@ -283,6 +284,7 @@ exec:
     "--on-download-complete", "aria2-downloaded.sh",
     "--on-bt-download-complete", "aria2-downloaded.sh"
   ]
+}
 @end verbatim
 
 @file{warcer.sh} contents:
@@ -295,11 +297,11 @@ Now you can queue that node to send you some website's page, file or
 BitTorrents:
 
 @verbatim
-% echo http://www.nncpgo.org/Postfix.html |
+$ echo http://www.nncpgo.org/Postfix.html |
     nncp-exec remote.node warcer postfix-whole-page
-% echo http://www.nncpgo.org/Postfix.html |
+$ echo http://www.nncpgo.org/Postfix.html |
     nncp-exec remote.node wgeter postfix-html-page
-% echo \
+$ echo \
     http://www.nncpgo.org/download/nncp-0.11.tar.xz
     http://www.nncpgo.org/download/nncp-0.11.tar.xz.sig |
     nncp-exec remote.node aria2c
@@ -315,30 +317,30 @@ everything you need.
 
 Use it to create bundles containing all required blobs/trees/commits and tags:
 @verbatim
-% git bundle create repo-initial.bundle master --tags --branches
-% git tag -f last-bundle
-% nncp-file repo-initial.bundle remote.node:repo-$(date % '+%Y%M%d%H%m%S').bundle
+$ git bundle create repo-initial.bundle master --tags --branches
+$ git tag -f last-bundle
+$ nncp-file repo-initial.bundle remote.node:repo-$(date % '+%Y%M%d%H%m%S').bundle
 @end verbatim
 
 Do usual working with the Git: commit, add, branch, checkout, etc. When
 you decide to queue your changes for sending, create diff-ed bundle and
 transfer them:
 @verbatim
-% git bundle create repo-$(date '+%Y%M%d%H%m%S').bundle last-bundle..master
+$ git bundle create repo-$(date '+%Y%M%d%H%m%S').bundle last-bundle..master
 or maybe
-% git bundle create repo-$(date '+%Y%M%d').bundle --since=10.days master
+$ git bundle create repo-$(date '+%Y%M%d').bundle --since=10.days master
 @end verbatim
 
 Received bundle on remote machine acts like usual remote:
 @verbatim
-% git clone -b master repo-XXX.bundle
+$ git clone -b master repo-XXX.bundle
 @end verbatim
 overwrite @file{repo.bundle} file with newer bundles you retrieve and
 fetch all required branches and commits:
 @verbatim
-% git pull # assuming that origin remote points to repo.bundle
-% git fetch repo.bundle master:localRef
-% git ls-remote repo.bundle
+$ git pull # assuming that origin remote points to repo.bundle
+$ git fetch repo.bundle master:localRef
+$ git ls-remote repo.bundle
 @end verbatim
 
 Bundles are also useful when cloning huge repositories (like Linux has).
@@ -348,6 +350,11 @@ Bundles, being an ordinary files, can be downloaded with native
 HTTP/FTP/NNCP resuming capabilities. After you fetch repository via the
 bundle, you can add an ordinary @file{git://} remote and fetch the
 difference.
+
+Also you can find the following exec-handler useful:
+@verbatiminclude git-bundler.sh
+And it allows you to request for bundles like that:
+@code{echo some-old-commit..master | nncp-exec REMOTE bundler REPONAME}.
 
 @node Multimedia
 @section Integration with multimedia streaming
@@ -360,7 +367,7 @@ and @emph{YouTube}.
 
 When you multimedia becomes an ordinary file, you can transfer it easily.
 @verbatim
-% youtube-dl \
+$ youtube-dl \
     --exec 'nncp-file {} remote.node:' \
     'https://www.youtube.com/watch?list=PLd2Cw8x5CytxPAEBwzilrhQUHt_UN10FJ'
 @end verbatim

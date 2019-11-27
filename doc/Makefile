@@ -13,6 +13,7 @@ CSS != cat style.css
 nncp.html: *.texi sp.utxt pedro.txt
 	rm -f nncp.html/*.html
 	$(MAKEINFO) --html \
+		--set-customization-variable EXTRA_HEAD='<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">' \
 		--set-customization-variable CSS_LINES='$(CSS)' \
 		--set-customization-variable SHOW_TITLE=0 \
 		--set-customization-variable USE_ACCESSKEY=0 \

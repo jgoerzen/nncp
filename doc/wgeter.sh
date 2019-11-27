@@ -5,6 +5,6 @@ read cmdline
 
 tmp=$(mktemp)
 wget --output-document=$tmp $cmdline
-xz -9 $tmp
-nncp-file -nice $NNCP_NICE $tmp.xz $NNCP_SENDER:$name.xz
-rm $tmp.xz
+zstd --rm $tmp
+nncp-file -nice $NNCP_NICE $tmp.zst $NNCP_SENDER:$name.zst
+rm $tmp.zst

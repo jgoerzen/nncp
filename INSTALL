@@ -4,21 +4,22 @@ Installation
 Possibly NNCP package already exists for your distribution:
 
    • FreeBSD ports (https://www.freshports.org/net/nncp/)
+   • DragonFly BSD ports
+     (https://github.com/DragonFlyBSD/DPorts/tree/master/net/nncp)
    • Void Linux
      (https://github.com/void-linux/void-packages/blob/master/srcpkgs/nncp/template)
 
    NNCP should run on any POSIX-compatible operating system.
 
    NNCP is written on Go (https://golang.org/) programming language and
-you have to install Go compiler (1.10+ version is highly recommended).
-_Make_ (BSD and GNU ones are fine) is recommended for convenient
-building.  Texinfo (https://www.gnu.org/software/texinfo/) is used for
-building documentation.
+you have to install Go compiler 1.10+ version.  ‘Make’ (BSD and GNU
+versions are fine) is recommended for convenient building.  Texinfo
+(https://www.gnu.org/software/texinfo/) is used for building
+documentation (although tarballs already include it).
 
    In general you must get *note the tarball: Tarballs, check its *note
 integrity and authenticity: Integrity. and run ‘make’.  Look for general
-and *note platform-specific: Platform-specific. installation
-instructions.
+and platform-specific *note build instructions: Build-instructions.
 
 Prepared tarballs
 =================
@@ -41,9 +42,8 @@ pub   rsa2048/0x2B25868E75A1A953 2017-01-10
       92C2 F0AE FE73 208E 46BF  F3DE 2B25 868E 75A1 A953
 uid   NNCP releases <releases at nncpgo dot org>
 
-   • % gpg --keyserver hkp://keys.gnupg.net/ --recv-keys 0x2B25868E75A1A953
-     % gpg --auto-key-locate dane --locate-keys releases at nncpgo dot org
-     % gpg --auto-key-locate wkd --locate-keys releases at nncpgo dot org
+   • $ gpg --auto-key-locate dane --locate-keys releases at nncpgo dot org
+     $ gpg --auto-key-locate wkd --locate-keys releases at nncpgo dot org
 
    • -----BEGIN PGP PUBLIC KEY BLOCK-----
      
@@ -68,50 +68,28 @@ uid   NNCP releases <releases at nncpgo dot org>
      -----END PGP PUBLIC KEY BLOCK-----
 
    Then you could verify tarballs signature:
-% gpg --verify nncp-3.1.tar.xz.sig nncp-3.1.tar.xz
-Platform-specific instructions
-==============================
+$ gpg --verify nncp-5.1.0.tar.xz.sig nncp-5.1.0.tar.xz
+Build instructions
+==================
 
-General installation instructions
----------------------------------
+Make sure that Go is installed.  For example to install it from
+packages:
 
-Look *note here: Integrity. for finding public keys for tarball
-authentication.
+FreeBSD
+     pkg install go
+Debian, Ubuntu
+     apt install golang
 
-% wget http://www.nncpgo.org/download/nncp-3.1.tar.xz
-% wget http://www.nncpgo.org/download/nncp-3.1.tar.xz.sig
-% gpg --verify nncp-3.1.tar.xz.sig nncp-3.1.tar.xz
-% xz -d nncp-3.1.tar.xz
-% tar xf nncp-3.1.tar
-% make -C nncp-3.1 all
+$ [fetch|wget] http://www.nncpgo.org/download/nncp-5.1.0.tar.xz
+$ [fetch|wget] http://www.nncpgo.org/download/nncp-5.1.0.tar.xz.sig
+$ gpg --verify nncp-5.1.0.tar.xz.sig nncp-5.1.0.tar.xz
+$ xz --decompress --stdout nncp-5.1.0.tar.xz | tar xf -
+$ make -C nncp-5.1.0 all
 
-   There is ‘install’ target respecting ‘DESTDIR’.  It will install
-binaries and info-documentation.
+   There is ‘install’ make-target respecting ‘DESTDIR’.  It will install
+binaries and info-documentation:
 
-Ubuntu installation instructions
---------------------------------
-
-Look *note here: Integrity. for finding public keys for tarball
-authentication.
-
-Ubuntu 16.04
-
-     # apt install golang
-
-     follow *note general: General. installation instructions
-
-     # make -C nncp-3.1 install PREFIX=/usr
-
-Ubuntu 14.04
-
-     # apt-get install golang-1.6
-     % wget http://www.nncpgo.org/download/nncp-3.1.tar.xz
-     % wget http://www.nncpgo.org/download/nncp-3.1.tar.xz.sig
-     % gpg --verify nncp-3.1.tar.xz.sig nncp-3.1.tar.xz
-     % tar xf nncp-3.1.tar.xz
-     % PATH=/usr/lib/go-1.6/bin:$PATH make -C nncp-3.1 all
-     # make -C nncp-3.1 install PREFIX=/usr
-
+# make -C nncp-5.1.0 install PREFIX=/usr/local
 Development source code
 =======================
 
@@ -120,14 +98,9 @@ be buggy.  It does not contain compiled documentation and dependent
 libraries source code.  Because of that, it is recommended for porters
 to use *note tarballs: Tarballs. instead.
 
-   You can obtain it by cloning Git (http://git-scm.com/) repository
-(https://git.cypherpunks.ru/cgit.cgi/nncp.git/log/) and fetching
-dependent libraries source code as git submodules:
-
-% git clone git://git.cypherpunks.ru/nncp.git nncp
-% cd nncp
-% git checkout develop
-% git submodule update --init
+$ git clone git://git.cypherpunks.ru/nncp.git
+$ cd nncp
+$ git checkout develop
 
    Also there is mirror of dependent libraries for safety if their
 native repositories will be unavailable (they are seldom updated):
@@ -137,10 +110,12 @@ Software/library                     Mirror
 ‘github.com/davecgh/go-xdr’          <git://git.cypherpunks.ru/go-xdr.git>
 ‘github.com/dustin/go-humanize’      <git://git.cypherpunks.ru/go-humanize.git>
 ‘github.com/flynn/noise’             <git://git.cypherpunks.ru/noise.git>
+‘github.com/google/go-cmp’           <git://git.cypherpunks.ru/go-cmp.git>
 ‘github.com/gorhill/cronexpr’        <git://git.cypherpunks.ru/cronexpr.git>
+‘github.com/hjson/hjson-go’          <git://git.cypherpunks.ru/hjson-go.git>
+‘github.com/klauspost/compress’      <git://git.cypherpunks.ru/compress.git>
 ‘golang.org/x/crypto’                <git://git.cypherpunks.ru/crypto.git>
 ‘golang.org/x/net’                   <git://git.cypherpunks.ru/net.git>
 ‘golang.org/x/sys’                   <git://git.cypherpunks.ru/sys.git>
 ‘gopkg.in/check.v1’                  <git://git.cypherpunks.ru/check.git>
-‘gopkg.in/yaml.v2’                   <git://git.cypherpunks.ru/yaml.git>
 
