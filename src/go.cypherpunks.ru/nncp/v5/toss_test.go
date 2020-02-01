@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -189,7 +189,7 @@ func TestTossFile(t *testing.T) {
 		incomingPath := filepath.Join(spool, "incoming")
 		for _, fileData := range files {
 			checksum := blake2b.Sum256(fileData)
-			fileName := ToBase32(checksum[:])
+			fileName := Base32Codec.EncodeToString(checksum[:])
 			src := filepath.Join(spool, fileName)
 			if err := ioutil.WriteFile(src, fileData, os.FileMode(0600)); err != nil {
 				panic(err)
@@ -220,7 +220,7 @@ func TestTossFile(t *testing.T) {
 		}
 		for _, fileData := range files {
 			checksum := blake2b.Sum256(fileData)
-			fileName := ToBase32(checksum[:])
+			fileName := Base32Codec.EncodeToString(checksum[:])
 			data, err := ioutil.ReadFile(filepath.Join(incomingPath, fileName))
 			if err != nil {
 				panic(err)
@@ -468,7 +468,7 @@ func TestTossTrns(t *testing.T) {
 			}
 			checksum := blake2b.Sum256(dst.Bytes())
 			if err := ioutil.WriteFile(
-				filepath.Join(rxPath, ToBase32(checksum[:])),
+				filepath.Join(rxPath, Base32Codec.EncodeToString(checksum[:])),
 				dst.Bytes(),
 				os.FileMode(0600),
 			); err != nil {

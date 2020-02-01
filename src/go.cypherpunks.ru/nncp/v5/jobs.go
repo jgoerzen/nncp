@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strconv"
 
 	xdr "github.com/davecgh/go-xdr/xdr2"
 )
@@ -50,12 +49,12 @@ func (ctx *Ctx) Jobs(nodeId *NodeId, xx TRxTx) chan Job {
 			return
 		}
 		fis, err := dir.Readdir(0)
-		dir.Close()
+		dir.Close() // #nosec G104
 		if err != nil {
 			return
 		}
 		for _, fi := range fis {
-			hshValue, err := FromBase32(fi.Name())
+			hshValue, err := Base32Codec.DecodeString(fi.Name())
 			if err != nil {
 				continue
 			}
@@ -65,16 +64,19 @@ func (ctx *Ctx) Jobs(nodeId *NodeId, xx TRxTx) chan Job {
 			}
 			var pktEnc PktEnc
 			if _, err = xdr.Unmarshal(fd, &pktEnc); err != nil || pktEnc.Magic != MagicNNCPEv4 {
-				fd.Close()
+				fd.Close() // #nosec G104
 				continue
 			}
-			fd.Seek(0, io.SeekStart)
+			if _, err = fd.Seek(0, io.SeekStart); err != nil {
+				fd.Close() // #nosec G104
+				continue
+			}
 			ctx.LogD("jobs", SDS{
 				"xx":   string(xx),
 				"node": pktEnc.Sender,
 				"name": fi.Name(),
-				"nice": strconv.Itoa(int(pktEnc.Nice)),
-				"size": strconv.FormatInt(fi.Size(), 10),
+				"nice": int(pktEnc.Nice),
+				"size": fi.Size(),
 			}, "taken")
 			job := Job{
 				PktEnc:   &pktEnc,

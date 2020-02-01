@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"sync"
 	"time"
 
@@ -44,6 +44,8 @@ func main() {
 		spoolPath = flag.String("spool", "", "Override path to spool")
 		logPath   = flag.String("log", "", "Override path to logfile")
 		quiet     = flag.Bool("quiet", false, "Print only errors")
+		showPrgrs = flag.Bool("progress", false, "Force progress showing")
+		omitPrgrs = flag.Bool("noprogress", false, "Omit progress showing")
 		debug     = flag.Bool("debug", false, "Print debug messages")
 		version   = flag.Bool("version", false, "Print version information")
 		warranty  = flag.Bool("warranty", false, "Print warranty information")
@@ -59,7 +61,15 @@ func main() {
 		return
 	}
 
-	ctx, err := nncp.CtxFromCmdline(*cfgPath, *spoolPath, *logPath, *quiet, *debug)
+	ctx, err := nncp.CtxFromCmdline(
+		*cfgPath,
+		*spoolPath,
+		*logPath,
+		*quiet,
+		*showPrgrs,
+		*omitPrgrs,
+		*debug,
+	)
 	if err != nil {
 		log.Fatalln("Error during initialization:", err)
 	}
@@ -105,13 +115,13 @@ func main() {
 				} else {
 					addrs = append(addrs, *call.Addr)
 				}
-				sds := nncp.SDS{"node": node.Id, "callindex": strconv.Itoa(i)}
+				sds := nncp.SDS{"node": node.Id, "callindex": i}
 				for {
 					n := time.Now()
 					t := call.Cron.Next(n)
 					ctx.LogD("caller", sds, t.String())
 					if t.IsZero() {
-						ctx.LogE("caller", sds, "got zero time")
+						ctx.LogE("caller", sds, errors.New("got zero time"), "")
 						return
 					}
 					time.Sleep(t.Sub(n))

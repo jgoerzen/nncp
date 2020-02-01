@@ -4,8 +4,11 @@
 There are people deserving to be thanked for helping this project:
 
 @itemize
+
 @item Shawn K. Quinn for his descriptive instructions about building
 NNCP under Ubuntu GNU/Linux distributions and bug reports.
+
 @item @url{mailto:jgoerzen@@complete.org, John Goerzen} for his feature
 suggestions and Debian package maintenance.
+
 @end itemize

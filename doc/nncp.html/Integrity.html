@@ -3,7 +3,7 @@
 <!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
 simplifying secure store-and-forward files and mail exchanging.
 
-Copyright (C) 2016-2019 Sergey Matveev
+Copyright (C) 2016-2020 Sergey Matveev
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3;
@@ -19,13 +19,13 @@ A copy of the license is included in the section entitled "Copying conditions". 
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
-<meta name="date" content="November 24, 2019">
+<meta name="date" content="January 23, 2020">
 <link href="index.html#Top" rel="start" title="Top">
 <link href="Installation.html#Installation" rel="up" title="Installation">
 <link href="Build_002dinstructions.html#Build_002dinstructions" rel="next" title="Build-instructions">
 <link href="Tarballs.html#Tarballs" rel="prev" title="Tarballs">
 <style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
-<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">
+<link rev="made" href="mailto:webmaster@nncpgo.org">
 </head>
 
 <body lang="en">
@@ -41,7 +41,7 @@ Next: <a href="Build_002dinstructions.html#Build_002dinstructions" rel="next">Bu
 <p>You <strong>have to</strong> check downloaded archives integrity and verify
 their signature to be sure that you have got trusted, untampered
 software. For integrity and authentication of downloaded binaries
-<a href="https://www.gnupg.org/">The GNU Privacy Guard</a> is used. You must
+<a href="https://www.gnupg.org/">GNU Privacy Guard</a> is used. You must
 download signature (<samp>.sig</samp>) provided with the tarball.
 </p>
 <p>For the very first time you need to import signing public key. It is
@@ -52,9 +52,11 @@ provided below, but it is better to check alternative resources with it.
 uid   NNCP releases &lt;releases at nncpgo dot org&gt;
 </pre>
 <ul>
-<li> <pre class="verbatim">$ gpg --auto-key-locate dane --locate-keys releases at nncpgo dot org
+<li> <div class="example">
+<pre class="example">$ gpg --auto-key-locate dane --locate-keys releases at nncpgo dot org
 $ gpg --auto-key-locate wkd --locate-keys releases at nncpgo dot org
-</pre>
+</pre></div>
+
 </li><li> <pre class="verbatim">-----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mQENBFh0lv0BCADmquHdyjr1Mr8VHRNxzipHxmgbdK3CGJL1yzb1ntj7zbJl5UnQ
@@ -80,8 +82,11 @@ vdr6yKbN
 </li></ul>
 
 <p>Then you could verify tarballs signature:
-</p><pre class="verbatim">$ gpg --verify nncp-5.1.0.tar.xz.sig nncp-5.1.0.tar.xz
-</pre>
+</p>
+<div class="example">
+<pre class="example">$ gpg --verify nncp-5.3.3.tar.xz.sig nncp-5.3.3.tar.xz
+</pre></div>
+
 
 
 </body>

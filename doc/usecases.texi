@@ -77,10 +77,10 @@ daemon}.
 
 The command:
 
-@verbatim
+@example
 $ nncp-file file_i_want_to_send bob:
 $ nncp-file another_file bob:movie.avi
-@end verbatim
+@end example
 
 will queue two files for sending to @emph{bob} node. Fire and forget!
 Now this is daemon's job (or offline transfer) to send this files part
@@ -100,12 +100,12 @@ NNCP allows traffic @ref{Niceness, prioritizing}: each packet has
 niceness level, that will guarantee that it will be processed earlier or
 later than the other ones. Nearly all commands has corresponding option:
 
-@verbatim
+@example
 $ nncp-file -nice FLASH myfile node:dst
 $ nncp-xfer -nice PRIORITY /mnt/shared
 $ nncp-call -nice NORMAL bob
 [...]
-@end verbatim
+@end example
 
 Huge files could be split on smaller @ref{Chunked, chunks}, giving
 possibility to transfer virtually any volumes using small capacity
@@ -113,10 +113,10 @@ storages.
 
 You can also use CD-ROM and tape drives:
 
-@verbatim
+@example
 $ nncp-bundle -tx bob | cdrecord -tao -
 $ nncp-bundle -tx bob | dd of=/dev/sa0 bs=10240
-@end verbatim
+@end example
 
 @node UsecaseNoLink
 @section Extreme terrestrial environments, no link
@@ -128,9 +128,9 @@ media for transferring packets to other nodes.
 Assume that you send two files to @emph{bob} node. Insert USB storage
 device (SD is preferable!), mount it and run @ref{nncp-xfer}:
 
-@verbatim
+@example
 $ nncp-xfer -node bob /media/usbstick
-@end verbatim
+@end example
 
 to copy all outbound packets related to @emph{bob}. Use @option{-mkdir}
 option to create related directory on USB/SD storage if they are missing
@@ -140,16 +140,16 @@ If you use single storage device to transfer data both to @emph{bob} and
 @emph{alice}, then just omit @option{-node} option to copy all available
 outgoing packets.
 
-@verbatim
+@example
 $ nncp-xfer /media/usbstick
-@end verbatim
+@end example
 
 Unmount it and transfer storage to Bob and Alice. When they will insert
 it in their computers, they will use exactly the same command:
 
-@verbatim
+@example
 $ nncp-xfer /media/usbstick
-@end verbatim
+@end example
 
 to find all packets related to their node and copy them locally for
 further processing. @command{nncp-xfer} is the only command used with
@@ -165,10 +165,10 @@ example, satellite's broadcasting signal. You are not able to use online
 You can use @ref{Bundles, bundles} and stream them above. They are just
 a sequence of @ref{Encrypted, encrypted packets} you can catch on.
 
-@verbatim
+@example
 $ nncp-bundle -tx alice bob eve ... | command to send broadcast
 $ command to receive broadcast | nncp-bundle -rx
-@end verbatim
+@end example
 
 With built-in packet duplicates detection ability, you can retransmit
 your broadcasts from time to time, to increase chances the recipient
@@ -229,15 +229,17 @@ authenticate peers and provide effective (both participants send payload
 in the very first packet) secure transport with forward secrecy
 property.
 
-@verbatim
-$ nncp-daemon -bind [::]:5400
-@end verbatim
+@example
+$ nncp-daemon -bind "[::]":5400
+@end example
+
 will start TCP daemon listening on all interfaces for incoming
 connections.
 
-@verbatim
+@example
 $ nncp-call bob
-@end verbatim
+@end example
+
 will try to connect to @emph{bob}'s node known TCP addresses (taken from
 configuration file) and send all related outbound packets and retrieve
 those the Bob has. All interrupted transfers will be automatically

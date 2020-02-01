@@ -1,6 +1,85 @@
 News
 ****
 
+Release 5.3.3
+=============
+
+   • More various error checks.
+
+   • Updated dependencies.
+
+Release 5.3.2
+=============
+
+   • Fixed incorrect logic of ‘onlinedeadline’ timeout, where connection
+     won’t take into account incoming packets events and will forcefully
+     disconnect.
+
+Release 5.3.1
+=============
+
+   • Fixed ‘onlinedeadline’ workability with call addresses that use
+     external commands ("|somecmd").
+
+   • ‘nncp-stat’ has ‘-pkt’ option displaying information about each
+     packet in the spool.
+
+Release 5.3.0
+=============
+
+   • Progress messages contain prefix, describing the running action.
+
+   • Fixed not occurring handshake messages padding.
+
+   • Finish all SP protocol related goroutines, less memory leak.
+
+   • SP protocol generates less socket write calls, thus generating less
+     TCP packets.
+
+   • Check ‘onlinedeadline’ and ‘maxonlinetime’ options every second,
+     independently from socket reads (up to 10 seconds).
+
+   • Once per minute, if no other traffic exists, PING packets are sent
+     in SP-connection.  That allows faster determining of connection
+     unworkability.
+
+   • ‘nncp-toss’ uses lock-file to prevent simultaneous tossing.
+
+Release 5.2.1
+=============
+
+   • Fixed SP protocol error handling, sometimes causing program panic.
+
+Release 5.2.0
+=============
+
+   • Most commands by default show oneline operations progress.
+     ‘-progress’, ‘-noprogress’ command line options, ‘noprogress’
+     configuration file option appeared.
+
+   • Fixed incorrect ‘nncp-check’ command return code, that returned bad
+     code when everything is good.
+
+   • Free disk space check during ‘nncp-bundle -rx’ call.
+
+Release 5.1.2
+=============
+
+   • *Critical* vulnerability: remote peers authentication could lead to
+     incorrect identification of remote side, allowing foreign encrypted
+     packets downloading.
+
+   • Bugfix: private and public Noise keys were swapped in newly created
+     configuration files, that lead to inability to authenticate online
+     peers.
+
+   • Explicit directories fsync-ing for guaranteed files renaming.
+
+Release 5.1.1
+=============
+
+   • Fixed workability of ‘nncp-file’ with ‘-chunked 0’ option.
+
 Release 5.1.0
 =============
 

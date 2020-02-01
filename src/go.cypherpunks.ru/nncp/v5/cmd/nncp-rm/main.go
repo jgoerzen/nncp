@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -70,23 +70,25 @@ func main() {
 		return
 	}
 
-	ctx, err := nncp.CtxFromCmdline(*cfgPath, *spoolPath, "", *quiet, *debug)
+	ctx, err := nncp.CtxFromCmdline(*cfgPath, *spoolPath, "", *quiet, false, false, *debug)
 	if err != nil {
 		log.Fatalln("Error during initialization:", err)
 	}
 	ctx.Umask()
 
 	if *doTmp {
-		err = filepath.Walk(filepath.Join(ctx.Spool, "tmp"), func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-			if info.IsDir() {
-				return nil
-			}
-			ctx.LogI("nncp-rm", nncp.SDS{"file": path}, "")
-			return os.Remove(path)
-		})
+		err = filepath.Walk(
+			filepath.Join(ctx.Spool, "tmp"),
+			func(path string, info os.FileInfo, err error) error {
+				if err != nil {
+					return err
+				}
+				if info.IsDir() {
+					return nil
+				}
+				ctx.LogI("nncp-rm", nncp.SDS{"file": path}, "")
+				return os.Remove(path)
+			})
 		if err != nil {
 			log.Fatalln("Error during walking:", err)
 		}
@@ -120,34 +122,36 @@ func main() {
 		log.Fatalln("Invalid -node specified:", err)
 	}
 	remove := func(xx nncp.TRxTx) error {
-		return filepath.Walk(filepath.Join(ctx.Spool, node.Id.String(), string(xx)), func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-			if info.IsDir() {
+		return filepath.Walk(
+			filepath.Join(ctx.Spool, node.Id.String(), string(xx)),
+			func(path string, info os.FileInfo, err error) error {
+				if err != nil {
+					return err
+				}
+				if info.IsDir() {
+					return nil
+				}
+				if *doSeen && strings.HasSuffix(info.Name(), nncp.SeenSuffix) {
+					ctx.LogI("nncp-rm", nncp.SDS{"file": path}, "")
+					return os.Remove(path)
+				}
+				if *doPart && strings.HasSuffix(info.Name(), nncp.PartSuffix) {
+					ctx.LogI("nncp-rm", nncp.SDS{"file": path}, "")
+					return os.Remove(path)
+				}
+				if *pktRaw != "" && filepath.Base(info.Name()) == *pktRaw {
+					ctx.LogI("nncp-rm", nncp.SDS{"file": path}, "")
+					return os.Remove(path)
+				}
+				if !*doSeen &&
+					!*doPart &&
+					(*doRx || *doTx) &&
+					((*doRx && xx == nncp.TRx) || (*doTx && xx == nncp.TTx)) {
+					ctx.LogI("nncp-rm", nncp.SDS{"file": path}, "")
+					return os.Remove(path)
+				}
 				return nil
-			}
-			if *doSeen && strings.HasSuffix(info.Name(), nncp.SeenSuffix) {
-				ctx.LogI("nncp-rm", nncp.SDS{"file": path}, "")
-				return os.Remove(path)
-			}
-			if *doPart && strings.HasSuffix(info.Name(), nncp.PartSuffix) {
-				ctx.LogI("nncp-rm", nncp.SDS{"file": path}, "")
-				return os.Remove(path)
-			}
-			if *pktRaw != "" && filepath.Base(info.Name()) == *pktRaw {
-				ctx.LogI("nncp-rm", nncp.SDS{"file": path}, "")
-				return os.Remove(path)
-			}
-			if !*doSeen &&
-				!*doPart &&
-				(*doRx || *doTx) &&
-				((*doRx && xx == nncp.TRx) || (*doTx && xx == nncp.TTx)) {
-				ctx.LogI("nncp-rm", nncp.SDS{"file": path}, "")
-				return os.Remove(path)
-			}
-			return nil
-		})
+			})
 	}
 	if *pktRaw != "" || *doRx || *doSeen || *doPart {
 		if err = remove(nncp.TRx); err != nil {

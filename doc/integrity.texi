@@ -4,7 +4,7 @@
 You @strong{have to} check downloaded archives integrity and verify
 their signature to be sure that you have got trusted, untampered
 software. For integrity and authentication of downloaded binaries
-@url{https://www.gnupg.org/, The GNU Privacy Guard} is used. You must
+@url{https://www.gnupg.org/, GNU Privacy Guard} is used. You must
 download signature (@file{.sig}) provided with the tarball.
 
 For the very first time you need to import signing public key. It is
@@ -19,17 +19,18 @@ uid   NNCP releases <releases at nncpgo dot org>
 @itemize
 
 @item
-@verbatim
+@example
 $ gpg --auto-key-locate dane --locate-keys releases at nncpgo dot org
 $ gpg --auto-key-locate wkd --locate-keys releases at nncpgo dot org
-@end verbatim
+@end example
 
 @item
-@verbatiminclude .well-known/openpgpkey/hu/i4cdqgcarfjdjnba6y4jnf498asg8c6p.asc
+@verbatiminclude PUBKEY.asc
 
 @end itemize
 
 Then you could verify tarballs signature:
-@verbatim
-$ gpg --verify nncp-5.1.0.tar.xz.sig nncp-5.1.0.tar.xz
-@end verbatim
+
+@example
+$ gpg --verify nncp-@value{VERSION}.tar.xz.sig nncp-@value{VERSION}.tar.xz
+@end example

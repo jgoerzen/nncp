@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ func main() {
 		return
 	}
 
-	ctx, err := nncp.CtxFromCmdline(*cfgPath, "", "", false, false)
+	ctx, err := nncp.CtxFromCmdline(*cfgPath, "", "", false, false, false, false)
 	if err != nil {
 		log.Fatalln("Error during initialization:", err)
 	}
@@ -65,13 +65,13 @@ func main() {
 	for _, node := range ctx.Neigh {
 		var noisePub *string
 		if node.NoisePub != nil {
-			np := nncp.ToBase32(node.NoisePub[:])
+			np := nncp.Base32Codec.EncodeToString(node.NoisePub[:])
 			noisePub = &np
 		}
 		cfg.Neigh[node.Name] = nncp.NodeJSON{
 			Id:       node.Id.String(),
-			ExchPub:  nncp.ToBase32(node.ExchPub[:]),
-			SignPub:  nncp.ToBase32(node.SignPub[:]),
+			ExchPub:  nncp.Base32Codec.EncodeToString(node.ExchPub[:]),
+			SignPub:  nncp.Base32Codec.EncodeToString(node.SignPub[:]),
 			NoisePub: noisePub,
 		}
 	}

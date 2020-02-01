@@ -3,7 +3,7 @@
 <!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
 simplifying secure store-and-forward files and mail exchanging.
 
-Copyright (C) 2016-2019 Sergey Matveev
+Copyright (C) 2016-2020 Sergey Matveev
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3;
@@ -19,13 +19,13 @@ A copy of the license is included in the section entitled "Copying conditions". 
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
-<meta name="date" content="November 24, 2019">
+<meta name="date" content="January 23, 2020">
 <link href="index.html#Top" rel="start" title="Top">
 <link href="index.html#Top" rel="up" title="Top">
 <link href="EBlob.html#EBlob" rel="next" title="EBlob">
 <link href="Encrypted.html#Encrypted" rel="prev" title="Encrypted">
 <style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
-<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">
+<link rev="made" href="mailto:webmaster@nncpgo.org">
 </head>
 
 <body lang="en">
@@ -83,17 +83,28 @@ just an unsigned integer telling what body structure follows.
     Actually <em>HALT</em> packet does not have any body, only the header
     with the type. It is also used in the first payload for padding to
     the maximum size.
-</p><pre class="verbatim">+------+
+</p>
+<pre class="verbatim">+------+
 | HALT |
++------+
+</pre>
+</dd>
+<dt><em>PING</em></dt>
+<dd><p>Dummy packet only used for determining workability of the connection.
+</p>
+<pre class="verbatim">+------+
+| PING |
 +------+
 </pre>
 </dd>
 <dt><em>INFO</em></dt>
 <dd><p>Information about the file we have for transmission.
-</p><pre class="verbatim">+------+--------------------+
+</p>
+<pre class="verbatim">+------+--------------------+
 | INFO | NICE | SIZE | HASH |
 +------+--------------------+
-</pre><table>
+</pre>
+<table>
 <thead><tr><th width="20%"></th><th width="30%">XDR type</th><th width="50%">Value</th></tr></thead>
 <tr><td width="20%">Niceness</td><td width="30%">unsigned integer</td><td width="50%">1-255, file niceness level</td></tr>
 <tr><td width="20%">Size</td><td width="30%">unsigned hyper integer</td><td width="50%">File size</td></tr>
@@ -104,10 +115,12 @@ just an unsigned integer telling what body structure follows.
 <dt><em>FREQ</em></dt>
 <dd><p>File transmission request. Ask remote side to queue the file for
     transmission.
-</p><pre class="verbatim">+------+---------------+
+</p>
+<pre class="verbatim">+------+---------------+
 | FREQ | HASH | OFFSET |
 +------+---------------+
-</pre><table>
+</pre>
+<table>
 <thead><tr><th width="20%"></th><th width="30%">XDR type</th><th width="50%">Value</th></tr></thead>
 <tr><td width="20%">Hash</td><td width="30%">32-byte, fixed length opaque data</td><td width="50%">Unique file identifier, its checksum</td></tr>
 <tr><td width="20%">Offset</td><td width="30%">unsigned hyper integer</td><td width="50%">Offset from which remote side must transmit the file</td></tr>
@@ -116,10 +129,12 @@ just an unsigned integer telling what body structure follows.
 </dd>
 <dt><em>FILE</em></dt>
 <dd><p>Chunk of file.
-</p><pre class="verbatim">+------+-------------------------+
+</p>
+<pre class="verbatim">+------+-------------------------+
 | FILE | HASH | OFFSET | PAYLOAD |
 +------+-------------------------+
-</pre><table>
+</pre>
+<table>
 <thead><tr><th width="20%"></th><th width="30%">XDR type</th><th width="50%">Value</th></tr></thead>
 <tr><td width="20%">Hash</td><td width="30%">32-byte, fixed length opaque data</td><td width="50%">Unique file identifier, its checksum</td></tr>
 <tr><td width="20%">Offset</td><td width="30%">unsigned hyper integer</td><td width="50%">Offset from which transmission goes</td></tr>
@@ -129,10 +144,12 @@ just an unsigned integer telling what body structure follows.
 </dd>
 <dt><em>DONE</em></dt>
 <dd><p>Signal remote side that we have successfully downloaded the file.
-</p><pre class="verbatim">+------+------+
+</p>
+<pre class="verbatim">+------+------+
 | DONE | HASH |
 +------+------+
-</pre><table>
+</pre>
+<table>
 <thead><tr><th width="20%"></th><th width="30%">XDR type</th><th width="50%">Value</th></tr></thead>
 <tr><td width="20%">Hash</td><td width="30%">32-byte, fixed length opaque data</td><td width="50%">Unique file identifier, its checksum</td></tr>
 </table>
@@ -170,10 +187,10 @@ just an unsigned integer telling what body structure follows.
           │   INFO..., FREQ..., DONE...     │          
           │&lt;────────────────────────────────│          
           │                                 │          
-          │   FILE..., INFO..., DONE...     │          
+          │FILE..., INFO..., DONE..., PING  │          
           │────────────────────────────────&gt;│          
           │                                 │          
-          │   FILE..., INFO..., DONE...     │          
+          │FILE..., INFO..., DONE..., PING  │          
           │&lt;────────────────────────────────│          
           │                                 │          
 </pre>
@@ -227,13 +244,21 @@ then run background integrity checker on it. If check succeeds, then
 delete <samp>.part</samp> suffix from file&rsquo;s name and send <em>DONE</em> packet.
 
 </li><li> When <em>DONE</em> packet received, delete corresponding file.
+
 </li><li> When <em>HALT</em> packet received, empty file sending queue.
 
 </li><li> Each second, node checks: are there any new <em>tx</em> packets
 appeared and queues corresponding <em>INFO</em> packets.
 
-</li><li> If no packets are sent and received during <a href="Configuration.html#CfgOnlineDeadline">onlinedeadline</a> duration, then close the connection. There is no
-explicit indication that session is over.
+</li><li> Each minute, if no packets were sent, node sends <em>PING</em>
+packet.
+
+</li><li> If no non-PING packets are sent and received during
+<a href="Configuration.html#CfgOnlineDeadline">onlinedeadline</a> duration, then close the
+connection. There is no explicit indication that session is over.
+
+</li><li> If no packets are received during two minutes (two PING timeouts),
+then close the connection.
 
 </li></ol>
 <hr>

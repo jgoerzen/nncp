@@ -17,23 +17,23 @@ sequentially streamed for recording and digested back.
 
 @item They do not require intermediate storage before recording on
 either CD-ROM or tape drive.
-@verbatim
+@example
 $ nncp-bundle -tx SOMENODE | cdrecord -tao -         # record directly to CD
 $ nncp-bundle -tx SOMENODE | dd of=/dev/sa0 bs=10240 # record directly to tape
 
 $ dd if=/dev/cd0 bs=2048 | nncp-bundle -rx  # read directly from CD
 $ dd if=/dev/sa0 bs=10240 | nncp-bundle -rx # read directly from tape
-@end verbatim
+@end example
 
 @item They do not require filesystem existence to deal with, simplifying
 administration when operating in heterogeneous systems with varying
 filesystems. No @command{mount}/@command{umount}, @command{zpool
 import}/@command{zpool export} and struggling with file permissions.
-@verbatim
+@example
 $ nncp-bundle -tx SOMENODE | dd of=/dev/da0 bs=1M # record directly to
                                                   # hard/flash drive
 $ dd if=/dev/da0 bs=1M | nncp-bundle -rx # read directly from drive
-@end verbatim
+@end example
 
 @item This is the fastest way to record outbound packets for offline
 transmission -- sequential write is always faster, when no

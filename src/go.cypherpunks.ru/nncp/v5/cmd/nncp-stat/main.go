@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,12 +32,23 @@ import (
 func usage() {
 	fmt.Fprintf(os.Stderr, nncp.UsageHeader())
 	fmt.Fprintf(os.Stderr, "nncp-stat -- show queued Rx/Tx stats\n\n")
-	fmt.Fprintf(os.Stderr, "Usage: %s [options]\nOptions:\n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "Usage: %s [options] [-pkt] [-node NODE]\nOptions:\n", os.Args[0])
 	flag.PrintDefaults()
+}
+
+func jobPrint(xx nncp.TRxTx, job nncp.Job) {
+	fmt.Printf(
+		"\t%s %s %s (nice: %s)\n",
+		string(xx),
+		nncp.Base32Codec.EncodeToString(job.HshValue[:]),
+		humanize.IBytes(uint64(job.Size)),
+		nncp.NicenessFmt(job.PktEnc.Nice),
+	)
 }
 
 func main() {
 	var (
+		showPkt   = flag.Bool("pkt", false, "Show packets listing")
 		cfgPath   = flag.String("cfg", nncp.DefaultCfgPath, "Path to configuration file")
 		nodeRaw   = flag.String("node", "", "Process only that node")
 		spoolPath = flag.String("spool", "", "Override path to spool")
@@ -56,7 +67,7 @@ func main() {
 		return
 	}
 
-	ctx, err := nncp.CtxFromCmdline(*cfgPath, *spoolPath, "", false, *debug)
+	ctx, err := nncp.CtxFromCmdline(*cfgPath, *spoolPath, "", false, false, false, *debug)
 	if err != nil {
 		log.Fatalln("Error during initialization:", err)
 	}
@@ -84,21 +95,27 @@ func main() {
 		if nodeOnly != nil && *node.Id != *nodeOnly.Id {
 			continue
 		}
+		fmt.Println(node.Name)
 		rxNums := make(map[uint8]int)
 		rxBytes := make(map[uint8]int64)
 		for job := range ctx.Jobs(node.Id, nncp.TRx) {
-			job.Fd.Close()
+			job.Fd.Close() // #nosec G104
+			if *showPkt {
+				jobPrint(nncp.TRx, job)
+			}
 			rxNums[job.PktEnc.Nice] = rxNums[job.PktEnc.Nice] + 1
 			rxBytes[job.PktEnc.Nice] = rxBytes[job.PktEnc.Nice] + job.Size
 		}
 		txNums := make(map[uint8]int)
 		txBytes := make(map[uint8]int64)
 		for job := range ctx.Jobs(node.Id, nncp.TTx) {
-			job.Fd.Close()
+			job.Fd.Close() // #nosec G104
+			if *showPkt {
+				jobPrint(nncp.TRx, job)
+			}
 			txNums[job.PktEnc.Nice] = txNums[job.PktEnc.Nice] + 1
 			txBytes[job.PktEnc.Nice] = txBytes[job.PktEnc.Nice] + job.Size
 		}
-		fmt.Println(node.Name)
 		var nice uint8
 		for nice = 1; nice > 0; nice++ {
 			rxNum, rxExists := rxNums[nice]

@@ -3,7 +3,7 @@
 <!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
 simplifying secure store-and-forward files and mail exchanging.
 
-Copyright (C) 2016-2019 Sergey Matveev
+Copyright (C) 2016-2020 Sergey Matveev
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3;
@@ -19,13 +19,13 @@ A copy of the license is included in the section entitled "Copying conditions". 
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
-<meta name="date" content="November 24, 2019">
+<meta name="date" content="January 23, 2020">
 <link href="index.html#Top" rel="start" title="Top">
 <link href="Commands.html#Commands" rel="up" title="Commands">
 <link href="nncp_002dcall.html#nncp_002dcall" rel="next" title="nncp-call">
 <link href="Commands.html#Commands" rel="prev" title="Commands">
 <style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
-<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">
+<link rev="made" href="mailto:webmaster@nncpgo.org">
 </head>
 
 <body lang="en">
@@ -38,10 +38,12 @@ Next: <a href="nncp_002dcall.html#nncp_002dcall" rel="next">nncp-call</a>, Up: <
 <a name="nncp_002dbundle-1"></a>
 <h3 class="section">nncp-bundle</h3>
 
-<pre class="verbatim">$ nncp-bundle [options] -tx [-delete] NODE [NODE ...] &gt; ...
+<div class="example">
+<pre class="example">$ nncp-bundle [options] -tx [-delete] NODE [NODE ...] &gt; ...
 $ nncp-bundle [options] -rx -delete [-dryrun] [NODE ...] &lt; ...
 $ nncp-bundle [options] -rx [-check] [-dryrun] [NODE ...] &lt; ...
-</pre>
+</pre></div>
+
 <p>With <samp>-tx</samp> option, this command creates <a href="Bundles.html#Bundles">bundle</a> of
 <a href="Encrypted.html#Encrypted">encrypted packets</a> from the spool directory and writes
 it to stdout.
@@ -71,9 +73,11 @@ with <samp>-rx</samp> and <samp>-delete</samp> options &ndash; in that mode, str
 packets integrity will be checked and they will be deleted from the
 spool if everything is good. So it is advisable to recheck your streams:
 </p>
-<pre class="verbatim">$ nncp-bundle -tx ALICE BOB WHATEVER | cdrecord -tao -
+<div class="example">
+<pre class="example">$ nncp-bundle -tx ALICE BOB WHATEVER | cdrecord -tao -
 $ dd if=/dev/cd0 bs=2048 | nncp-bundle -rx -delete
-</pre>
+</pre></div>
+
 <p><samp>-dryrun</samp> option prevents any writes to the spool. This is
 useful when you need to see what packets will pass by and possibly check
 their integrity.

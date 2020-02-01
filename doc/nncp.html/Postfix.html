@@ -3,7 +3,7 @@
 <!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
 simplifying secure store-and-forward files and mail exchanging.
 
-Copyright (C) 2016-2019 Sergey Matveev
+Copyright (C) 2016-2020 Sergey Matveev
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3;
@@ -19,20 +19,20 @@ A copy of the license is included in the section entitled "Copying conditions". 
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
-<meta name="date" content="November 24, 2019">
+<meta name="date" content="January 23, 2020">
 <link href="index.html#Top" rel="start" title="Top">
 <link href="Integration.html#Integration" rel="up" title="Integration">
 <link href="Feeds.html#Feeds" rel="next" title="Feeds">
-<link href="Integration.html#Integration" rel="prev" title="Integration">
+<link href="FreqIndex.html#FreqIndex" rel="prev" title="FreqIndex">
 <style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
-<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">
+<link rev="made" href="mailto:webmaster@nncpgo.org">
 </head>
 
 <body lang="en">
 <a name="Postfix"></a>
 <div class="header">
 <p>
-Next: <a href="Feeds.html#Feeds" rel="next">Feeds</a>, Up: <a href="Integration.html#Integration" rel="up">Integration</a> &nbsp; </p>
+Next: <a href="Feeds.html#Feeds" rel="next">Feeds</a>, Previous: <a href="FreqIndex.html#FreqIndex" rel="prev">FreqIndex</a>, Up: <a href="Integration.html#Integration" rel="up">Integration</a> &nbsp; </p>
 </div>
 <hr>
 <a name="Integration-with-Postfix"></a>
@@ -53,10 +53,12 @@ the Postfix <code>sendmail</code> command.
 
 </li><li> Define a <code>pipe(8)</code> based mail delivery transport for
 delivery via NNCP:
-<pre class="verbatim">/usr/local/etc/postfix/master.cf:
+<div class="example">
+<pre class="example">/usr/local/etc/postfix/master.cf:
 nncp      unix  -       n       n       -       -       pipe
           flags=F user=nncp argv=nncp-exec -quiet $nexthop sendmail $recipient
-</pre>
+</pre></div>
+
 <p>This runs the <code>nncp-exec</code> command to place outgoing mail into
 the NNCP queue after replacing <var>$nexthop</var> by the the receiving NNCP
 node and after replacing <var>$recipient</var> by the recipients. The
@@ -67,10 +69,12 @@ shell meta characters in command-line parameters.
 </li><li> Specify that mail for <em>example.com</em>, should be delivered via
 NNCP, to a host named <em>nncp-host</em>:
 
-<pre class="verbatim">/usr/local/etc/postfix/transport:
+<div class="example">
+<pre class="example">/usr/local/etc/postfix/transport:
     example.com     nncp:nncp-host
     .example.com    nncp:nncp-host
-</pre>
+</pre></div>
+
 <p>See the <code>transport(5)</code> manual page for more details.
 </p>
 </li><li> Execute the command <code>postmap /etc/postfix/transport</code>
@@ -78,15 +82,19 @@ whenever you change the <samp>transport</samp> file.
 
 </li><li> Enable <samp>transport</samp> table lookups:
 
-<pre class="verbatim">/usr/local/etc/postfix/main.cf:
+<div class="example">
+<pre class="example">/usr/local/etc/postfix/main.cf:
     transport_maps = hash:$config_directory/transport
-</pre>
+</pre></div>
+
 </li><li> Add <em>example.com</em> to the list of domains that your site is
 willing to relay mail for.
 
-<pre class="verbatim">/usr/local/etc/postfix/main.cf:
+<div class="example">
+<pre class="example">/usr/local/etc/postfix/main.cf:
     relay_domains = example.com ...other relay domains...
-</pre>
+</pre></div>
+
 <p>See the <samp>relay_domains</samp> configuration parameter description for
 details.
 </p>
@@ -107,22 +115,28 @@ the Postfix <code>sendmail</code> command.
 </li><li> Specify that all remote mail must be sent via the <code>nncp</code>
 mail transport to your NNCP gateway host, say, <em>nncp-gateway</em>:
 
-<pre class="verbatim">/usr/local/etc/postfix/main.cf:
+<div class="example">
+<pre class="example">/usr/local/etc/postfix/main.cf:
     relayhost = nncp-gateway
     default_transport = nncp
-</pre>
+</pre></div>
+
 <p>Postfix 2.0 and later also allows the following more succinct form:
 </p>
-<pre class="verbatim">/usr/local/etc/postfix/main.cf:
+<div class="example">
+<pre class="example">/usr/local/etc/postfix/main.cf:
     default_transport = nncp:nncp-gateway
-</pre>
+</pre></div>
+
 </li><li> Define a <code>pipe(8)</code> based message delivery transport for
 mail delivery via NNCP:
 
-<pre class="verbatim">/usr/local/etc/postfix/master.cf:
+<div class="example">
+<pre class="example">/usr/local/etc/postfix/master.cf:
 nncp      unix  -       n       n       -       -       pipe
           flags=F user=nncp argv=nncp-exec -quiet $nexthop sendmail $recipient
-</pre>
+</pre></div>
+
 <p>This runs the <code>nncp-exec</code> command to place outgoing mail into
 the NNCP queue. It substitutes the hostname (<em>nncp-gateway</em>, or
 whatever you specified) and the recipients before execution of the
@@ -137,7 +151,7 @@ effective.
 <hr>
 <div class="header">
 <p>
-Next: <a href="Feeds.html#Feeds" rel="next">Feeds</a>, Up: <a href="Integration.html#Integration" rel="up">Integration</a> &nbsp; </p>
+Next: <a href="Feeds.html#Feeds" rel="next">Feeds</a>, Previous: <a href="FreqIndex.html#FreqIndex" rel="prev">FreqIndex</a>, Up: <a href="Integration.html#Integration" rel="up">Integration</a> &nbsp; </p>
 </div>
 
 

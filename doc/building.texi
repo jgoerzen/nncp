@@ -10,17 +10,17 @@ Make sure that Go is installed. For example to install it from packages:
     @verb{|apt install golang|}
 @end table
 
-@verbatim
-$ [fetch|wget] http://www.nncpgo.org/download/nncp-5.1.0.tar.xz
-$ [fetch|wget] http://www.nncpgo.org/download/nncp-5.1.0.tar.xz.sig
-$ gpg --verify nncp-5.1.0.tar.xz.sig nncp-5.1.0.tar.xz
-$ xz --decompress --stdout nncp-5.1.0.tar.xz | tar xf -
-$ make -C nncp-5.1.0 all
-@end verbatim
+@example
+$ [fetch|wget] http://www.nncpgo.org/download/nncp-@value{VERSION}.tar.xz
+$ [fetch|wget] http://www.nncpgo.org/download/nncp-@value{VERSION}.tar.xz.sig
+$ gpg --verify nncp-@value{VERSION}.tar.xz.sig nncp-@value{VERSION}.tar.xz
+$ xz --decompress --stdout nncp-@value{VERSION}.tar.xz | tar xf -
+$ make -C nncp-@value{VERSION} all
+@end example
 
 There is @command{install} make-target respecting @env{DESTDIR}. It will
 install binaries and info-documentation:
 
-@verbatim
-# make -C nncp-5.1.0 install PREFIX=/usr/local
-@end verbatim
+@example
+# make -C nncp-@value{VERSION} install PREFIX=/usr/local
+@end example
