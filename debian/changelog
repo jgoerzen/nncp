@@ -1,3 +1,9 @@
+nncp (5.3.3-1) unstable; urgency=medium
+
+  * New upstream release.  Contains a critical security fix from 5.1.2.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 31 Jan 2020 21:03:23 -0600
+
 nncp (5.1.0-1) unstable; urgency=low
 
   * New upstream release.
