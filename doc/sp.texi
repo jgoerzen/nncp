@@ -54,19 +54,31 @@ just an unsigned integer telling what body structure follows.
     Actually @emph{HALT} packet does not have any body, only the header
     with the type. It is also used in the first payload for padding to
     the maximum size.
+
 @verbatim
 +------+
 | HALT |
 +------+
 @end verbatim
 
+@item PING
+    Dummy packet only used for determining workability of the connection.
+
+@verbatim
++------+
+| PING |
++------+
+@end verbatim
+
 @item INFO
     Information about the file we have for transmission.
+
 @verbatim
 +------+--------------------+
 | INFO | NICE | SIZE | HASH |
 +------+--------------------+
 @end verbatim
+
     @multitable @columnfractions 0.2 0.3 0.5
     @headitem @tab XDR type @tab Value
     @item Niceness @tab
@@ -83,11 +95,13 @@ just an unsigned integer telling what body structure follows.
 @item FREQ
     File transmission request. Ask remote side to queue the file for
     transmission.
+
 @verbatim
 +------+---------------+
 | FREQ | HASH | OFFSET |
 +------+---------------+
 @end verbatim
+
     @multitable @columnfractions 0.2 0.3 0.5
     @headitem @tab XDR type @tab Value
     @item Hash @tab
@@ -100,11 +114,13 @@ just an unsigned integer telling what body structure follows.
 
 @item FILE
     Chunk of file.
+
 @verbatim
 +------+-------------------------+
 | FILE | HASH | OFFSET | PAYLOAD |
 +------+-------------------------+
 @end verbatim
+
     @multitable @columnfractions 0.2 0.3 0.5
     @headitem @tab XDR type @tab Value
     @item Hash @tab
@@ -120,11 +136,13 @@ just an unsigned integer telling what body structure follows.
 
 @item DONE
     Signal remote side that we have successfully downloaded the file.
+
 @verbatim
 +------+------+
 | DONE | HASH |
 +------+------+
 @end verbatim
+
     @multitable @columnfractions 0.2 0.3 0.5
     @headitem @tab XDR type @tab Value
     @item Hash @tab
@@ -186,13 +204,20 @@ then run background integrity checker on it. If check succeeds, then
 delete @file{.part} suffix from file's name and send @emph{DONE} packet.
 
 @item When @emph{DONE} packet received, delete corresponding file.
+
 @item When @emph{HALT} packet received, empty file sending queue.
 
 @item Each second, node checks: are there any new @emph{tx} packets
 appeared and queues corresponding @emph{INFO} packets.
 
-@item If no packets are sent and received during @ref{CfgOnlineDeadline,
-onlinedeadline} duration, then close the connection. There is no
-explicit indication that session is over.
+@item Each minute, if no packets were sent, node sends @emph{PING}
+packet.
+
+@item If no non-PING packets are sent and received during
+@ref{CfgOnlineDeadline, onlinedeadline} duration, then close the
+connection. There is no explicit indication that session is over.
+
+@item If no packets are received during two minutes (two PING timeouts),
+then close the connection.
 
 @end enumerate

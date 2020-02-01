@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -86,40 +86,42 @@ func main() {
 		fmt.Printf("Number of rounds: %d\n", eblob.TCost)
 		fmt.Printf("Number of parallel jobs: %d\n", eblob.PCost)
 		fmt.Printf("Blob size: %d\n", len(eblob.Blob))
-		os.Exit(0)
+		return
 	}
+
+	os.Stderr.WriteString("Passphrase:") // #nosec G104
+	password, err := terminal.ReadPassword(0)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	os.Stderr.WriteString("\n") // #nosec G104
+
 	if *decrypt {
-		os.Stderr.WriteString("Passphrase:")
-		password, err := terminal.ReadPassword(0)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		os.Stderr.WriteString("\n")
 		cfgRaw, err := nncp.DeEBlob(data, password)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		os.Stdout.Write(cfgRaw)
-	} else {
-		os.Stderr.WriteString("Passphrase:")
-		password1, err := terminal.ReadPassword(0)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		os.Stderr.WriteString("\n")
-		os.Stderr.WriteString("Repeat passphrase:")
-		password2, err := terminal.ReadPassword(0)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		os.Stderr.WriteString("\n")
-		if bytes.Compare(password1, password2) != 0 {
-			log.Fatalln(errors.New("Passphrases do not match"))
-		}
-		eblob, err := nncp.NewEBlob(*sOpt, *tOpt, *pOpt, password1, data)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		os.Stdout.Write(eblob)
+		os.Stdout.Write(cfgRaw) // #nosec G104
+		return
 	}
+
+	password1, err := terminal.ReadPassword(0)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	os.Stderr.WriteString("\n")                 // #nosec G104
+	os.Stderr.WriteString("Repeat passphrase:") // #nosec G104
+	password2, err := terminal.ReadPassword(0)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	os.Stderr.WriteString("\n") // #nosec G104
+	if bytes.Compare(password1, password2) != 0 {
+		log.Fatalln(errors.New("Passphrases do not match"))
+	}
+	eblob, err := nncp.NewEBlob(*sOpt, *tOpt, *pOpt, password1, data)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	os.Stdout.Write(eblob) // #nosec G104
 }

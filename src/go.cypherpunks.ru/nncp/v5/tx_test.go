@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -84,6 +84,7 @@ func TestTx(t *testing.T) {
 			int64(src.Len()),
 			int64(padSize),
 			src,
+			"pktName",
 		)
 		if err != nil {
 			return false

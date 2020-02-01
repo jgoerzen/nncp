@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -82,16 +82,16 @@ func main() {
 			nncp.DefaultSpoolPath,
 			nncp.DefaultLogPath,
 			nodeOur.Id.String(),
-			nncp.ToBase32(nodeOur.ExchPub[:]),
-			nncp.ToBase32(nodeOur.ExchPrv[:]),
-			nncp.ToBase32(nodeOur.SignPub[:]),
-			nncp.ToBase32(nodeOur.SignPrv[:]),
-			nncp.ToBase32(nodeOur.NoisePub[:]),
-			nncp.ToBase32(nodeOur.NoisePrv[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.ExchPub[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.ExchPrv[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.SignPub[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.SignPrv[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.NoisePrv[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.NoisePub[:]),
 			nodeOur.Id.String(),
-			nncp.ToBase32(nodeOur.ExchPub[:]),
-			nncp.ToBase32(nodeOur.SignPub[:]),
-			nncp.ToBase32(nodeOur.NoisePub[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.ExchPub[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.SignPub[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.NoisePub[:]),
 			nncp.DefaultSendmailPath,
 		)
 	} else {
@@ -102,6 +102,8 @@ func main() {
   log: %s
   # Enforce specified umask usage
   # umask: "022"
+  # Omit progress showing by default
+  # noprogress: true
 
   # Enable notification email sending
   # notify: {
@@ -216,16 +218,16 @@ func main() {
 			nncp.DefaultSpoolPath,
 			nncp.DefaultLogPath,
 			nodeOur.Id.String(),
-			nncp.ToBase32(nodeOur.ExchPub[:]),
-			nncp.ToBase32(nodeOur.ExchPrv[:]),
-			nncp.ToBase32(nodeOur.SignPub[:]),
-			nncp.ToBase32(nodeOur.SignPrv[:]),
-			nncp.ToBase32(nodeOur.NoisePub[:]),
-			nncp.ToBase32(nodeOur.NoisePrv[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.ExchPub[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.ExchPrv[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.SignPub[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.SignPrv[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.NoisePrv[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.NoisePub[:]),
 			nodeOur.Id.String(),
-			nncp.ToBase32(nodeOur.ExchPub[:]),
-			nncp.ToBase32(nodeOur.SignPub[:]),
-			nncp.ToBase32(nodeOur.NoisePub[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.ExchPub[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.SignPub[:]),
+			nncp.Base32Codec.EncodeToString(nodeOur.NoisePub[:]),
 			nncp.DefaultSendmailPath,
 			nncp.DefaultSendmailPath,
 		)

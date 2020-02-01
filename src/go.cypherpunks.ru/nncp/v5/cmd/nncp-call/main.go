@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"go.cypherpunks.ru/nncp/v5"
 )
@@ -49,12 +50,14 @@ func main() {
 		spoolPath   = flag.String("spool", "", "Override path to spool")
 		logPath     = flag.String("log", "", "Override path to logfile")
 		quiet       = flag.Bool("quiet", false, "Print only errors")
+		showPrgrs   = flag.Bool("progress", false, "Force progress showing")
+		omitPrgrs   = flag.Bool("noprogress", false, "Omit progress showing")
 		debug       = flag.Bool("debug", false, "Print debug messages")
 		version     = flag.Bool("version", false, "Print version information")
 		warranty    = flag.Bool("warranty", false, "Print warranty information")
 
-		onlineDeadline = flag.Uint("onlinedeadline", 0, "Override onlinedeadline option")
-		maxOnlineTime  = flag.Uint("maxonlinetime", 0, "Override maxonlinetime option")
+		onlineDeadlineSec = flag.Uint("onlinedeadline", 0, "Override onlinedeadline option")
+		maxOnlineTimeSec  = flag.Uint("maxonlinetime", 0, "Override maxonlinetime option")
 	)
 	flag.Usage = usage
 	flag.Parse()
@@ -78,7 +81,15 @@ func main() {
 		log.Fatalln("-rx and -tx can not be set simultaneously")
 	}
 
-	ctx, err := nncp.CtxFromCmdline(*cfgPath, *spoolPath, *logPath, *quiet, *debug)
+	ctx, err := nncp.CtxFromCmdline(
+		*cfgPath,
+		*spoolPath,
+		*logPath,
+		*quiet,
+		*showPrgrs,
+		*omitPrgrs,
+		*debug,
+	)
 	if err != nil {
 		log.Fatalln("Error during initialization:", err)
 	}
@@ -95,11 +106,13 @@ func main() {
 		log.Fatalln("Node does not have online communication capability")
 	}
 
-	if *onlineDeadline == 0 {
-		onlineDeadline = &node.OnlineDeadline
+	onlineDeadline := node.OnlineDeadline
+	if *onlineDeadlineSec != 0 {
+		onlineDeadline = time.Duration(*onlineDeadlineSec) * time.Second
 	}
-	if *maxOnlineTime == 0 {
-		maxOnlineTime = &node.MaxOnlineTime
+	maxOnlineTime := node.MaxOnlineTime
+	if *maxOnlineTimeSec != 0 {
+		maxOnlineTime = time.Duration(*maxOnlineTimeSec) * time.Second
 	}
 
 	var xxOnly nncp.TRxTx
@@ -129,7 +142,7 @@ func main() {
 		splitted = strings.Split(*onlyPktsRaw, ",")
 		onlyPkts = make(map[[32]byte]bool, len(splitted))
 		for _, pktIdRaw := range splitted {
-			pktId, err := nncp.FromBase32(pktIdRaw)
+			pktId, err := nncp.Base32Codec.DecodeString(pktIdRaw)
 			if err != nil {
 				log.Fatalln("Invalid packet specified: ", err)
 			}
@@ -147,8 +160,8 @@ func main() {
 		xxOnly,
 		*rxRate,
 		*txRate,
-		*onlineDeadline,
-		*maxOnlineTime,
+		onlineDeadline,
+		maxOnlineTime,
 		*listOnly,
 		onlyPkts,
 	) {

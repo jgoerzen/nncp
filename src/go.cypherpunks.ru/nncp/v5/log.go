@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -40,7 +40,14 @@ func sdFmt(who string, sds SDS) string {
 	result := make([]string, 0, 1+len(keys))
 	result = append(result, "["+who)
 	for _, k := range keys {
-		result = append(result, fmt.Sprintf(`%s="%s"`, k, sds[k]))
+		var value string
+		switch v := sds[k].(type) {
+		case int, int8, uint8, int64, uint64:
+			value = fmt.Sprintf("%d", v)
+		default:
+			value = fmt.Sprintf("%s", v)
+		}
+		result = append(result, fmt.Sprintf(`%s="%s"`, k, value))
 	}
 	return strings.Join(result, " ") + "]"
 }
@@ -84,8 +91,8 @@ func (ctx *Ctx) Log(msg string) {
 		fmt.Fprintln(os.Stderr, "Can not open log:", err)
 		return
 	}
-	fd.WriteString(msg)
-	fd.Close()
+	fd.WriteString(msg) // #nosec G104
+	fd.Close()          // #nosec G104
 }
 
 func (ctx *Ctx) LogD(who string, sds SDS, msg string) {
@@ -103,13 +110,8 @@ func (ctx *Ctx) LogI(who string, sds SDS, msg string) {
 	ctx.Log(msg)
 }
 
-func (ctx *Ctx) LogP(who string, sds SDS, msg string) {
-	if !ctx.Quiet {
-		fmt.Fprintln(os.Stderr, ctx.Humanize(msgFmt(LogLevel("P"), who, sds, msg)))
-	}
-}
-
-func (ctx *Ctx) LogE(who string, sds SDS, msg string) {
+func (ctx *Ctx) LogE(who string, sds SDS, err error, msg string) {
+	sds["err"] = err.Error()
 	msg = msgFmt(LogLevel("E"), who, sds, msg)
 	if len(msg) > 2048 {
 		msg = msg[:2048]

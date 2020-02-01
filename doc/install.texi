@@ -1,12 +1,16 @@
 @node Installation
 @unnumbered Installation
 
+@set VERSION 5.3.3
+
 Possibly NNCP package already exists for your distribution:
 
 @itemize
 @item @url{https://www.freshports.org/net/nncp/, FreeBSD ports}
 @item @url{https://github.com/DragonFlyBSD/DPorts/tree/master/net/nncp, DragonFly BSD ports}
 @item @url{https://github.com/void-linux/void-packages/blob/master/srcpkgs/nncp/template, Void Linux}
+@item @url{https://qa.debian.org/developer.php?login=jgoerzen@@complete.org, Debian packages} (pending inclusion, maintainer's page)
+@item @url{https://github.com/NixOS/nixpkgs/pull/75772, NixOS packages} (pending inclusion, maintainer's page)
 @end itemize
 
 NNCP should run on any POSIX-compatible operating system.

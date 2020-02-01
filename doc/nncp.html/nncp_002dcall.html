@@ -3,7 +3,7 @@
 <!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
 simplifying secure store-and-forward files and mail exchanging.
 
-Copyright (C) 2016-2019 Sergey Matveev
+Copyright (C) 2016-2020 Sergey Matveev
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3;
@@ -19,13 +19,13 @@ A copy of the license is included in the section entitled "Copying conditions". 
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
-<meta name="date" content="November 24, 2019">
+<meta name="date" content="January 23, 2020">
 <link href="index.html#Top" rel="start" title="Top">
 <link href="Commands.html#Commands" rel="up" title="Commands">
 <link href="nncp_002dcaller.html#nncp_002dcaller" rel="next" title="nncp-caller">
 <link href="nncp_002dbundle.html#nncp_002dbundle" rel="prev" title="nncp-bundle">
 <style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
-<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">
+<link rev="made" href="mailto:webmaster@nncpgo.org">
 </head>
 
 <body lang="en">
@@ -38,7 +38,8 @@ Next: <a href="nncp_002dcaller.html#nncp_002dcaller" rel="next">nncp-caller</a>,
 <a name="nncp_002dcall-1"></a>
 <h3 class="section">nncp-call</h3>
 
-<pre class="verbatim">$ nncp-call [options]
+<div class="example">
+<pre class="example">$ nncp-call [options]
     [-onlinedeadline INT]
     [-maxonlinetime INT]
     [-rx|-tx]
@@ -47,7 +48,8 @@ Next: <a href="nncp_002dcaller.html#nncp_002dcaller" rel="next">nncp-caller</a>,
     [-rxrate INT]
     [-txrate INT]
     NODE[:ADDR] [FORCEADDR]
-</pre>
+</pre></div>
+
 <p>Call (connect to) specified <samp>NODE</samp> and run <a href="Sync.html#Sync">synchronization</a> protocol with the <a href="nncp_002ddaemon.html#nncp_002ddaemon">daemon</a> on the
 remote side. Normally this command could be run any time you wish to
 either check for incoming packets, or to send out queued ones.

@@ -3,7 +3,7 @@
 <!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
 simplifying secure store-and-forward files and mail exchanging.
 
-Copyright (C) 2016-2019 Sergey Matveev
+Copyright (C) 2016-2020 Sergey Matveev
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3;
@@ -19,13 +19,13 @@ A copy of the license is included in the section entitled "Copying conditions". 
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
-<meta name="date" content="November 24, 2019">
+<meta name="date" content="January 23, 2020">
 <link href="index.html#Top" rel="start" title="Top">
 <link href="Scenarii.html#g_t_0421_0446_0435_043d_0430_0440_0438_0438" rel="up" title="Сценарии">
 <link href="UsecaseBroadcastRU.html#UsecaseBroadcastRU" rel="next" title="UsecaseBroadcastRU">
 <link href="UsecaseQoSRU.html#UsecaseQoSRU" rel="prev" title="UsecaseQoSRU">
 <style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
-<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">
+<link rev="made" href="mailto:webmaster@nncpgo.org">
 </head>
 
 <body lang="en">
@@ -47,8 +47,10 @@ Next: <a href="UsecaseBroadcastRU.html#UsecaseBroadcastRU" rel="next">UsecaseBro
 устройство (SD гораздо предпочтительнее!) хранения, подмонтируйте и
 запустите <a href="nncp_002dxfer.html#nncp_002dxfer">nncp-xfer</a>:
 </p>
-<pre class="verbatim">$ nncp-xfer -node bob /media/usbstick
-</pre>
+<div class="example">
+<pre class="example">$ nncp-xfer -node bob /media/usbstick
+</pre></div>
+
 <p>чтобы скопировать все исходящие пакеты относящиеся к <em>bob</em>.
 Используйте <samp>-mkdir</samp> опцию чтобы создать все необходимые
 директории на накопителе, если их нет (например когда запускаемся первый
@@ -58,13 +60,17 @@ Next: <a href="UsecaseBroadcastRU.html#UsecaseBroadcastRU" rel="next">UsecaseBro
 <em>bob</em> и к <em>alice</em>, то тогда просто не указывайте
 <samp>-node</samp> опцию, чтобы скопировать все доступные исходящие пакеты.
 </p>
-<pre class="verbatim">$ nncp-xfer /media/usbstick
-</pre>
+<div class="example">
+<pre class="example">$ nncp-xfer /media/usbstick
+</pre></div>
+
 <p>Размонтируйте и передайте накопитель Бобу и Алисе. Когда они вставят
 накопитель в свои компьютеры, то выполнят точно такую же команду:
 </p>
-<pre class="verbatim">$ nncp-xfer /media/usbstick
-</pre>
+<div class="example">
+<pre class="example">$ nncp-xfer /media/usbstick
+</pre></div>
+
 <p>чтобы найти все пакеты относящиеся к их узлу и локально скопируют для
 дальнейшей обработки. <code>nncp-xfer</code> это единственная команда
 используемая с переносными устройствами хранения.

@@ -3,6 +3,127 @@
 
 See also this page @ref{Новости, on russian}.
 
+@node Release 5.3.3
+@section Release 5.3.3
+@itemize
+
+@item
+More various error checks.
+
+@item
+Updated dependencies.
+
+@end itemize
+
+@node Release 5.3.2
+@section Release 5.3.2
+@itemize
+
+@item
+Fixed incorrect logic of @option{onlinedeadline} timeout, where
+connection won't take into account incoming packets events and will
+forcefully disconnect.
+
+@end itemize
+
+@node Release 5.3.1
+@section Release 5.3.1
+@itemize
+
+@item
+Fixed @option{onlinedeadline} workability with call addresses that use
+external commands (@verb{#"|somecmd"#}).
+
+@item
+@command{nncp-stat} has @option{-pkt} option displaying information
+about each packet in the spool.
+
+@end itemize
+
+@node Release 5.3.0
+@section Release 5.3.0
+@itemize
+
+@item
+Progress messages contain prefix, describing the running action.
+
+@item
+Fixed not occurring handshake messages padding.
+
+@item
+Finish all SP protocol related goroutines, less memory leak.
+
+@item
+SP protocol generates less socket write calls, thus generating less TCP
+packets.
+
+@item
+Check @option{onlinedeadline} and @option{maxonlinetime} options every
+second, independently from socket reads (up to 10 seconds).
+
+@item
+Once per minute, if no other traffic exists, PING packets are sent in
+SP-connection. That allows faster determining of connection unworkability.
+
+@item
+@command{nncp-toss} uses lock-file to prevent simultaneous tossing.
+
+@end itemize
+
+@node Release 5.2.1
+@section Release 5.2.1
+@itemize
+
+@item
+Fixed SP protocol error handling, sometimes causing program panic.
+
+@end itemize
+
+@node Release 5.2.0
+@section Release 5.2.0
+@itemize
+
+@item
+Most commands by default show oneline operations progress.
+@option{-progress}, @option{-noprogress} command line options,
+@option{noprogress} configuration file option appeared.
+
+@item
+Fixed incorrect @command{nncp-check} command return code, that returned
+bad code when everything is good.
+
+@item
+Free disk space check during @command{nncp-bundle -rx} call.
+
+@end itemize
+
+@node Release 5.1.2
+@section Release 5.1.2
+@itemize
+
+@item
+@strong{Critical} vulnerability: remote peers authentication could lead
+to incorrect identification of remote side, allowing foreign encrypted
+packets downloading.
+
+@item
+Bugfix: private and public Noise keys were swapped in newly created
+configuration files, that lead to inability to authenticate online peers.
+
+@item
+Explicit directories fsync-ing for guaranteed files renaming.
+
+@end itemize
+
+@node Release 5.1.1
+@section Release 5.1.1
+@itemize
+
+@item
+Fixed workability of @command{nncp-file} with @option{-chunked 0} option.
+
+@end itemize
+
 @node Release 5.1.0
 @section Release 5.1.0
 @itemize

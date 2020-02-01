@@ -6,11 +6,11 @@ be buggy. It does not contain compiled documentation and dependent
 libraries source code. Because of that, it is recommended for porters
 to use @ref{Tarballs, tarballs} instead.
 
-@verbatim
+@example
 $ git clone git://git.cypherpunks.ru/nncp.git
 $ cd nncp
 $ git checkout develop
-@end verbatim
+@end example
 
 Also there is mirror of dependent libraries for safety if their native
 repositories will be unavailable (they are seldom updated):

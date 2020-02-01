@@ -3,7 +3,7 @@
 <!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
 simplifying secure store-and-forward files and mail exchanging.
 
-Copyright (C) 2016-2019 Sergey Matveev
+Copyright (C) 2016-2020 Sergey Matveev
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3;
@@ -19,13 +19,13 @@ A copy of the license is included in the section entitled "Copying conditions". 
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
-<meta name="date" content="November 24, 2019">
+<meta name="date" content="January 23, 2020">
 <link href="index.html#Top" rel="start" title="Top">
 <link href="index.html#Top" rel="up" title="Top">
 <link href="Shared-spool.html#Shared-spool" rel="next" title="Shared spool">
 <link href="Sources.html#Sources" rel="prev" title="Sources">
 <style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
-<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">
+<link rev="made" href="mailto:webmaster@nncpgo.org">
 </head>
 
 <body lang="en">
@@ -44,6 +44,7 @@ Next: <a href="Call.html#Call" rel="next">Call</a>, Previous: <a href="Installat
   spool: /var/spool/nncp
   log: /var/spool/nncp/log
   umask: &quot;022&quot;
+  noprogress: true
 
   notify: {
     file: {
@@ -132,6 +133,10 @@ directory. <strong>log</strong> field contains an absolute path to <a href="Log.
 override their umask to specified octal mask. Useful for using with
 <a href="Shared-spool.html#Shared-spool">shared spool directories</a>.
 </p>
+<p>Enabled <strong>noprogress</strong> option disabled progress showing for many
+commands by default. You can always force its showing with
+<samp>-progress</samp> command line option anyway.
+</p>
 <a name="CfgNotify"></a><p><strong>notify</strong> section contains notification settings for successfully
 tossed file, freq and exec packets. Corresponding <strong>from</strong> and
 <strong>to</strong> fields will be substituted in notification email message.
@@ -172,11 +177,13 @@ arguments and the body fed to command&rsquo;s stdin.
 <tt>echo hello world | nncp-exec OURNODE sendmail ARG0 ARG1 ARG2</tt>
 command, will execute:
 </p>
-<pre class="verbatim">NNCP_SELF=OURNODE \
+<div class="example">
+<pre class="example">NNCP_SELF=OURNODE \
 NNCP_SENDER=REMOTE \
 NNCP_NICE=64 \
 /usr/sbin/sendmail -t ARG0 ARG1 ARG2
-</pre>
+</pre></div>
+
 <p>feeding <tt>hello world\n</tt> to that started <code>sendmail</code>
 process.
 </p>

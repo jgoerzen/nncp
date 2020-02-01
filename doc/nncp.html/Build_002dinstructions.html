@@ -3,7 +3,7 @@
 <!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
 simplifying secure store-and-forward files and mail exchanging.
 
-Copyright (C) 2016-2019 Sergey Matveev
+Copyright (C) 2016-2020 Sergey Matveev
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3;
@@ -19,13 +19,13 @@ A copy of the license is included in the section entitled "Copying conditions". 
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
-<meta name="date" content="November 24, 2019">
+<meta name="date" content="January 23, 2020">
 <link href="index.html#Top" rel="start" title="Top">
 <link href="Installation.html#Installation" rel="up" title="Installation">
 <link href="Sources.html#Sources" rel="next" title="Sources">
 <link href="Integrity.html#Integrity" rel="prev" title="Integrity">
 <style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
-<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">
+<link rev="made" href="mailto:webmaster@nncpgo.org">
 </head>
 
 <body lang="en">
@@ -49,17 +49,21 @@ Next: <a href="Sources.html#Sources" rel="next">Sources</a>, Previous: <a href="
 </p></dd>
 </dl>
 
-<pre class="verbatim">$ [fetch|wget] http://www.nncpgo.org/download/nncp-5.1.0.tar.xz
-$ [fetch|wget] http://www.nncpgo.org/download/nncp-5.1.0.tar.xz.sig
-$ gpg --verify nncp-5.1.0.tar.xz.sig nncp-5.1.0.tar.xz
-$ xz --decompress --stdout nncp-5.1.0.tar.xz | tar xf -
-$ make -C nncp-5.1.0 all
-</pre>
+<div class="example">
+<pre class="example">$ [fetch|wget] http://www.nncpgo.org/download/nncp-5.3.3.tar.xz
+$ [fetch|wget] http://www.nncpgo.org/download/nncp-5.3.3.tar.xz.sig
+$ gpg --verify nncp-5.3.3.tar.xz.sig nncp-5.3.3.tar.xz
+$ xz --decompress --stdout nncp-5.3.3.tar.xz | tar xf -
+$ make -C nncp-5.3.3 all
+</pre></div>
+
 <p>There is <code>install</code> make-target respecting <code>DESTDIR</code>. It will
 install binaries and info-documentation:
 </p>
-<pre class="verbatim"># make -C nncp-5.1.0 install PREFIX=/usr/local
-</pre>
+<div class="example">
+<pre class="example"># make -C nncp-5.3.3 install PREFIX=/usr/local
+</pre></div>
+
 
 
 </body>

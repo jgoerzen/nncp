@@ -8,6 +8,11 @@ Possibly NNCP package already exists for your distribution:
      (https://github.com/DragonFlyBSD/DPorts/tree/master/net/nncp)
    • Void Linux
      (https://github.com/void-linux/void-packages/blob/master/srcpkgs/nncp/template)
+   • Debian packages
+     (https://qa.debian.org/developer.php?login=jgoerzen@complete.org)
+     (pending inclusion, maintainer’s page)
+   • NixOS packages (https://github.com/NixOS/nixpkgs/pull/75772)
+     (pending inclusion, maintainer’s page)
 
    NNCP should run on any POSIX-compatible operating system.
 
@@ -31,7 +36,7 @@ Tarballs integrity check
 
 You *have to* check downloaded archives integrity and verify their
 signature to be sure that you have got trusted, untampered software.
-For integrity and authentication of downloaded binaries The GNU Privacy
+For integrity and authentication of downloaded binaries GNU Privacy
 Guard (https://www.gnupg.org/) is used.  You must download signature
 (‘.sig’) provided with the tarball.
 
@@ -42,8 +47,8 @@ pub   rsa2048/0x2B25868E75A1A953 2017-01-10
       92C2 F0AE FE73 208E 46BF  F3DE 2B25 868E 75A1 A953
 uid   NNCP releases <releases at nncpgo dot org>
 
-   • $ gpg --auto-key-locate dane --locate-keys releases at nncpgo dot org
-     $ gpg --auto-key-locate wkd --locate-keys releases at nncpgo dot org
+   •      $ gpg --auto-key-locate dane --locate-keys releases at nncpgo dot org
+          $ gpg --auto-key-locate wkd --locate-keys releases at nncpgo dot org
 
    • -----BEGIN PGP PUBLIC KEY BLOCK-----
      
@@ -68,7 +73,8 @@ uid   NNCP releases <releases at nncpgo dot org>
      -----END PGP PUBLIC KEY BLOCK-----
 
    Then you could verify tarballs signature:
-$ gpg --verify nncp-5.1.0.tar.xz.sig nncp-5.1.0.tar.xz
+
+     $ gpg --verify nncp-5.3.3.tar.xz.sig nncp-5.3.3.tar.xz
 Build instructions
 ==================
 
@@ -80,16 +86,16 @@ FreeBSD
 Debian, Ubuntu
      apt install golang
 
-$ [fetch|wget] http://www.nncpgo.org/download/nncp-5.1.0.tar.xz
-$ [fetch|wget] http://www.nncpgo.org/download/nncp-5.1.0.tar.xz.sig
-$ gpg --verify nncp-5.1.0.tar.xz.sig nncp-5.1.0.tar.xz
-$ xz --decompress --stdout nncp-5.1.0.tar.xz | tar xf -
-$ make -C nncp-5.1.0 all
+     $ [fetch|wget] http://www.nncpgo.org/download/nncp-5.3.3.tar.xz
+     $ [fetch|wget] http://www.nncpgo.org/download/nncp-5.3.3.tar.xz.sig
+     $ gpg --verify nncp-5.3.3.tar.xz.sig nncp-5.3.3.tar.xz
+     $ xz --decompress --stdout nncp-5.3.3.tar.xz | tar xf -
+     $ make -C nncp-5.3.3 all
 
    There is ‘install’ make-target respecting ‘DESTDIR’.  It will install
 binaries and info-documentation:
 
-# make -C nncp-5.1.0 install PREFIX=/usr/local
+     # make -C nncp-5.3.3 install PREFIX=/usr/local
 Development source code
 =======================
 
@@ -98,9 +104,9 @@ be buggy.  It does not contain compiled documentation and dependent
 libraries source code.  Because of that, it is recommended for porters
 to use *note tarballs: Tarballs. instead.
 
-$ git clone git://git.cypherpunks.ru/nncp.git
-$ cd nncp
-$ git checkout develop
+     $ git clone git://git.cypherpunks.ru/nncp.git
+     $ cd nncp
+     $ git checkout develop
 
    Also there is mirror of dependent libraries for safety if their
 native repositories will be unavailable (they are seldom updated):
@@ -118,4 +124,3 @@ Software/library                     Mirror
 ‘golang.org/x/net’                   <git://git.cypherpunks.ru/net.git>
 ‘golang.org/x/sys’                   <git://git.cypherpunks.ru/sys.git>
 ‘gopkg.in/check.v1’                  <git://git.cypherpunks.ru/check.git>
-

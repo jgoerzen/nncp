@@ -82,67 +82,6 @@ func TestUtime(t *testing.T) {
 	}
 }
 
-func TestUtimesNanoAt(t *testing.T) {
-	defer chtmpdir(t)()
-
-	symlink := "symlink1"
-	defer os.Remove(symlink)
-	err := os.Symlink("nonexisting", symlink)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	ts := []unix.Timespec{
-		{Sec: 1111, Nsec: 2222},
-		{Sec: 3333, Nsec: 4444},
-	}
-	err = unix.UtimesNanoAt(unix.AT_FDCWD, symlink, ts, unix.AT_SYMLINK_NOFOLLOW)
-	if err != nil {
-		t.Fatalf("UtimesNanoAt: %v", err)
-	}
-
-	var st unix.Stat_t
-	err = unix.Lstat(symlink, &st)
-	if err != nil {
-		t.Fatalf("Lstat: %v", err)
-	}
-	if runtime.GOARCH == "ppc64" {
-		if int64(st.Atim.Sec) != int64(ts[0].Sec) || st.Atim.Nsec != ts[0].Nsec {
-			t.Errorf("UtimesNanoAt: wrong atime: %v", st.Atim)
-		}
-		if int64(st.Mtim.Sec) != int64(ts[1].Sec) || st.Mtim.Nsec != ts[1].Nsec {
-			t.Errorf("UtimesNanoAt: wrong mtime: %v", st.Mtim)
-		}
-	} else {
-		if int32(st.Atim.Sec) != int32(ts[0].Sec) || int32(st.Atim.Nsec) != int32(ts[0].Nsec) {
-			t.Errorf("UtimesNanoAt: wrong atime: %v", st.Atim)
-		}
-		if int32(st.Mtim.Sec) != int32(ts[1].Sec) || int32(st.Mtim.Nsec) != int32(ts[1].Nsec) {
-			t.Errorf("UtimesNanoAt: wrong mtime: %v", st.Mtim)
-		}
-	}
-}
-
-func TestSelect(t *testing.T) {
-	_, err := unix.Select(0, nil, nil, nil, &unix.Timeval{Sec: 0, Usec: 0})
-	if err != nil {
-		t.Fatalf("Select: %v", err)
-	}
-
-	dur := 150 * time.Millisecond
-	tv := unix.NsecToTimeval(int64(dur))
-	start := time.Now()
-	_, err = unix.Select(0, nil, nil, nil, &tv)
-	took := time.Since(start)
-	if err != nil {
-		t.Fatalf("Select: %v", err)
-	}
-
-	if took < dur {
-		t.Errorf("Select: timeout should have been at least %v, got %v", dur, took)
-	}
-}
-
 func TestPselect(t *testing.T) {
 	if runtime.GOARCH == "ppc64" {
 		t.Skip("pselect issue with structure timespec on AIX 7.2 tl0, skipping test")

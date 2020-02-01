@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -173,7 +173,10 @@ func (ctx *Ctx) Humanize(s string) string {
 	case "nncp-rm":
 		msg += "removing " + sds["file"]
 	case "call-start":
-		msg = fmt.Sprintf("Connected to %s", nodeS)
+		msg = fmt.Sprintf("Connection to %s", nodeS)
+		if err, exists := sds["err"]; exists {
+			msg += ": " + err
+		}
 	case "call-finish":
 		rx, err := strconv.ParseUint(sds["rxbytes"], 10, 64)
 		if err != nil {
@@ -197,6 +200,26 @@ func (ctx *Ctx) Humanize(s string) string {
 			humanize.IBytes(uint64(rx)), humanize.IBytes(uint64(rxs)),
 			humanize.IBytes(uint64(tx)), humanize.IBytes(uint64(txs)),
 		)
+	case "sp-start":
+		if nodeS == "" {
+			msg += "SP"
+			if peer, exists := sds["peer"]; exists {
+				msg += fmt.Sprintf(": %s", peer)
+			}
+		} else {
+			nice, err := NicenessParse(sds["nice"])
+			if err != nil {
+				return s
+			}
+			msg += fmt.Sprintf("SP with %s (nice %s)", nodeS, NicenessFmt(nice))
+		}
+		if len(rem) > 0 {
+			msg += ": " + rem
+		}
+		if err, exists := sds["err"]; exists {
+			msg += ": " + err
+		}
+
 	case "sp-info":
 		nice, err := NicenessParse(sds["nice"])
 		if err != nil {
@@ -204,7 +227,7 @@ func (ctx *Ctx) Humanize(s string) string {
 		}
 		msg = fmt.Sprintf(
 			"Packet %s (%s) (nice %s)",
-			sds["hash"],
+			sds["pkt"],
 			size,
 			NicenessFmt(nice),
 		)
@@ -231,7 +254,7 @@ func (ctx *Ctx) Humanize(s string) string {
 		}
 		msg += fmt.Sprintf("%s packets, %s", sds["pkts"], size)
 	case "sp-process":
-		msg = fmt.Sprintf("%s has %s (%s): %s", nodeS, sds["hash"], size, rem)
+		msg = fmt.Sprintf("%s has %s (%s): %s", nodeS, sds["pkt"], size, rem)
 	case "sp-file":
 		switch sds["xx"] {
 		case "rx":
@@ -251,7 +274,7 @@ func (ctx *Ctx) Humanize(s string) string {
 		}
 		msg += fmt.Sprintf(
 			"%s %d%% (%s / %s)",
-			sds["hash"],
+			sds["pkt"],
 			100*sizeParsed/fullsize,
 			humanize.IBytes(uint64(sizeParsed)),
 			humanize.IBytes(uint64(fullsize)),
@@ -259,9 +282,9 @@ func (ctx *Ctx) Humanize(s string) string {
 	case "sp-done":
 		switch sds["xx"] {
 		case "rx":
-			msg = fmt.Sprintf("Packet %s is retreived (%s)", sds["hash"], size)
+			msg = fmt.Sprintf("Packet %s is retreived (%s)", sds["pkt"], size)
 		case "tx":
-			msg = fmt.Sprintf("Packet %s is sent", sds["hash"])
+			msg = fmt.Sprintf("Packet %s is sent", sds["pkt"])
 		default:
 			return s
 		}

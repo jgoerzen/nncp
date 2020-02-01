@@ -8,6 +8,7 @@ Example @url{https://hjson.org/, Hjson} configuration file:
   spool: /var/spool/nncp
   log: /var/spool/nncp/log
   umask: "022"
+  noprogress: true
 
   notify: {
     file: {
@@ -98,6 +99,10 @@ Non-empty optional @strong{umask} will force all invoked commands to
 override their umask to specified octal mask. Useful for using with
 @ref{Shared spool, shared spool directories}.
 
+Enabled @strong{noprogress} option disabled progress showing for many
+commands by default. You can always force its showing with
+@option{-progress} command line option anyway.
+
 @anchor{CfgNotify}
 @strong{notify} section contains notification settings for successfully
 tossed file, freq and exec packets. Corresponding @strong{from} and
@@ -143,12 +148,12 @@ arguments and the body fed to command's stdin.
 @verb{|echo hello world | nncp-exec OURNODE sendmail ARG0 ARG1 ARG2|}
 command, will execute:
 
-@verbatim
+@example
 NNCP_SELF=OURNODE \
 NNCP_SENDER=REMOTE \
 NNCP_NICE=64 \
 /usr/sbin/sendmail -t ARG0 ARG1 ARG2
-@end verbatim
+@end example
 
 feeding @verb{|hello world\n|} to that started @command{sendmail}
 process.
@@ -230,9 +235,9 @@ users, then you can @command{setgid} it and assure that umask is group
 friendly. For convenience you can set @option{umask} globally for
 invoked NNCP commands in the configuration file. For example:
 
-@verbatim
+@example
 $ chgrp nncp /usr/local/etc/nncp.hjson /var/spool/nncp
 $ chmod g+r /usr/local/etc/nncp.hjson
 $ chmod g+rwxs /var/spool/nncp
 $ echo 'umask: "007"' >> /usr/local/etc/nncp.hjson
-@end verbatim
+@end example

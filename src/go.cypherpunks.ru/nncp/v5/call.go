@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ package nncp
 
 import (
 	"net"
-	"strconv"
+	"time"
 
 	"github.com/gorhill/cronexpr"
 )
@@ -31,8 +31,8 @@ type Call struct {
 	RxRate         int
 	TxRate         int
 	Addr           *string
-	OnlineDeadline uint
-	MaxOnlineTime  uint
+	OnlineDeadline time.Duration
+	MaxOnlineTime  time.Duration
 }
 
 func (ctx *Ctx) CallNode(
@@ -41,7 +41,7 @@ func (ctx *Ctx) CallNode(
 	nice uint8,
 	xxOnly TRxTx,
 	rxRate, txRate int,
-	onlineDeadline, maxOnlineTime uint,
+	onlineDeadline, maxOnlineTime time.Duration,
 	listOnly bool,
 	onlyPkts map[[32]byte]bool,
 ) (isGood bool) {
@@ -77,18 +77,18 @@ func (ctx *Ctx) CallNode(
 			state.Wait()
 			ctx.LogI("call-finish", SDS{
 				"node":     state.Node.Id,
-				"duration": strconv.FormatInt(int64(state.Duration.Seconds()), 10),
-				"rxbytes":  strconv.FormatInt(state.RxBytes, 10),
-				"txbytes":  strconv.FormatInt(state.TxBytes, 10),
-				"rxspeed":  strconv.FormatInt(state.RxSpeed, 10),
-				"txspeed":  strconv.FormatInt(state.TxSpeed, 10),
+				"duration": int64(state.Duration.Seconds()),
+				"rxbytes":  state.RxBytes,
+				"txbytes":  state.TxBytes,
+				"rxspeed":  state.RxSpeed,
+				"txspeed":  state.TxSpeed,
 			}, "")
 			isGood = true
-			conn.Close()
+			conn.Close() // #nosec G104
 			break
 		} else {
-			ctx.LogE("call-start", SdsAdd(sds, SDS{"err": err}), "")
-			conn.Close()
+			ctx.LogE("call-start", sds, err, "")
+			conn.Close() // #nosec G104
 		}
 	}
 	return

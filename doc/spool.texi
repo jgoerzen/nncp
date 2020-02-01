@@ -5,11 +5,12 @@ Spool directory holds @ref{Encrypted, encrypted packets} received from
 remote nodes and queued for sending to them. It has the following
 example structure:
 
-@verbatim
+@example
 spool/tmp/
 spool/2WHB...OABQ/rx.lock
 spool/2WHB...OABQ/rx/5ZIB...UMKW.part
 spool/2WHB...OABQ/tx.lock
+spool/2WHB...OABQ/toss.lock
 spool/BYRR...CG6Q/rx.lock
 spool/BYRR...CG6Q/rx/
 spool/BYRR...CG6Q/tx.lock
@@ -17,7 +18,7 @@ spool/BYRR...CG6Q/tx/AQUT...DGNT.seen
 spool/BYRR...CG6Q/tx/NSYY...ZUU6
 spool/BYRR...CG6Q/tx/VCSR...3VXX.seen
 spool/BYRR...CG6Q/tx/ZI5U...5RRQ
-@end verbatim
+@end example
 
 Except for @file{tmp}, all other directories are Base32-encoded node
 identifiers (@file{2WHB...OABQ}, @file{BYRR...CG6Q} in our example).

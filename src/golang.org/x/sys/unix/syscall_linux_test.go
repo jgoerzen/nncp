@@ -158,43 +158,6 @@ func TestUtime(t *testing.T) {
 	}
 }
 
-func TestUtimesNanoAt(t *testing.T) {
-	defer chtmpdir(t)()
-
-	symlink := "symlink1"
-	os.Remove(symlink)
-	err := os.Symlink("nonexisting", symlink)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	ts := []unix.Timespec{
-		{Sec: 1111, Nsec: 2222},
-		{Sec: 3333, Nsec: 4444},
-	}
-	err = unix.UtimesNanoAt(unix.AT_FDCWD, symlink, ts, unix.AT_SYMLINK_NOFOLLOW)
-	if err != nil {
-		t.Fatalf("UtimesNanoAt: %v", err)
-	}
-
-	var st unix.Stat_t
-	err = unix.Lstat(symlink, &st)
-	if err != nil {
-		t.Fatalf("Lstat: %v", err)
-	}
-
-	// Only check Mtim, Atim might not be supported by the underlying filesystem
-	expected := ts[1]
-	if st.Mtim.Nsec == 0 {
-		// Some filesystems only support 1-second time stamp resolution
-		// and will always set Nsec to 0.
-		expected.Nsec = 0
-	}
-	if st.Mtim != expected {
-		t.Errorf("UtimesNanoAt: wrong mtime: expected %v, got %v", expected, st.Mtim)
-	}
-}
-
 func TestRlimitAs(t *testing.T) {
 	// disable GC during to avoid flaky test
 	defer debug.SetGCPercent(debug.SetGCPercent(-1))
@@ -237,70 +200,38 @@ func TestRlimitAs(t *testing.T) {
 	}
 }
 
-func TestSelect(t *testing.T) {
-	n, err := unix.Select(0, nil, nil, nil, &unix.Timeval{Sec: 0, Usec: 0})
-	if err != nil {
-		t.Fatalf("Select: %v", err)
-	}
-	if n != 0 {
-		t.Fatalf("Select: expected 0 ready file descriptors, got %v", n)
-	}
-
-	dur := 150 * time.Millisecond
-	tv := unix.NsecToTimeval(int64(dur))
-	start := time.Now()
-	n, err = unix.Select(0, nil, nil, nil, &tv)
-	took := time.Since(start)
-	if err != nil {
-		t.Fatalf("Select: %v", err)
-	}
-	if n != 0 {
-		t.Fatalf("Select: expected 0 ready file descriptors, got %v", n)
-	}
-
-	if took < dur {
-		t.Errorf("Select: timeout should have been at least %v, got %v", dur, took)
-	}
-
-	rr, ww, err := os.Pipe()
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer rr.Close()
-	defer ww.Close()
-
-	if _, err := ww.Write([]byte("HELLO GOPHER")); err != nil {
-		t.Fatal(err)
-	}
-
-	rFdSet := &unix.FdSet{}
-	fd := int(rr.Fd())
-	rFdSet.Set(fd)
-
-	n, err = unix.Select(fd+1, rFdSet, nil, nil, nil)
-	if err != nil {
-		t.Fatalf("Select: %v", err)
-	}
-	if n != 1 {
-		t.Fatalf("Select: expected 1 ready file descriptors, got %v", n)
-	}
-}
-
 func TestPselect(t *testing.T) {
-	_, err := unix.Pselect(0, nil, nil, nil, &unix.Timespec{Sec: 0, Nsec: 0}, nil)
-	if err != nil {
-		t.Fatalf("Pselect: %v", err)
+	for {
+		n, err := unix.Pselect(0, nil, nil, nil, &unix.Timespec{Sec: 0, Nsec: 0}, nil)
+		if err == unix.EINTR {
+			t.Logf("Pselect interrupted")
+			continue
+		} else if err != nil {
+			t.Fatalf("Pselect: %v", err)
+		}
+		if n != 0 {
+			t.Fatalf("Pselect: got %v ready file descriptors, expected 0", n)
+		}
+		break
 	}
 
 	dur := 2500 * time.Microsecond
 	ts := unix.NsecToTimespec(int64(dur))
-	start := time.Now()
-	_, err = unix.Pselect(0, nil, nil, nil, &ts, nil)
-	took := time.Since(start)
-	if err == unix.EINTR {
-		t.Skipf("Pselect interrupted after %v timeout", took)
-	} else if err != nil {
-		t.Fatalf("Pselect: %v", err)
+	var took time.Duration
+	for {
+		start := time.Now()
+		n, err := unix.Pselect(0, nil, nil, nil, &ts, nil)
+		took = time.Since(start)
+		if err == unix.EINTR {
+			t.Logf("Pselect interrupted after %v", took)
+			continue
+		} else if err != nil {
+			t.Fatalf("Pselect: %v", err)
+		}
+		if n != 0 {
+			t.Fatalf("Pselect: got %v ready file descriptors, expected 0", n)
+		}
+		break
 	}
 
 	if took < dur {
@@ -557,33 +488,47 @@ func TestSyncFileRange(t *testing.T) {
 }
 
 func TestClockNanosleep(t *testing.T) {
-	delay := 100 * time.Millisecond
+	delay := 50 * time.Millisecond
 
 	// Relative timespec.
 	start := time.Now()
 	rel := unix.NsecToTimespec(delay.Nanoseconds())
-	err := unix.ClockNanosleep(unix.CLOCK_MONOTONIC, 0, &rel, nil)
-	if err == unix.ENOSYS || err == unix.EPERM {
-		t.Skip("clock_nanosleep syscall is not available, skipping test")
-	} else if err != nil {
-		t.Errorf("ClockNanosleep(CLOCK_MONOTONIC, 0, %#v, nil) = %v", &rel, err)
-	} else if slept := time.Since(start); slept < delay {
-		t.Errorf("ClockNanosleep(CLOCK_MONOTONIC, 0, %#v, nil) slept only %v", &rel, slept)
+	remain := unix.Timespec{}
+	for {
+		err := unix.ClockNanosleep(unix.CLOCK_MONOTONIC, 0, &rel, &remain)
+		if err == unix.ENOSYS || err == unix.EPERM {
+			t.Skip("clock_nanosleep syscall is not available, skipping test")
+		} else if err == unix.EINTR {
+			t.Logf("ClockNanosleep interrupted after %v", time.Since(start))
+			rel = remain
+			continue
+		} else if err != nil {
+			t.Errorf("ClockNanosleep(CLOCK_MONOTONIC, 0, %#v, nil) = %v", &rel, err)
+		} else if slept := time.Since(start); slept < delay {
+			t.Errorf("ClockNanosleep(CLOCK_MONOTONIC, 0, %#v, nil) slept only %v", &rel, slept)
+		}
+		break
 	}
 
 	// Absolute timespec.
-	start = time.Now()
-	until := start.Add(delay)
-	abs := unix.NsecToTimespec(until.UnixNano())
-	err = unix.ClockNanosleep(unix.CLOCK_REALTIME, unix.TIMER_ABSTIME, &abs, nil)
-	if err != nil {
-		t.Errorf("ClockNanosleep(CLOCK_REALTIME, TIMER_ABSTIME, %#v (=%v), nil) = %v", &abs, until, err)
-	} else if slept := time.Since(start); slept < delay {
-		t.Errorf("ClockNanosleep(CLOCK_REALTIME, TIMER_ABSTIME, %#v (=%v), nil) slept only %v", &abs, until, slept)
+	for {
+		start = time.Now()
+		until := start.Add(delay)
+		abs := unix.NsecToTimespec(until.UnixNano())
+		err := unix.ClockNanosleep(unix.CLOCK_REALTIME, unix.TIMER_ABSTIME, &abs, nil)
+		if err == unix.EINTR {
+			t.Logf("ClockNanosleep interrupted after %v", time.Since(start))
+			continue
+		} else if err != nil {
+			t.Errorf("ClockNanosleep(CLOCK_REALTIME, TIMER_ABSTIME, %#v (=%v), nil) = %v", &abs, until, err)
+		} else if slept := time.Since(start); slept < delay {
+			t.Errorf("ClockNanosleep(CLOCK_REALTIME, TIMER_ABSTIME, %#v (=%v), nil) slept only %v", &abs, until, slept)
+		}
+		break
 	}
 
 	// Invalid clock. clock_nanosleep(2) says EINVAL, but it’s actually EOPNOTSUPP.
-	err = unix.ClockNanosleep(unix.CLOCK_THREAD_CPUTIME_ID, 0, &rel, nil)
+	err := unix.ClockNanosleep(unix.CLOCK_THREAD_CPUTIME_ID, 0, &rel, nil)
 	if err != unix.EINVAL && err != unix.EOPNOTSUPP {
 		t.Errorf("ClockNanosleep(CLOCK_THREAD_CPUTIME_ID, 0, %#v, nil) = %v, want EINVAL or EOPNOTSUPP", &rel, err)
 	}
@@ -702,5 +647,19 @@ func TestEpoll(t *testing.T) {
 	got := int(events[0].Fd)
 	if got != fd {
 		t.Errorf("EpollWait: wrong Fd in event: got %v, expected %v", got, fd)
+	}
+}
+
+func TestPrctlRetInt(t *testing.T) {
+	err := unix.Prctl(unix.PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)
+	if err != nil {
+		t.Skipf("Prctl: %v, skipping test", err)
+	}
+	v, err := unix.PrctlRetInt(unix.PR_GET_NO_NEW_PRIVS, 0, 0, 0, 0)
+	if err != nil {
+		t.Fatalf("failed to perform prctl: %v", err)
+	}
+	if v != 1 {
+		t.Fatalf("unexpected return from prctl; got %v, expected %v", v, 1)
 	}
 }

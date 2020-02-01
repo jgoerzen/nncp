@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ import (
 	"log"
 	"net"
 	"os"
-	"strconv"
 	"time"
 
 	"go.cypherpunks.ru/nncp/v5"
@@ -60,6 +59,10 @@ func (c InetdConn) SetWriteDeadline(t time.Time) error {
 }
 
 func (c InetdConn) Close() error {
+	if err := c.r.Close(); err != nil {
+		c.w.Close() // #nosec G104
+		return err
+	}
 	return c.w.Close()
 }
 
@@ -73,18 +76,18 @@ func performSP(ctx *nncp.Ctx, conn nncp.ConnDeadlined, nice uint8) {
 		state.Wait()
 		ctx.LogI("call-finish", nncp.SDS{
 			"node":     state.Node.Id,
-			"duration": strconv.FormatInt(int64(state.Duration.Seconds()), 10),
-			"rxbytes":  strconv.FormatInt(state.RxBytes, 10),
-			"txbytes":  strconv.FormatInt(state.TxBytes, 10),
-			"rxspeed":  strconv.FormatInt(state.RxSpeed, 10),
-			"txspeed":  strconv.FormatInt(state.TxSpeed, 10),
+			"duration": int64(state.Duration.Seconds()),
+			"rxbytes":  state.RxBytes,
+			"txbytes":  state.TxBytes,
+			"rxspeed":  state.RxSpeed,
+			"txspeed":  state.TxSpeed,
 		}, "")
 	} else {
 		nodeId := "unknown"
 		if state.Node != nil {
 			nodeId = state.Node.Id.String()
 		}
-		ctx.LogE("call-start", nncp.SDS{"node": nodeId, "err": err}, "")
+		ctx.LogE("call-start", nncp.SDS{"node": nodeId}, err, "")
 	}
 }
 
@@ -98,6 +101,8 @@ func main() {
 		spoolPath = flag.String("spool", "", "Override path to spool")
 		logPath   = flag.String("log", "", "Override path to logfile")
 		quiet     = flag.Bool("quiet", false, "Print only errors")
+		showPrgrs = flag.Bool("progress", false, "Force progress showing")
+		omitPrgrs = flag.Bool("noprogress", false, "Omit progress showing")
 		debug     = flag.Bool("debug", false, "Print debug messages")
 		version   = flag.Bool("version", false, "Print version information")
 		warranty  = flag.Bool("warranty", false, "Print warranty information")
@@ -117,7 +122,15 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	ctx, err := nncp.CtxFromCmdline(*cfgPath, *spoolPath, *logPath, *quiet, *debug)
+	ctx, err := nncp.CtxFromCmdline(
+		*cfgPath,
+		*spoolPath,
+		*logPath,
+		*quiet,
+		*showPrgrs,
+		*omitPrgrs,
+		*debug,
+	)
 	if err != nil {
 		log.Fatalln("Error during initialization:", err)
 	}
@@ -127,9 +140,10 @@ func main() {
 	ctx.Umask()
 
 	if *inetd {
-		os.Stderr.Close()
+		os.Stderr.Close() // #nosec G104
 		conn := &InetdConn{os.Stdin, os.Stdout}
 		performSP(ctx, conn, nice)
+		conn.Close() // #nosec G104
 		return
 	}
 
@@ -146,7 +160,7 @@ func main() {
 		ctx.LogD("daemon", nncp.SDS{"addr": conn.RemoteAddr()}, "accepted")
 		go func(conn net.Conn) {
 			performSP(ctx, conn, nice)
-			conn.Close()
+			conn.Close() // #nosec G104
 		}(conn)
 	}
 }

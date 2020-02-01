@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"time"
 
 	"github.com/gorhill/cronexpr"
 	"github.com/hjson/hjson-go"
@@ -108,19 +109,21 @@ type CfgJSON struct {
 	Log   string `json:"log"`
 	Umask string `json:"umask",omitempty`
 
+	OmitPrgrs bool `json:"noprogress",omitempty`
+
 	Notify *NotifyJSON `json:"notify,omitempty"`
 
 	Self  *NodeOurJSON        `json:"self"`
 	Neigh map[string]NodeJSON `json:"neigh"`
 }
 
-func NewNode(name string, yml NodeJSON) (*Node, error) {
-	nodeId, err := NodeIdFromString(yml.Id)
+func NewNode(name string, cfg NodeJSON) (*Node, error) {
+	nodeId, err := NodeIdFromString(cfg.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	exchPub, err := FromBase32(yml.ExchPub)
+	exchPub, err := Base32Codec.DecodeString(cfg.ExchPub)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +131,7 @@ func NewNode(name string, yml NodeJSON) (*Node, error) {
 		return nil, errors.New("Invalid exchPub size")
 	}
 
-	signPub, err := FromBase32(yml.SignPub)
+	signPub, err := Base32Codec.DecodeString(cfg.SignPub)
 	if err != nil {
 		return nil, err
 	}
@@ -137,8 +140,8 @@ func NewNode(name string, yml NodeJSON) (*Node, error) {
 	}
 
 	var noisePub []byte
-	if yml.NoisePub != nil {
-		noisePub, err = FromBase32(*yml.NoisePub)
+	if cfg.NoisePub != nil {
+		noisePub, err = Base32Codec.DecodeString(*cfg.NoisePub)
 		if err != nil {
 			return nil, err
 		}
@@ -148,8 +151,8 @@ func NewNode(name string, yml NodeJSON) (*Node, error) {
 	}
 
 	var incoming *string
-	if yml.Incoming != nil {
-		inc := path.Clean(*yml.Incoming)
+	if cfg.Incoming != nil {
+		inc := path.Clean(*cfg.Incoming)
 		if !path.IsAbs(inc) {
 			return nil, errors.New("Incoming path must be absolute")
 		}
@@ -160,8 +163,8 @@ func NewNode(name string, yml NodeJSON) (*Node, error) {
 	freqChunked := int64(MaxFileSize)
 	var freqMinSize int64
 	freqMaxSize := int64(MaxFileSize)
-	if yml.Freq != nil {
-		f := yml.Freq
+	if cfg.Freq != nil {
+		f := cfg.Freq
 		if f.Path != nil {
 			fPath := path.Clean(*f.Path)
 			if !path.IsAbs(fPath) {
@@ -184,44 +187,44 @@ func NewNode(name string, yml NodeJSON) (*Node, error) {
 	}
 
 	defRxRate := 0
-	if yml.RxRate != nil && *yml.RxRate > 0 {
-		defRxRate = *yml.RxRate
+	if cfg.RxRate != nil && *cfg.RxRate > 0 {
+		defRxRate = *cfg.RxRate
 	}
 	defTxRate := 0
-	if yml.TxRate != nil && *yml.TxRate > 0 {
-		defTxRate = *yml.TxRate
+	if cfg.TxRate != nil && *cfg.TxRate > 0 {
+		defTxRate = *cfg.TxRate
 	}
 
-	defOnlineDeadline := uint(DefaultDeadline)
-	if yml.OnlineDeadline != nil {
-		if *yml.OnlineDeadline <= 0 {
+	defOnlineDeadline := DefaultDeadline
+	if cfg.OnlineDeadline != nil {
+		if *cfg.OnlineDeadline <= 0 {
 			return nil, errors.New("OnlineDeadline must be at least 1 second")
 		}
-		defOnlineDeadline = *yml.OnlineDeadline
+		defOnlineDeadline = time.Duration(*cfg.OnlineDeadline) * time.Second
 	}
-	var defMaxOnlineTime uint
-	if yml.MaxOnlineTime != nil {
-		defMaxOnlineTime = *yml.MaxOnlineTime
+	var defMaxOnlineTime time.Duration
+	if cfg.MaxOnlineTime != nil {
+		defMaxOnlineTime = time.Duration(*cfg.MaxOnlineTime) * time.Second
 	}
 
 	var calls []*Call
-	for _, callYml := range yml.Calls {
-		expr, err := cronexpr.Parse(callYml.Cron)
+	for _, callCfg := range cfg.Calls {
+		expr, err := cronexpr.Parse(callCfg.Cron)
 		if err != nil {
 			return nil, err
 		}
 
 		nice := uint8(255)
-		if callYml.Nice != nil {
-			nice, err = NicenessParse(*callYml.Nice)
+		if callCfg.Nice != nil {
+			nice, err = NicenessParse(*callCfg.Nice)
 			if err != nil {
 				return nil, err
 			}
 		}
 
 		var xx TRxTx
-		if callYml.Xx != nil {
-			switch *callYml.Xx {
+		if callCfg.Xx != nil {
+			switch *callCfg.Xx {
 			case "rx":
 				xx = TRx
 			case "tx":
@@ -232,34 +235,34 @@ func NewNode(name string, yml NodeJSON) (*Node, error) {
 		}
 
 		rxRate := defRxRate
-		if callYml.RxRate != nil {
-			rxRate = *callYml.RxRate
+		if callCfg.RxRate != nil {
+			rxRate = *callCfg.RxRate
 		}
 		txRate := defTxRate
-		if callYml.TxRate != nil {
-			txRate = *callYml.TxRate
+		if callCfg.TxRate != nil {
+			txRate = *callCfg.TxRate
 		}
 
 		var addr *string
-		if callYml.Addr != nil {
-			if a, exists := yml.Addrs[*callYml.Addr]; exists {
+		if callCfg.Addr != nil {
+			if a, exists := cfg.Addrs[*callCfg.Addr]; exists {
 				addr = &a
 			} else {
-				addr = callYml.Addr
+				addr = callCfg.Addr
 			}
 		}
 
 		onlineDeadline := defOnlineDeadline
-		if callYml.OnlineDeadline != nil {
-			if *callYml.OnlineDeadline == 0 {
+		if callCfg.OnlineDeadline != nil {
+			if *callCfg.OnlineDeadline == 0 {
 				return nil, errors.New("OnlineDeadline must be at least 1 second")
 			}
-			onlineDeadline = *callYml.OnlineDeadline
+			onlineDeadline = time.Duration(*callCfg.OnlineDeadline) * time.Second
 		}
 
-		var maxOnlineTime uint
-		if callYml.MaxOnlineTime != nil {
-			maxOnlineTime = *callYml.MaxOnlineTime
+		var maxOnlineTime time.Duration
+		if callCfg.MaxOnlineTime != nil {
+			maxOnlineTime = time.Duration(*callCfg.MaxOnlineTime) * time.Second
 		}
 
 		calls = append(calls, &Call{
@@ -279,14 +282,14 @@ func NewNode(name string, yml NodeJSON) (*Node, error) {
 		Id:             nodeId,
 		ExchPub:        new([32]byte),
 		SignPub:        ed25519.PublicKey(signPub),
-		Exec:           yml.Exec,
+		Exec:           cfg.Exec,
 		Incoming:       incoming,
 		FreqPath:       freqPath,
 		FreqChunked:    freqChunked,
 		FreqMinSize:    freqMinSize,
 		FreqMaxSize:    freqMaxSize,
 		Calls:          calls,
-		Addrs:          yml.Addrs,
+		Addrs:          cfg.Addrs,
 		RxRate:         defRxRate,
 		TxRate:         defTxRate,
 		OnlineDeadline: defOnlineDeadline,
@@ -300,13 +303,13 @@ func NewNode(name string, yml NodeJSON) (*Node, error) {
 	return &node, nil
 }
 
-func NewNodeOur(yml *NodeOurJSON) (*NodeOur, error) {
-	id, err := NodeIdFromString(yml.Id)
+func NewNodeOur(cfg *NodeOurJSON) (*NodeOur, error) {
+	id, err := NodeIdFromString(cfg.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	exchPub, err := FromBase32(yml.ExchPub)
+	exchPub, err := Base32Codec.DecodeString(cfg.ExchPub)
 	if err != nil {
 		return nil, err
 	}
@@ -314,7 +317,7 @@ func NewNodeOur(yml *NodeOurJSON) (*NodeOur, error) {
 		return nil, errors.New("Invalid exchPub size")
 	}
 
-	exchPrv, err := FromBase32(yml.ExchPrv)
+	exchPrv, err := Base32Codec.DecodeString(cfg.ExchPrv)
 	if err != nil {
 		return nil, err
 	}
@@ -322,7 +325,7 @@ func NewNodeOur(yml *NodeOurJSON) (*NodeOur, error) {
 		return nil, errors.New("Invalid exchPrv size")
 	}
 
-	signPub, err := FromBase32(yml.SignPub)
+	signPub, err := Base32Codec.DecodeString(cfg.SignPub)
 	if err != nil {
 		return nil, err
 	}
@@ -330,7 +333,7 @@ func NewNodeOur(yml *NodeOurJSON) (*NodeOur, error) {
 		return nil, errors.New("Invalid signPub size")
 	}
 
-	signPrv, err := FromBase32(yml.SignPrv)
+	signPrv, err := Base32Codec.DecodeString(cfg.SignPrv)
 	if err != nil {
 		return nil, err
 	}
@@ -338,7 +341,7 @@ func NewNodeOur(yml *NodeOurJSON) (*NodeOur, error) {
 		return nil, errors.New("Invalid signPrv size")
 	}
 
-	noisePub, err := FromBase32(yml.NoisePub)
+	noisePub, err := Base32Codec.DecodeString(cfg.NoisePub)
 	if err != nil {
 		return nil, err
 	}
@@ -346,7 +349,7 @@ func NewNodeOur(yml *NodeOurJSON) (*NodeOur, error) {
 		return nil, errors.New("Invalid noisePub size")
 	}
 
-	noisePrv, err := FromBase32(yml.NoisePrv)
+	noisePrv, err := Base32Codec.DecodeString(cfg.NoisePrv)
 	if err != nil {
 		return nil, err
 	}
@@ -373,12 +376,12 @@ func NewNodeOur(yml *NodeOurJSON) (*NodeOur, error) {
 func CfgParse(data []byte) (*Ctx, error) {
 	var err error
 	if bytes.Compare(data[:8], MagicNNCPBv3[:]) == 0 {
-		os.Stderr.WriteString("Passphrase:")
+		os.Stderr.WriteString("Passphrase:") // #nosec G104
 		password, err := terminal.ReadPassword(0)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		os.Stderr.WriteString("\n")
+		os.Stderr.WriteString("\n") // #nosec G104
 		data, err = DeEBlob(data, password)
 		if err != nil {
 			return nil, err
@@ -423,10 +426,15 @@ func CfgParse(data []byte) (*Ctx, error) {
 		rInt := int(r)
 		umaskForce = &rInt
 	}
+	showPrgrs := true
+	if cfgJSON.OmitPrgrs {
+		showPrgrs = false
+	}
 	ctx := Ctx{
 		Spool:      spoolPath,
 		LogPath:    logPath,
 		UmaskForce: umaskForce,
+		ShowPrgrs:  showPrgrs,
 		Self:       self,
 		Neigh:      make(map[NodeId]*Node, len(cfgJSON.Neigh)),
 		Alias:      make(map[string]*NodeId),

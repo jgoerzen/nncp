@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ func main() {
 				-1,
 			))
 		case nncp.PktTypeTrns:
-			path = nncp.ToBase32(pkt.Path[:pkt.PathLen])
+			path = nncp.Base32Codec.EncodeToString(pkt.Path[:pkt.PathLen])
 		default:
 			path = string(pkt.Path[:pkt.PathLen])
 		}
@@ -132,7 +132,7 @@ func main() {
 	_, err = xdr.Unmarshal(bytes.NewReader(beginning), &pktEnc)
 	if err == nil && pktEnc.Magic == nncp.MagicNNCPEv4 {
 		if *dump {
-			ctx, err := nncp.CtxFromCmdline(*cfgPath, "", "", false, false)
+			ctx, err := nncp.CtxFromCmdline(*cfgPath, "", "", false, false, false, false)
 			if err != nil {
 				log.Fatalln("Error during initialization:", err)
 			}

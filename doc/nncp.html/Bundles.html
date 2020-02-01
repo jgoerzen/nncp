@@ -3,7 +3,7 @@
 <!-- This manual is for NNCP (Node to Node copy) -  collection of utilities
 simplifying secure store-and-forward files and mail exchanging.
 
-Copyright (C) 2016-2019 Sergey Matveev
+Copyright (C) 2016-2020 Sergey Matveev
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3;
@@ -19,13 +19,13 @@ A copy of the license is included in the section entitled "Copying conditions". 
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
-<meta name="date" content="November 24, 2019">
+<meta name="date" content="January 23, 2020">
 <link href="index.html#Top" rel="start" title="Top">
 <link href="index.html#Top" rel="up" title="Top">
 <link href="Spool.html#Spool" rel="next" title="Spool">
 <link href="Chunked.html#Chunked" rel="prev" title="Chunked">
 <style type="text/css"><!-- body {     margin: auto;     width: 80em;     background-color: #AEBECE; } h1, h2, h3, h4 { text-align: center } h1, h2, h3, h4, strong { color: #900090 } pre { background-color: #CCCCCC } table, th, td { border: 1px solid black } --></style>
-<link rev="made" href="mailto:stargrave+webmaster@nncpgo.org">
+<link rev="made" href="mailto:webmaster@nncpgo.org">
 </head>
 
 <body lang="en">
@@ -53,20 +53,24 @@ sequentially streamed for recording and digested back.
 <ul>
 <li> They do not require intermediate storage before recording on
 either CD-ROM or tape drive.
-<pre class="verbatim">$ nncp-bundle -tx SOMENODE | cdrecord -tao -         # record directly to CD
+<div class="example">
+<pre class="example">$ nncp-bundle -tx SOMENODE | cdrecord -tao -         # record directly to CD
 $ nncp-bundle -tx SOMENODE | dd of=/dev/sa0 bs=10240 # record directly to tape
 
 $ dd if=/dev/cd0 bs=2048 | nncp-bundle -rx  # read directly from CD
 $ dd if=/dev/sa0 bs=10240 | nncp-bundle -rx # read directly from tape
-</pre>
+</pre></div>
+
 </li><li> They do not require filesystem existence to deal with, simplifying
 administration when operating in heterogeneous systems with varying
 filesystems. No <code>mount</code>/<code>umount</code>, <code>zpool
 import</code>/<code>zpool export</code> and struggling with file permissions.
-<pre class="verbatim">$ nncp-bundle -tx SOMENODE | dd of=/dev/da0 bs=1M # record directly to
+<div class="example">
+<pre class="example">$ nncp-bundle -tx SOMENODE | dd of=/dev/da0 bs=1M # record directly to
                                                   # hard/flash drive
 $ dd if=/dev/da0 bs=1M | nncp-bundle -rx # read directly from drive
-</pre>
+</pre></div>
+
 </li><li> This is the fastest way to record outbound packets for offline
 transmission &ndash; sequential write is always faster, when no
 metainformation needs to be updated.

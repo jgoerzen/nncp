@@ -1,6 +1,6 @@
 /*
 NNCP -- Node to Node copy, utilities for store-and-forward data exchange
-Copyright (C) 2016-2019 Sergey Matveev <stargrave@stargrave.org>
+Copyright (C) 2016-2020 Sergey Matveev <stargrave@stargrave.org>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -51,6 +51,8 @@ func main() {
 		spoolPath    = flag.String("spool", "", "Override path to spool")
 		logPath      = flag.String("log", "", "Override path to logfile")
 		quiet        = flag.Bool("quiet", false, "Print only errors")
+		showPrgrs    = flag.Bool("progress", false, "Force progress showing")
+		omitPrgrs    = flag.Bool("noprogress", false, "Omit progress showing")
 		debug        = flag.Bool("debug", false, "Print debug messages")
 		version      = flag.Bool("version", false, "Print version information")
 		warranty     = flag.Bool("warranty", false, "Print warranty information")
@@ -74,7 +76,15 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	ctx, err := nncp.CtxFromCmdline(*cfgPath, *spoolPath, *logPath, *quiet, *debug)
+	ctx, err := nncp.CtxFromCmdline(
+		*cfgPath,
+		*spoolPath,
+		*logPath,
+		*quiet,
+		*showPrgrs,
+		*omitPrgrs,
+		*debug,
+	)
 	if err != nil {
 		log.Fatalln("Error during initialization:", err)
 	}
@@ -107,6 +117,9 @@ func main() {
 		chunkSize = node.FreqChunked
 	} else if *argChunkSize > 0 {
 		chunkSize = *argChunkSize * 1024
+	}
+	if chunkSize == 0 {
+		chunkSize = nncp.MaxFileSize
 	}
 
 	if err = ctx.TxFile(
