@@ -1,0 +1,91 @@
+@node CfgGeneral
+@cindex general configuration options
+@section Configuration general options
+
+Those options are in the root of configuration dictionary.
+
+@verbatim
+spool: /var/spool/nncp
+log: /var/spool/nncp/log
+
+# All of options below are optional
+umask: "022"
+noprogress: true
+nohdr: true
+
+# MultiCast Discovery
+mcd-listen: ["em[0-3]", "igb_.*"]
+mcd-send: {"em[0-3]": 60, igb_.*: 5}
+
+# Yggdrasil aliases
+yggdrasil-aliases: {
+  myprv: 60bb...27aa
+  bob-pub: 98de...ac19d
+  alice-endpoint: tcp://example.com:1234?key=689c...13fb
+  default-endpoints: tcp://[::1]:2345,alice-endpoint
+}
+@end verbatim
+
+@table @code
+
+@vindex spool
+@item spool
+Absolute path to the @ref{Spool, spool} directory.
+
+@vindex log
+@vindex FD log file descriptor
+@item log
+Either:
+    @itemize
+    @item absolute path to the @ref{Log, log} file
+    @item @code{FD:XXX}, where @code{XXX} is a decimal file descriptor
+        to write records too
+    @end itemize
+
+@vindex umask
+@item umask
+Will force all invoked commands to override their umask to specified
+octal mask. Useful for using with @ref{Shared spool, shared spool directories}.
+
+@vindex noprogress
+@item noprogress
+When enabled, disables progress showing for many commands by default.
+You can always force its showing with @option{-progress} command line
+option anyway.
+
+@vindex nohdr
+@anchor{CfgNoHdr}
+@item nohdr
+@strong{nohdr} option disables @ref{HdrFile, @file{hdr/}} files usage.
+
+@end table
+
+And optional @ref{MCD, MultiCast Discovery} options:
+
+@table @code
+
+@vindex mcd-listen
+@anchor{CfgMCDListen}
+@item mcd-listen
+Specifies list of network interfaces regular expression
+@command{@ref{nncp-caller}} will listen for incoming @ref{MCD} announcements.
+
+@vindex mcd-send
+@anchor{CfgMCDSend}
+@item mcd-send
+Specifies list of network interfaces regular expressions, and intervals
+in seconds, where @command{@ref{nncp-daemon}} will send @ref{MCD} announcements.
+
+@end table
+
+@cindex yggdrasil aliases
+@anchor{CfgYggdrasilAliases}
+Optional @ref{Yggdrasil}-related aliases are used for convenience and
+keeping private keys away being used directly in command line. Each
+@code{PUB}, @code{PRV}, @code{PEER}, @code{BIND} value in
+@command{@ref{nncp-daemon}}'s @option{-yggdrasil} and in @code{yggdrasil:}
+addresses is replaced with alias value. Moreover each entry in list of
+@code{PUB}s, @code{PEER}s and @code{BIND} can be an alias too. Pay
+attention, that all aliases ending with @code{prv} will be saved with
+600 permissions when converting to @ref{Configuration directory,
+directory layout}.

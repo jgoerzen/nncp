@@ -1,10 +1,14 @@
 @node Sync
+@cindex sync protocol
+@cindex online protocol
+@cindex synchronization
 @unnumbered Synchronization protocol
 
 So-called synchronization protocol (SP) is used in current TCP daemon's
 implementation. It is used for synchronizing @ref{Spool, spool}
 directory contents between two nodes.
 
+@cindex XMODEM
 It is aimed to be very simple and effective. It uses reliable transport
 like TCP connections. It must be effective both on single-duplex and
 full-duplex links: for example satellites have very high throughput but
@@ -12,6 +16,13 @@ high-delay links, so acknowledging of each received packet, like
 @url{https://en.wikipedia.org/wiki/XMODEM, XMODEM} does, causes
 unacceptable performance degradation.
 
+@vindex NNCPDEADLINE
+Internally it uses various timeouts and deadlines. One of them used
+extensively is 10 seconds default deadline timeout. You can override it
+with @env{$NNCPDEADLINE} environment variable, that could be useful with
+very high delay links.
+
+@cindex Noise-IK
 SP works on top of
 @url{http://noiseprotocol.org/noise.html#interactive-patterns,
 @code{Noise_IK_25519_ChaChaPoly_BLAKE2b}} protocol. Each Noise packet
@@ -49,6 +60,7 @@ just an unsigned integer telling what body structure follows.
 
 @table @emph
 
+@cindex HALT payload
 @item HALT
     Stop file transmission, empty sending queue on the remote side.
     Actually @emph{HALT} packet does not have any body, only the header
@@ -61,6 +73,7 @@ just an unsigned integer telling what body structure follows.
 +------+
 @end verbatim
 
+@cindex PING payload
 @item PING
     Dummy packet only used for determining workability of the connection.
 
@@ -70,6 +83,7 @@ just an unsigned integer telling what body structure follows.
 +------+
 @end verbatim
 
+@cindex INFO payload
 @item INFO
     Information about the file we have for transmission.
 
@@ -92,6 +106,7 @@ just an unsigned integer telling what body structure follows.
         Unique file identifier, its checksum
     @end multitable
 
+@cindex FREQ payload
 @item FREQ
     File transmission request. Ask remote side to queue the file for
     transmission.
@@ -112,6 +127,7 @@ just an unsigned integer telling what body structure follows.
         Offset from which remote side must transmit the file
     @end multitable
 
+@cindex FILE payload
 @item FILE
     Chunk of file.
 
@@ -134,6 +150,7 @@ just an unsigned integer telling what body structure follows.
         Chunk of file itself
     @end multitable
 
+@cindex DONE payload
 @item DONE
     Signal remote side that we have successfully downloaded the file.
 
@@ -154,7 +171,7 @@ just an unsigned integer telling what body structure follows.
 
 Typical peer's behaviour is following:
 
-@verbatiminclude sp.utxt
+@verbatiminclude sp.plantuml.txt
 
 @enumerate
 @item Perform @emph{Noise-IK} handshake:
@@ -182,7 +199,7 @@ payloads, then send all of remaining in the transport stage.
     Ignore it if it is too nice.
     @item If already downloaded file exists, then queue @emph{DONE}
     sending.
-    @item If @file{.seen} exists, then queue @emph{DONE} sending.
+    @item If @file{seen/XXX} exists, then queue @emph{DONE} sending.
     @item If @file{.part} exists, then queue @emph{FREQ} sending with
     corresponding offset.
     @end itemize

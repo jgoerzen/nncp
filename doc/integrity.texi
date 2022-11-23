@@ -1,4 +1,10 @@
 @node Integrity
+@cindex integrity check
+@cindex authenticity check
+@cindex OpenPGP
+@cindex gpg
+@cindex GnuPG
+@cindex WKD
 @section Tarballs integrity check
 
 You @strong{have to} check downloaded archives integrity and verify
@@ -21,11 +27,11 @@ uid   NNCP releases <releases at nncpgo dot org>
 @item
 @example
 $ gpg --auto-key-locate dane --locate-keys releases at nncpgo dot org
-$ gpg --auto-key-locate wkd --locate-keys releases at nncpgo dot org
+$ gpg --auto-key-locate  wkd --locate-keys releases at nncpgo dot org
 @end example
 
 @item
-@verbatiminclude PUBKEY.asc
+@verbatiminclude .well-known/openpgpkey/nncpgo.org/hu/i4cdqgcarfjdjnba6y4jnf498asg8c6p.asc
 
 @end itemize
 

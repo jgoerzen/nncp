@@ -1,34 +1,37 @@
 @node Log
+@cindex log format
+@cindex logging
+@cindex recfile
+@pindex recutils
 @unnumbered Log format
 
-Log is a plaintext file with single log entry per line. Lines are "\n"
-separated. It is not intended to be read by human -- use @ref{nncp-log}
-utility.
+Log is a plaintext file consisting of
+@url{https://www.gnu.org/software/recutils/, recfile} records. It can be
+read by human, but it is better to use either @command{@ref{nncp-log}},
+or @command{recutils} utilities for selecting and formatting the required
+fields.
 
-Each line has the following format:
-
-@verbatim
-LEVEL | DATETIME | SD | MSG
-@end verbatim
-
-Example log records:
+Two example records from it:
 
 @verbatim
-I 2017-01-09T08:41:54.751732131Z [nncp-xfer node="VHMTRWDOXPLK7BR55ICZ5N32ZJUMRKZEMFNGGCEAXV66GG43PEBQ" pkt="KMG6FO5UNEK7HWVFJPWQYC7MOZ76KEZ4FWCGM62PWA2QE5755NPA" size="4162548" xx="tx"]
-I 2017-01-09T08:42:18.990005394Z [sp-infos node="BYRRQUULEHINPKEFN7CHMSHR5I5CK7PMX5HQNCYERTBAR4BOCG6Q" pkts="0" size="0" xx="tx"]
-I 2017-01-09T08:48:59.264847401Z [call-finish duration="10" node="BYRRQUULEHINPKEFN7CHMSHR5I5CK7PMX5HQNCYERTBAR4BOCG6Q" rxbytes="60" rxspeed="60" txbytes="108" txspeed="108"]
-@end verbatim
+When: 2021-08-07T20:30:49.042460622Z
+Who: sp-file-done
+Node: BYRRQUULEHINPKEFN7CHMSHR5I5CK7PMX5HQNCYERTBAR4BOCG6Q
+Nice: 255
+Type: file
+XX: rx
+Pkt: VQFR6KXC5N4UGL3HKKJKPXE4TN3G4UQGFXQTEYFZ7ZZIKWUVKOGA
+Size: 5229
+FullSize: 5229
+Msg: Got packet VQFR6KXC5N4UGL3HKKJKPXE4TN3G4UQGFXQTEYFZ7ZZIKWUVKOGA 100% (5.1 KiB / 5.1 KiB): done
 
-@table @emph
-@item |
-    Space character.
-@item LEVEL
-    Is single character log level. As a rule is is either @verb{|I|}
-    (informational message), or @verb{|E|} (error message).
-@item DATETIME
-    UTC datetime in RFC 3339 @verb{|2006-01-02T15:04:05.999999999Z|} format.
-@item SD
-    Structured data as in RFC 5424.
-@item MSG
-    Arbitrary UTF-8 encoded text data.
-@end table
+When: 2021-08-07T20:30:49.131766306Z
+Who: rx
+Node: BYRRQUULEHINPKEFN7CHMSHR5I5CK7PMX5HQNCYERTBAR4BOCG6Q
+Pkt: VQFR6KXC5N4UGL3HKKJKPXE4TN3G4UQGFXQTEYFZ7ZZIKWUVKOGA
+Nice: 96
+Size: 4741
+Type: exec
+Dst: sendmail stargrave@stargrave.org
+Msg: Got exec from gw to sendmail stargrave@stargrave.org (4.6 KiB)
+@end verbatim

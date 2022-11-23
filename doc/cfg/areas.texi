@@ -1,0 +1,69 @@
+@node CfgAreas
+@vindex areas
+@section Configuration areas options
+
+@ref{Multicast} areas configuration only used with multicast packets.
+
+@verbatim
+areas: {
+  nodelist: {
+    id: OU67K7NA3RPOPFKJWNVBYJ5GPLRBDGHH6DZSSJ32JL7Q3Q76E52A
+
+    pub: ALCX2NJBANMBNFTQ27C3C6W2WJIXSE74R27TSYZQKMD2UJERCEOQ
+    prv: VQ3B4TLAZZB2G7RS3OSS5NUVKAS44OGY5YMQPMTAHQMZZLNG25MA
+
+    subs: ["alice", "bob", "eve"]
+    incoming: /home/incoming/areas/nodelist
+  }
+  echoarea: {
+    id: CKKJ3HOAVOP7VPNCEGZRNDO34MUOOJ4AXHDFCSVSOE647KN5CMIA
+
+    pub: 5MFPTJI2R322EUCTGCWZXTDBCVEL5NCFDBXI5PHPQOTLUVSQ3ZIQ
+    prv: LVGIZQRQTDE524KEE5FOWLE2GCQBILY4VSQBDHWJC6YUTOJ54QCQ
+
+    subs: ["alice", "bob"]
+    exec: {sendmail: ["/usr/sbin/sendmail"]}
+    allow-unknown: true
+  }
+  whatever.pvt: {
+    id: OU67K7NA3RPOPFKJWNVBYJ5GPLRBDGHH6DZSSJ32JL7Q3Q76E52A
+    subs: ["dave", "eve"]
+  }
+}
+@end verbatim
+
+Each key is human readable multicast group/area/echo name.
+
+The only required field is the @code{id}. You can not process multicast
+packets that has unknown area identification.
+
+@vindex subs
+@code{subs} contains a list of recipients you must relay incoming
+multicast packet on.
+
+Knowledge of @code{pub} and @code{prv} keys gives ability to decrypt
+multicast packet and process its contents (file or exec transmission).
+For accepting file transmissions you must set @code{incoming}, similar
+to @ref{CfgIncoming, neigh's node option}. For accepting exec
+transmissions you must set @code{exec}, similar to @ref{CfgExec, neigh's
+node option}.
+
+You can accept multicast packets from unknown senders, by setting
+@code{allow-unknown} option.
+
+In the example above:
+
+@table @code
+@item nodelist
+That area is for multicast sending of @file{nodelist} files, with
+relaying it to @code{alice}, @code{bob} and @code{eve} further.
+@item echoarea
+That area is for multicast discussion through @code{sendmail} handled
+exec packets. Relaying to @code{alice} and @code{bob} and accepting
+messages from unknown participants.
+@item whatever.pvt
+We just relay that area packets to @code{dave} and @code{eve}, but
+without ability to see what is inside them. Pay attention that
+@code{allow-unknown} does not play any role here, because we are not
+even trying to decrypt (and authenticate) those multicast packets.
+@end table

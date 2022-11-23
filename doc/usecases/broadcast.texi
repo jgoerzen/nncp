@@ -1,0 +1,18 @@
+@node UsecaseBroadcast
+@section One-way broadcasting communications
+
+Sometimes you have got high-bandwidth but unidirectional link, for
+example, satellite's broadcasting signal. You are not able to use online
+@ref{Sync, synchronization protocol} because it requires mutual interaction.
+
+You can use @ref{Bundles, bundles} and stream them above. They are just
+a sequence of @ref{Encrypted, encrypted packets} you can catch on.
+
+@example
+$ nncp-bundle -tx alice bob eve @dots{} | command to send broadcast
+$ command to receive broadcast | nncp-bundle -rx
+@end example
+
+With built-in packet duplicates detection ability, you can retransmit
+your broadcasts from time to time, to increase chances the recipient
+will catch them by regular stream listening.

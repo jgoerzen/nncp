@@ -1,0 +1,59 @@
+@node nncp-reass
+@pindex nncp-reass
+@section nncp-reass
+
+@example
+$ nncp-reass [options] [-dryrun] [-keep] [-dump] [-stdout] FILE.nncp.meta
+$ nncp-reass [options] [-dryrun] [-keep] @{-all | -node NODE@}
+@end example
+
+Reassemble @ref{Chunked, chunked file} after @ref{nncp-toss, tossing}.
+
+When called with @option{FILE} option, this command will reassemble only
+it. When called with @option{-node} option, this command will try to
+reassemble all @file{.nncp.meta} files found in @option{NODE}'s
+@ref{CfgIncoming, incoming} directory. When called with @option{-all}
+option, then cycle through all known nodes to do the same.
+
+Reassembling process does the following:
+
+@enumerate
+@item Parses @ref{Chunked, @file{.nncp.meta}} file.
+@item Checks existence and size of every @file{.nncp.chunkXXX}.
+@item Verifies integrity of every chunk.
+@item Concatenates all chunks, simultaneously removing them from filesystem.
+@end enumerate
+
+That process reads the whole data twice. Be sure to have free disk
+space for at least one chunk. Decrypted chunk files as a rule are saved
+in pseudo-random order, so removing them during reassembly process will
+likely lead to filesystem fragmentation. Reassembly process on
+filesystems with deduplication capability should be rather lightweight.
+
+If @option{-dryrun} option is specified, then only existence and
+integrity checking are performed.
+
+If @option{-keep} option is specified, then no
+@file{.nncp.meta}/@file{.nncp.chunkXXX} files are deleted during
+reassembly process.
+
+@option{-stdout} option outputs reassembled file to @code{stdout},
+instead of saving to temporary file with renaming after. This could be
+useful for reassembling on separate filesystem to lower fragmentation
+effect, and/or separate storage device for higher performance.
+
+@option{-dump} option prints meta-file contents in human-friendly form.
+It is useful mainly for debugging purposes. For example:
+@example
+Original filename: testfile
+File size: 3.8 MiB (3987795 bytes)
+Chunk size: 1.0 MiB (1048576 bytes)
+Number of chunks: 4
+Checksums:
+    0: eac60d819edf40b8ecdacd0b9a5a8c62de2d15eef3c8ca719eafa0be9b894017
+    1: 013a07e659f2e353d0e4339c3375c96c7fffaa2fa00875635f440bbc4631052a
+    2: f4f883975a663f2252328707a30e71b2678f933b2f3103db8475b03293e4316e
+    3: 0e9e229501bf0ca42d4aa07393d19406d40b179f3922a3986ef12b41019b45a3
+@end example
+
+Do not forget about @ref{ChunkedZFS, possible} ZFS deduplication issues.

@@ -1,0 +1,37 @@
+@node MCD
+@cindex MCD
+@cindex multicast discovery
+@unnumbered MultiCast Discovery
+
+MCD is an addition to online @ref{Sync, synchronization protocol}, that
+gives ability to make node discovery by sending multicast announcements
+in local area network. It is very simple:
+
+@itemize
+@item
+    @command{@ref{nncp-daemon}} sends multicast messages about its
+    presence from time to time. See @ref{CfgMCDSend, mcd-send}
+    configuration option.
+@item
+    When @command{@ref{nncp-caller}} sees them, it adds them as the most
+    preferred addresses to already known ones. If MCD address
+    announcement was not refreshed after two minutes -- it is removed.
+    See @ref{CfgMCDListen, mcd-listen} and
+    @ref{CfgMCDIgnore, mcd-ignore} configuration options.
+@end itemize
+
+MCD announcement is an XDR-encoded packet with only two fields:
+
+@verbatim
++----------------+
+| MAGIC | SENDER |
++----------------+
+@end verbatim
+
+Magic number is @verb{|N N C P D 0x00 0x00 0x01|} and sender is 32-byte
+identifier of the node. It is sent as UDP packet on IPv6
+@strong{@verb{|ff02::4e4e:4350|}} (hexadecimal ASCII @verb{|NNCP|})
+multicast address and @strong{5400} port. Operating system will use IPv6
+link-local address as a source one, with the port taken from
+@command{@ref{nncp-daemon}}'s @option{-bind} option. That way, IP packet
+itself will carry the link-scope reachable address of the daemon.

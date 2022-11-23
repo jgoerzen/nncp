@@ -1,0 +1,16 @@
+@node nncp-freq
+@pindex nncp-freq
+@section nncp-freq
+
+@example
+$ nncp-freq [options] NODE:SRC [DST]
+@end example
+
+Send file request to @option{NODE}, asking it to send its @file{SRC}
+file from @ref{CfgFreq, freq.path} directory to our node under @file{DST}
+filename in our @ref{CfgIncoming, incoming} one. If @file{DST} is not
+specified, then last element of @file{SRC} will be used.
+
+If @ref{CfgNotify, notification} is enabled on the remote side for
+file request, then it will sent simple letter after successful file
+queuing.

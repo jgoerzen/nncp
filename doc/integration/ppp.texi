@@ -1,0 +1,81 @@
+@node PPP
+@cindex PPP
+@cindex serial link
+@cindex serial connection
+@section Serial connection
+
+It is not trivial to run online @command{@ref{nncp-daemon}},
+@command{@ref{nncp-call}} and @command{@ref{nncp-caller}} commands over
+the serial link, because it is link without built-in error detection.
+For efficient usage you have to use some kind of window-sliding error
+correction protocol, like Kermit, ZMODEM, UUCP's g-protocol and similar
+well known ones.
+
+However TCP is already satisfying and existing protocol for the same
+purposes. So it would be more easier to bring up the IP interconnection
+and use TCP over it. Most distributions already have
+@url{https://en.wikipedia.org/wiki/Point-to-point_protocol, PPP}
+protocol out-of-box.
+
+Ordinary man page for @command{ppp} in FreeBSD is enough for being able
+to setup it:
+
+@itemize
+
+@item Enable PPP-aware default terminal to run @command{ppplogin} script:
+
+@example
+/etc/gettytab:
+    default:pp=/usr/local/bin/ppplogin:@dots{}
+@end example
+
+@example
+/usr/local/bin/ppplogin:
+    #!/bin/sh
+    exec /usr/sbin/ppp -direct incoming
+@end example
+
+@item Enable listening on necessary UART:
+
+@example
+/etc/ttys:
+    ttyU0 "/usr/libexec/getty 3wire.115200" vt100 on
+@end example
+
+@item
+Create @code{incoming} PPP profile, allowing authenticated @code{ppp}
+user to log in:
+
+@example
+/etc/ppp/ppp.conf:
+    incoming:
+        allow ppp
+        disable deflate pred1 mppe protocomp vjcomp ipcp dns
+        enable lqr # null-modem cables might not have carrier detection
+/etc/ppp/ppp.secret:
+    ppp	PASSWORD
+@end example
+
+@item
+Configure PPP client to access that server:
+
+@example
+/etc/ppp/ppp.conf:
+    outgoing:
+        set device /dev/cuaU0
+        set speed 115200
+        set dial
+        set login
+        set authname ppp
+        set authkey PASSWORD
+        disable deflate pred1 mppe protocomp vjcomp ipcp dns
+        enable lqr
+@end example
+
+@end itemize
+
+That configuration does not negotiate any kind of IPv4 addresses,
+routing or DNS servers. Also all compression is turned off, because
+NNCP's traffic is encrypted and uncompressible. Only IPV6CP will
+negotiate IPv6 link-local addresses, on which you can run @ref{MCD,
+multicast discovered} daemons for simplicity.

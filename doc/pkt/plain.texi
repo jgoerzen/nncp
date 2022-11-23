@@ -1,0 +1,159 @@
+@node Plain
+@cindex plain packet
+@section Plain packet
+
+Plain packet contains either the whole file, or file request (freq), or
+transition packet or exec message. It is called "plain", because it
+contains plaintext, but plain packets would never be stored on your hard
+drive.
+
+@verbatim
+            HEADER
++--------------------------------------+--...---+
+| MAGIC | TYPE | NICE | PATHLEN | PATH | PAYLOAD|
++--------------------------------------+--...---+
+@end verbatim
+
+@multitable @columnfractions 0.2 0.3 0.5
+@headitem @tab XDR type @tab Value
+@item Magic number @tab
+    8-byte, fixed length opaque data @tab
+    @verb{|N N C P P 0x00 0x00 0x03|}
+@item Payload type @tab
+    unsigned integer @tab
+    @enumerate 0
+    @item file (file transmission)
+    @item freq (file request)
+    @item exec (compressed exec)
+    @item trns (transition)
+    @item exec-fat (uncompressed exec)
+    @item area (@ref{Multicast, multicast} area message)
+    @item ack (receipt acknowledgement)
+    @end enumerate
+@item Niceness @tab
+    unsigned integer @tab
+    1-255, preferred packet @ref{Niceness, niceness} level
+@item Path length @tab
+    unsigned integer @tab
+    actual length of @emph{path} field's payload
+@item Path @tab
+    255 byte, fixed length opaque data @tab
+    Depending on packet's type, path holds:
+    @itemize
+    @item UTF-8 encoded destination path for file transfer
+    @item UTF-8 encoded source path for file request
+    @item UTF-8 encoded, zero byte separated, exec's arguments
+    @item Node's id the transition packet must be relayed on
+    @item Multicast area's id
+    @item Packet's id (its @ref{MTH} hash)
+    @end itemize
+@end multitable
+
+Path has fixed size because of hiding its actual length -- it is
+valuable metadata. Payload is appended to the header -- it is not stored
+as XDR field, because XDR has no ability to pass more than 4 GiB of
+opaque data. Moreover most XDR libraries store fields in the memory in
+practice.
+
+Depending on the packet's type, payload could store:
+
+@itemize
+@item File contents
+@item Destination path for freq
+@item Optionally @url{https://facebook.github.io/zstd/, Zstandard}
+    compressed exec body
+@item Whole encrypted packet we need to relay on
+@item Multicast area message wrap with another encrypted packet inside
+@item Nothing, if it is acknowledgement packet
+@end itemize
+
+Also depending on packet's type, niceness level means:
+
+@itemize
+@item Preferable niceness level for files sent by freq
+@item @env{$NNCP_NICE} variable's value passed during @ref{CfgExec} invocation.
+@end itemize
+
+So plain packets can hold following paths and payloads:
+
+@table @code
+
+@item file
+@example
+  +--------------- PATH ---------------+   +---- PAYLOAD ---+
+ /                                      \ /                  \
++----------------------------------------+---------------...--+
+| FILENAME  | 0x00 ... variable ... 0x00 |    FILE CONTENTS   |
++----------------------------------------+---------------...--+
+ \         /
+   PATHLEN
+@end example
+
+@item freq
+@example
+  +--------------- PATH ---------------+   +---- PAYLOAD ---+
+ /                                      \ /                  \
++----------------------------------------+---------------...--+
+| FILENAME  | 0x00 ... variable ... 0x00 |       FILENAME     |
++----------------------------------------+---------------...--+
+ \         /
+   PATHLEN
+@end example
+
+@item exec
+@example
+  +------------------------- PATH ----------------------------+   +---- PAYLOAD ---+
+ /                                                             \ /                  \
++---------------------------------------------------------------+---------------...--+
+|  HANDLE 0x00 | ARG0 0x00 ARG1 ...| 0x00 ... variable ... 0x00 |     ZSTD DATA      |
++---------------------------------------------------------------+---------------...--+
+ \                                /
+  +-------- PATHLEN -------------+
+@end example
+
+@item exec-fat
+@example
+  +------------------------- PATH ----------------------------+   +---- PAYLOAD ---+
+ /                                                             \ /                  \
++---------------------------------------------------------------+---------------...--+
+|  HANDLE 0x00 | ARG0 0x00 ARG1 ...| 0x00 ... variable ... 0x00 |        DATA        |
++---------------------------------------------------------------+---------------...--+
+ \                                /
+  +-------- PATHLEN -------------+
+@end example
+
+@item trns
+@example
+  +------- PATH ---------+   +---- PAYLOAD ---+
+ /                        \ /                  \
++--------------------------+---------------...--+
+|  NODE ID | 0x00 ... 0x00 |  ENCRYPTED PACKET  |
++--------------------------+---------------...--+
+ \        /
+   PATHLEN
+@end example
+
+@item area
+@example
+  +------- PATH ---------+   +---- PAYLOAD ---+
+ /                        \ /                  \
++--------------------------+---------------...--+
+|  AREA ID | 0x00 ... 0x00 |  ENCRYPTED PACKET  |
++--------------------------+---------------...--+
+ \        /
+   PATHLEN
+@end example
+See also @ref{Encrypted area, encrypted area packet}.
+
+@item ack
+@example
+  +------- PATH --------+
+ /                       \
++-------------------------+
+|  PKT ID | 0x00 ... 0x00 |
++-------------------------+
+ \       /
+  PATHLEN
+@end example
+
+@end table

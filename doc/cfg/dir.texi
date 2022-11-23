@@ -1,0 +1,109 @@
+@node Configuration directory
+@cindex configuration directory
+@section Configuration directory
+
+Optionally you can convert configuration file to the directory layout
+with @command{@ref{nncp-cfgdir}} command. And vice versa too, of course
+loosing the comment lines. Directory layout can looks like that:
+
+@example
+nncp-cfg-dir
+├── areas
+│   ├── home
+│   │   ├── id
+│   │   ├── incoming
+│   │   ├── prv
+│   │   ├── pub
+│   │   └── subs
+│   └── homero
+│       ├── id
+│       ├── exec
+│       │   └── sendmail
+│       ├── prv
+│       ├── pub
+│       └── allow-unknown
+├── log
+├── mcd-listen
+├── neigh
+│   ├── beta
+│   │   ├── exchpub
+│   │   ├── exec
+│   │   │   └── sendmail
+│   │   ├── id
+│   │   ├── incoming
+│   │   ├── noisepub
+│   │   ├── signpub
+│   │   └── via
+│   ├── gw
+│   │   ├── addrs
+│   │   │   ├── lan
+│   │   │   └── main
+│   │   ├── calls
+│   │   │   ├── 0
+│   │   │   │   ├── autotoss
+│   │   │   │   ├── cron
+│   │   │   │   ├── nice
+│   │   │   │   └── rxrate
+│   │   │   ├── 1
+│   │   │   │   ├── addr
+│   │   │   │   ├── autotoss
+│   │   │   │   ├── cron
+│   │   │   │   └── onlinedeadline
+│   │   │   └── 2
+│   │   │       ├── addr
+│   │   │       ├── autotoss
+│   │   │       ├── cron
+│   │   │       └── onlinedeadline
+│   │   ├── exchpub
+│   │   ├── exec
+│   │   │   └── sendmail
+│   │   ├── freq
+│   │   │   └── chunked
+│   │   ├── id
+│   │   ├── incoming
+│   │   ├── noisepub
+│   │   └── signpub
+│   └── self
+│       ├── exchpub
+│       ├── exec
+│       │   ├── appender
+│       │   ├── sendmail
+│       │   └── slow
+│       ├── freq
+│       │   └── path
+│       ├── id
+│       ├── incoming
+│       ├── noisepub
+│       └── signpub
+├── notify
+│   ├── file
+│   │   ├── from
+│   │   └── to
+│   └── freq
+│       ├── from
+│       └── to
+├── self
+│   ├── exchprv
+│   ├── exchpub
+│   ├── id
+│   ├── noiseprv
+│   ├── noisepub
+│   ├── signprv
+│   └── signpub
+└── spool
+@end example
+
+Your @option{-cfg} and @env{$NNCPCFG} could point to that directory,
+instead of @file{.hjson} file. It will be transparently converted to
+internal JSON representation. However it can not be encrypted with the
+@command{@ref{nncp-cfgenc}}.
+
+@cindex private keys
+That layout should be much more machine friendly and scriptable. Each
+string parameters is stored as a single line plain text file. String
+arrays are newline-separated plain text files. Dictionaries are
+transformed to the subdirectories. Its structure should be
+self-describing. True booleans are stored as an empty flag-file
+existence (their absence equals to false). All names starting with "."
+are skipped. All files ending with @file{prv} are created with 600
+permissions, instead of the default 666.

@@ -1,0 +1,18 @@
+@node CfgSelf
+@cindex self-node configuration keypairs
+@section Configuration self-node keypairs
+
+@strong{self} section contains our node's private keypairs.
+
+@vindex ExchPrv
+@vindex ExchPub
+@vindex SignPrv
+@vindex SignPub
+@strong{exch*} and @strong{sign*} are used during @ref{Encrypted,
+encrypted} packet creation.
+
+@vindex NoisePrv
+@vindex NoisePub
+@strong{noise*} are used during @ref{Sync, synchronization protocol}
+working in @command{@ref{nncp-call}}, @command{@ref{nncp-caller}},
+@command{@ref{nncp-daemon}}.

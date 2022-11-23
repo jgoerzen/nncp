@@ -1,0 +1,45 @@
+@node nncp-pkt
+@pindex nncp-pkt
+@section nncp-pkt
+
+@example
+$ nncp-pkt [options] < pkt
+$ nncp-pkt [options] [-decompress] -dump < pkt > payload
+$ nncp-pkt -overheads
+@end example
+
+Low level packet parser. Can be useful for debugging. There are two
+types of packets: @ref{Plain, plain} and @ref{Encrypted, encrypted}. By
+default it will print packet's header, for example:
+
+@example
+Packet type: encrypted
+Niceness: B (224)
+Sender: 2WHBV3TPZHDOZGUJEH563ZEK7M33J4UESRFO4PDKWD5KZNPROABQ (self)
+@end example
+
+@option{-dump} option outputs plain packet's payload (if it is file
+transmission, then it will be the file itself as an example). If it is
+an encrypted packet, then it will be decrypted first, outputing the
+included plain packet, that can be fed to @command{@ref{nncp-pkt}} again:
+
+@example
+Packet type: plain
+Payload type: transitional
+Niceness: B (224)
+Path: VHMTRWDOXPLK7BR55ICZ5N32ZJUMRKZEMFNGGCEAXV66GG43PEBQ (name-of-node)
+
+Packet type: plain
+Payload type: exec compressed
+Niceness: P (96)
+Path: stargrave@@stargrave.org
+@end example
+
+@option{-decompress} option tries to zstd-decompress data from plain
+packet (useful with @verb{|exec compressed|} types of packets).
+
+@option{-overheads} options print encrypted, plain and size header overheads.
+
+This command automatically determines if an encrypted packet belongs to
+@ref{Multicast, multicast} area and will try to decrypt it with its
+corresponding key.

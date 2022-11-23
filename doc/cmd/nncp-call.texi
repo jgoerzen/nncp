@@ -1,0 +1,72 @@
+@node nncp-call
+@pindex nncp-call
+@section nncp-call
+
+@example
+$ nncp-call [options]
+    [-onlinedeadline INT]
+    [-maxonlinetime INT]
+    [-rx|-tx]
+    [-list]
+    [-pkts PKT,PKT,@dots{}]
+    [-rxrate INT]
+    [-txrate INT]
+    [-autotoss*]
+    [-nock]
+    [-ucspi]
+    [-mcd-wait INT]
+    NODE[:ADDR] [FORCEADDR]
+@end example
+
+Call (connect to) specified @option{NODE} and run @ref{Sync,
+synchronization} protocol with the @ref{nncp-daemon, daemon} on the
+remote side. Normally this command could be run any time you wish to
+either check for incoming packets, or to send out queued ones.
+Synchronization protocol allows resuming and bidirectional packets
+transfer.
+
+If @option{-rx} option is specified then only inbound packets
+transmission is performed. If @option{-tx} option is specified, then
+only outbound transmission is performed.
+
+@option{-onlinedeadline} overrides @ref{CfgOnlineDeadline, @emph{onlinedeadline}}.
+@option{-maxonlinetime} overrides @ref{CfgMaxOnlineTime, @emph{maxonlinetime}}.
+@option{-rxrate}/@option{-txrate} override @ref{CfgXxRate, rxrate/txrate}.
+
+@option{-list} option allows you to list packets of remote node, without
+any transmission. You can specify what packets your want to download, by
+specifying @option{-pkts} option with comma-separated list of packets
+identifiers.
+
+Each @option{NODE} can contain several uniquely identified
+@option{ADDR}esses in @ref{CfgAddrs, configuration} file. If you do
+not specify the exact one, then all will be tried until the first
+success. Optionally you can force @option{FORCEADDR} address usage,
+instead of addresses taken from configuration file. You can specify
+@verb{|host:port|}, @verb{#|some command#} and
+@code{yggdrasil:PUB;PRV;PEER[,@dots{}]} formats.
+
+If you specify @option{-ucspi} option, then it is assumed that you run
+@command{@ref{nncp-call}} command under some UCSPI-TCP compatible utility,
+that provides read/write channels through 6/7 file descriptors.
+
+@option{-mcd-wait} options tells to wait up to specified number of
+seconds for the @ref{MCD} packet from the specified @code{NODE}. When
+the packet is received, initiate a call.
+
+@option{-autotoss} option runs tosser on node's spool every second
+during the call. All @option{-autotoss-*} options is the same as in
+@command{@ref{nncp-toss}} command.
+
+Partly downloaded packets are stored in @file{.part} files. By default
+all downloaded files are sequentially checksummed in the background,
+stripping @file{.part} extension if is successful. If @option{-nock}
+option is set, then no checksumming is done, renaming fully downloaded
+files to @file{.nock} extension. Pay attention that checksumming can be
+time consuming and connection could be lost during that check, so remote
+node won't be notified that the file is finished. If you run
+@command{@ref{nncp-check} -nock}, that will checksum files and strip the
+@file{.nock} extension, then repeated call to remote node will notify about
+packet's completion. Also it will be notified if @ref{nncp-toss, tossing}
+created @file{seen/} file. Read @ref{CfgNoCK, more} about @option{-nock}
+option.

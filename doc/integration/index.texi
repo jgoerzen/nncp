@@ -1,0 +1,30 @@
+@node Integration
+@cindex integration with existing software
+@unnumbered Integration with existing software
+
+Here is some examples of how you can solve popular tasks with NNCP,
+making them store-and-forward friendly.
+
+@menu
+* Index files for freqing: FreqIndex
+* Postfix::
+* Exim::
+* Web feeds: Feeds
+* Web pages: WARCs
+* BitTorrent and huge files: BitTorrent
+* Downloading service: DownloadService
+* Git::
+* Multimedia streaming: Multimedia
+* Serial connection: PPP
+@end menu
+
+@include integration/freqindex.texi
+@include integration/postfix.texi
+@include integration/exim.texi
+@include integration/feeds.texi
+@include integration/warc.texi
+@include integration/bittorrent.texi
+@include integration/download.texi
+@include integration/git.texi
+@include integration/multimedia.texi
+@include integration/ppp.texi

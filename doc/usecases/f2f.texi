@@ -1,0 +1,47 @@
+@node UsecaseF2F
+@section Private, isolated MitM/Sybil-resistant networks
+
+All Internet connections can be eavesdropped and forged. You
+@strong{have to} to use encryption and authentication for securing them.
+But it is very hard to secure metadata, that leaks during each online
+session. When you start your shiny new software server be sure that
+there could be huge quantity of bogus peers trying to perform
+@url{https://en.wikipedia.org/wiki/Sybil_attack, Sybil attack}. Opennet
+peer-to-peer networking is dangerous thing to do.
+
+The most popular cryptographic protocol in Internet is
+@url{https://en.wikipedia.org/wiki/Transport_Layer_Security, TLS} that
+is very hard to implement correctly and hard to configure for mutual
+participants authentication. Not all TLS configurations and related
+protocols provide @url{https://en.wikipedia.org/wiki/Forward_secrecy,
+forward secrecy} property -- all previously intercepted packets could be
+read if private keys are compromised.
+
+Friend-to-friend networks, darknets can mitigate risks related to fake
+and forged nodes. However they are harder to support and require more
+time to be done right.
+
+NNCP's @ref{nncp-daemon, TCP daemon} uses
+@url{http://noiseprotocol.org/, Noise-IK} protocol to mutually
+authenticate peers and provide effective (both participants send payload
+in the very first packet) secure transport with forward secrecy
+property.
+
+@example
+$ nncp-daemon -bind "[::]":5400
+@end example
+
+will start TCP daemon listening on all interfaces for incoming
+connections.
+
+@example
+$ nncp-call bob
+@end example
+
+will try to connect to @emph{bob}'s node known TCP addresses (taken from
+configuration file) and send all related outbound packets and retrieve
+those the Bob has. All interrupted transfers will be automatically
+resumed.
+
+Ability to do @ref{MCD, multicast nodes discovery} of participant in
+IPv6 networks allows complete ignorance of network addresses specifying.

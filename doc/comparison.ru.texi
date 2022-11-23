@@ -10,27 +10,28 @@
 @multitable @columnfractions 0.40 0.15 0.15 0.15 0.15
 @headitem @tab UUCP @tab FTN @tab NNCP @tab SMTP
 
-@item Простота настройки @tab Средне @tab Сложно @tab Легко @tab Сложно
-@item Передача почты @tab @strong{Да} @tab @strong{Да} @tab @strong{Да} @tab @strong{Да}
-@item Передача новостей @tab @strong{Да} @tab @strong{Да} @tab Нет @tab Нет
-@item Передача файлов @tab @strong{Да} @tab @strong{Да} @tab @strong{Да} @tab Нет
-@item Разбиение файлов на части @tab Нет @tab @strong{Да} @tab @strong{Да} @tab Нет
-@item Удалённое исполнение команд @tab @strong{Да} @tab Нет @tab @strong{Да} @tab Нет
-@item Возобновляемое скачивание @tab @strong{Да} @tab @strong{Да} @tab @strong{Да} @tab Нет
-@item Приоритезация пакетов @tab @strong{Да} @tab Нет @tab @strong{Да} @tab Нет
-@item Сжатие почты @tab Нет @tab @strong{Да} @tab @strong{Да} @tab Нет
-@item Интеграция с SMTP @tab @strong{Да} @tab Нет @tab @strong{Да} @tab N/A
-@item Push/poll модель @tab @strong{Обе} @tab @strong{Обе} @tab @strong{Обе} @tab Push
-@item DTN @tab @strong{Да} @tab @strong{Да} @tab @strong{Да} @tab Нет
-@item Предполагаемый размер сети @tab Дюжины @tab Глобально @tab Дюжины @tab Глобально
-@item Маршрутизация @tab Ручное/статичное @tab Федеративное @tab Ручное/статичное @tab Федеративное
-@item Поддержка телефонной сети @tab @strong{Да} @tab @strong{Да} @tab Возможно @tab Нет
-@item Анонимные участники @tab @strong{Да} @tab Нет @tab Нет @tab @strong{Да}
-@item Аутентификация участников @tab PAP @tab PAP/CHAP @tab публичный ключ @tab Нет
-@item Шифрование пакетов @tab Нет @tab Нет @tab @strong{Да} @tab Нет
-@item Приватность метаданных @tab Нет @tab Нет @tab @strong{Да} @tab Нет
-@item Проверка целостности пакетов @tab Нет @tab Нет @tab @strong{Да} @tab Нет
-@item Дружелюбность к флоппинету @tab Нет @tab Частично @tab @strong{Да} @tab Нет
+@item Простота настройки           @tab Средне           @tab Сложно       @tab Легко            @tab Сложно
+@item Передача почты               @tab @strong{Да}      @tab @strong{Да}  @tab @strong{Да}      @tab @strong{Да}
+@item Передача новостей            @tab @strong{Да}      @tab @strong{Да}  @tab @strong{Да}      @tab Нет
+@item Передача файлов              @tab @strong{Да}      @tab @strong{Да}  @tab @strong{Да}      @tab Нет
+@item Мультвещательная передача    @tab Нет              @tab @strong{Да}  @tab @strong{Да}      @tab Нет
+@item Разбиение файлов на части    @tab Нет              @tab @strong{Да}  @tab @strong{Да}      @tab Нет
+@item Удалённое исполнение команд  @tab @strong{Да}      @tab Нет          @tab @strong{Да}      @tab Нет
+@item Возобновляемое скачивание    @tab @strong{Да}      @tab @strong{Да}  @tab @strong{Да}      @tab Нет
+@item Приоритезация пакетов        @tab @strong{Да}      @tab Нет          @tab @strong{Да}      @tab Нет
+@item Сжатие почты                 @tab Нет              @tab @strong{Да}  @tab @strong{Да}      @tab Нет
+@item Интеграция с SMTP            @tab @strong{Да}      @tab Нет          @tab @strong{Да}      @tab N/A
+@item Push/poll модель             @tab @strong{Обе}     @tab @strong{Обе} @tab @strong{Обе}     @tab Push
+@item DTN                          @tab @strong{Да}      @tab @strong{Да}  @tab @strong{Да}      @tab Нет
+@item Предполагаемый размер сети   @tab Дюжины           @tab Глобально    @tab Дюжины           @tab Глобально
+@item Маршрутизация                @tab Ручное/статичное @tab Федеративное @tab Ручное/статичное @tab Федеративное
+@item Поддержка телефонной сети    @tab @strong{Да}      @tab @strong{Да}  @tab Возможно         @tab Нет
+@item Анонимные участники          @tab @strong{Да}      @tab Нет          @tab Нет              @tab @strong{Да}
+@item Аутентификация участников    @tab PAP              @tab PAP/CHAP     @tab публичный ключ   @tab Нет
+@item Шифрование пакетов           @tab Нет              @tab Нет          @tab @strong{Да}      @tab Нет
+@item Приватность метаданных       @tab Нет              @tab Нет          @tab @strong{Да}      @tab Нет
+@item Проверка целостности пакетов @tab Нет              @tab Нет          @tab @strong{Да}      @tab Нет
+@item Дружелюбность к флоппинету   @tab Нет              @tab Частично     @tab @strong{Да}      @tab Нет
 
 @end multitable
 
@@ -51,10 +52,6 @@
     NNCP требует редактирование единственного Hjson @ref{Configuration,
     конфигурационного файла}.
 
-@item Передача новостей
-    SMTP ничего не знает о новостях, NNTP и тому подобному. NNCP тоже не
-    знает, потому что на текущий день они уже мало используются.
-
 @item Передача файлов
     SMTP может передавать файлы только в Base64 кодировке -- это очень
     не эффективно.
@@ -71,11 +68,11 @@
     этом в очереди на отправку будут гигабайты файлов.
 
 @item Интеграция с SMTP
-    Почтовые серверы типа @url{http://www.postfix.org/, Postfix}
-    предоставляют документацию и примеры конфигурации для использования
-    с UUCP. @url{http://www.exim.org/, Exim} и
+    Почтовые серверы типа @url{http://www.postfix.org/, Postfix} и
+    @url{http://www.exim.org/, Exim} предоставляют документацию и
+    примеры конфигурации для использования с UUCP.
     @url{http://www.sendmail.com/sm/open_source/, Sendmail} тоже
-    относительно легко могут быть интегрированы с ним. Для использования
+    относительно легко может быть интегрирован с ним. Для использования
     с NNCP, просто замените UUCP команды на аналогичные NNCP.
 
 @item Push/poll модель

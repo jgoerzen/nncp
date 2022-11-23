@@ -1,0 +1,48 @@
+@node nncp-daemon
+@pindex nncp-daemon
+@section nncp-daemon
+
+@example
+$ nncp-daemon [options]
+    [-maxconn INT] [-bind ADDR] [-ucspi]
+    [-autotoss*] [-nock] [-mcd-once]
+    [-yggdrasil yggdrasils://PRV[:PORT]?[bind=BIND][&pub=PUB][&peer=PEER][&mcast=REGEX[:PORT]]]
+@end example
+
+Start listening TCP daemon, wait for incoming connections and run
+@ref{Sync, synchronization protocol} with each of them. You can run
+@command{@ref{nncp-toss}} utility in background to process inbound
+packets from time to time.
+
+@option{-maxconn} option specifies how many simultaneous clients daemon
+can handle. @option{-bind} option specifies @option{addr:port} it must
+bind to and listen (empty string means no listening on TCP port).
+
+It could be run as @url{http://cr.yp.to/ucspi-tcp.html, UCSPI-TCP}
+service, by specifying @option{-ucspi} option. Pay attention that
+because it uses @code{stdin}/@code{stdout}, it can not effectively work
+with IO timeouts and connection closing can propagate up to 5 minutes in
+practice. Example startup command:
+
+@verbatim
+tcpserver -DHR -l 0 ::0 uucp nncp-daemon -quiet -ucspi
+@end verbatim
+
+Also it is some kind of backward compatible with @command{inetd}
+interface, just lacking knowledge or remote's address:
+
+@verbatim
+uucp	stream	tcp6	nowait	nncpuser	/usr/local/bin/nncp-daemon	nncp-daemon -quiet -ucspi
+@end verbatim
+
+@option{-autotoss} option runs tosser on node's spool every second
+during the call. All @option{-autotoss-*} options is the same as in
+@command{@ref{nncp-toss}} command.
+
+Read @ref{CfgNoCK, more} about @option{-nock} option.
+
+@option{-mcd-once} option sends @ref{MCD} announcements once and quits.
+Could be useful with inetd-based setup, where daemons are not running.
+
+With @option{-yggdrasil} option daemon also acts as a @ref{Yggdrasil}
+listener daemon.

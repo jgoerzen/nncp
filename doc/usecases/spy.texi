@@ -1,0 +1,35 @@
+@node UsecaseSpy
+@cindex reconnaissance, spying, intelligence, covert operations
+@section Reconnaissance, spying, intelligence, covert agents
+
+Those guys know how Internet is a dangerous place incompatible with
+privacy. They require quick, fast dropping and picking of data. No
+possibility of many round-trips -- just drop the data, fire-and-forget.
+It could be either removable media again and/or
+@url{https://en.wikipedia.org/wiki/USB_dead_drop, USB dead drops},
+@url{https://en.wikipedia.org/wiki/PirateBox, PirateBox}es,
+@url{https://en.wikipedia.org/wiki/Short-range_agent_communications, SRAC}.
+Short lived short range networks like Bluetooth and WiFi can also
+be pretty fast, allowing to quickly fire chunks of queued packets.
+
+Very important property is that compromising of those dead drops and
+storages must be neither fatal nor even dangerous. Packets sent through
+the network and exchanged via those devices are end-to-end
+@ref{Encrypted, encrypted} (but unfortunately lacking forward secrecy).
+No filenames, mail recipients are seen.
+
+All node communications are done with so-called @ref{Spool, spool} area:
+directory containing only those unprocessed encrypted packets. After
+packet transfer you still can not read any of them: you have to run
+another stage: @ref{nncp-toss, tossing}, that involves your private
+cryptographic keys. So even if your loose your computer, storage devices
+and so on -- it is not so bad, because you are not carrying private keys
+with it (don't you?), you do not "toss" those packets immediately on the
+same device. Tossing (reading those encrypted packets and extracting
+transferred files and mail messages) could and should be done on a
+separate computer (@command{@ref{nncp-cfgmin}} command could help creating
+configuration file without private keys for that purpose).
+
+If you really want to carry your private keys, then @command{@ref{nncp-cfgenc}}
+command will be able to encrypt your configuration file. Passphrase you
+enter is strengthened with both CPU and memory hard function.

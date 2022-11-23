@@ -1,0 +1,26 @@
+@node UsecaseSatelliteLinks
+@cindex satellite link
+@section Satellite links
+
+Satellite links have @strong{very} high delays together with high
+bandwidths. You can send several megabits of data per second, but they
+will reach the remote side only after half a second!
+Most file sharing protocols like
+@url{https://en.wikipedia.org/wiki/Files_transferred_over_shell_protocol, FISH},
+@url{https://en.wikipedia.org/wiki/FTP, FTP},
+@url{https://en.wikipedia.org/wiki/Secure_copy, scp},
+@url{https://en.wikipedia.org/wiki/XMODEM, XMODEM}
+will perform very badly because of round-trips quantity. Each file
+transmission explicitly generates request and acknowledgement packets
+that are send over the link. Remote side won't do anything until it
+receives them. Moreover not all protocols allow duplex data
+transmission (when both sides are sending data simultaneously).
+
+NNCP's @ref{Sync, synchronization protocol} (SP) tries to mitigate all
+that issues by reducing number of round-trips, number of packets passing
+through. All file lists, file download requests are grouped together
+(pipelined) in one huge packet. Only transmission halt and successful
+file download acknowledgements are sent explicitly. SP could be asked
+only either to upload or download packets for our node. SP could ignore
+files with low priority. Full files listing is passing even during the
+handshake procedure.

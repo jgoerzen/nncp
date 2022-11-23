@@ -1,0 +1,19 @@
+@node Multimedia
+@cindex multimedia integration
+@cindex pindex youtube-dl
+@cindex pindex yt-dlp
+@cindex cindex YouTube
+@section Integration with multimedia streaming
+
+Many video and audio streams could be downloaded using
+@url{https://github.com/yt-dlp/yt-dlp, yt-dlp} program.
+@url{https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md, Look} how
+many of them are supported, including @emph{Dailymotion}, @emph{Vimeo}
+and @emph{YouTube}.
+
+When your multimedia becomes an ordinary file, you can transfer it easily.
+
+@example
+$ yt-dlp --exec 'nncp-file @{@} remote.node:' \
+    'https://www.youtube.com/watch?list=PLd2Cw8x5CytxPAEBwzilrhQUHt_UN10FJ'
+@end example

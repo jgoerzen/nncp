@@ -1,0 +1,14 @@
+@node Indices
+@unnumbered Indices
+
+@node Concepts Index
+@section Concepts Index
+@printindex cp
+
+@node Programs Index
+@section Programs Index
+@printindex pg
+
+@node Variables Index
+@section Variables Index
+@printindex vr

@@ -8,7 +8,7 @@ requests, Internet mail and commands transmission. All packets are
 integrity checked, end-to-end encrypted (E2EE), explicitly authenticated
 by known participants public keys. Onion encryption is applied to
 relayed packets. Each node acts both as a client and server, can use
-push and poll behaviour model.
+push and poll behaviour model. Also there is multicasting areas support.
 
 Out-of-box offline sneakernet/floppynet, dead drops, sequential and
 append-only CD-ROM/tape storages, air-gapped computers support. But
@@ -22,9 +22,9 @@ Home page: http://www.nncpgo.org/
 
 Please send questions regarding the use of NNCP, bug reports and
 patches to nncp-devel mailing list:
-https://lists.cypherpunks.ru/pipermail/nncp-devel/
+http://lists.cypherpunks.ru/nncp_002ddevel.html
 
 Development Git source code repository currently is located here:
-https://git.cypherpunks.ru/cgit.cgi/nncp.git/
+http://www.git.cypherpunks.ru/?p=nncp.git;a=summary
 
 For further information please read either doc/nncp.info or doc/nncp.texi.

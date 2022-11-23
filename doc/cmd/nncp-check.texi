@@ -1,0 +1,19 @@
+@node nncp-check
+@pindex nncp-check
+@section nncp-check
+
+@example
+$ nncp-check [-nock] [-cycle INT] [options]
+@end example
+
+Perform @ref{Spool, spool} directory integrity check. Read all files
+that has Base32-encoded filenames and compare it with recalculated
+@ref{MTH} hash output of their contents.
+
+The most useful mode of operation is with @option{-nock} option, that
+checks integrity of @file{.nock} files, renaming them to ordinary
+(verified) encrypted packets.
+
+@option{-cycle} option tells not to quit, but to repeat checking every
+@option{INT} seconds in an infinite loop. That can be useful when
+running this command as a daemon.

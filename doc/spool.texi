@@ -1,41 +1,89 @@
 @node Spool
+@cindex spool directory
 @unnumbered Spool directory
 
 Spool directory holds @ref{Encrypted, encrypted packets} received from
 remote nodes and queued for sending to them. It has the following
-example structure:
+example structure with just single outbound (@code{tx}) packet
+@code{LYT64MWSNDK34CVYOO7TA6ZCJ3NWI2OUDBBMX2A4QWF34FIRY4DQ} to the node
+@code{2WHBV3TPZHDOZGUJEH563ZEK7M33J4UESRFO4PDKWD5KZNPROABQ}:
 
 @example
-spool/tmp/
-spool/2WHB...OABQ/rx.lock
-spool/2WHB...OABQ/rx/5ZIB...UMKW.part
-spool/2WHB...OABQ/tx.lock
-spool/2WHB...OABQ/toss.lock
-spool/BYRR...CG6Q/rx.lock
-spool/BYRR...CG6Q/rx/
-spool/BYRR...CG6Q/tx.lock
-spool/BYRR...CG6Q/tx/AQUT...DGNT.seen
-spool/BYRR...CG6Q/tx/NSYY...ZUU6
-spool/BYRR...CG6Q/tx/VCSR...3VXX.seen
-spool/BYRR...CG6Q/tx/ZI5U...5RRQ
+spool/2WHBV3TPZHDOZGUJEH563ZEK7M33J4UESRFO4PDKWD5KZNPROABQ/toss.lock
+spool/2WHBV3TPZHDOZGUJEH563ZEK7M33J4UESRFO4PDKWD5KZNPROABQ/rx.lock
+spool/2WHBV3TPZHDOZGUJEH563ZEK7M33J4UESRFO4PDKWD5KZNPROABQ/rx/
+spool/2WHBV3TPZHDOZGUJEH563ZEK7M33J4UESRFO4PDKWD5KZNPROABQ/tx.lock
+spool/2WHBV3TPZHDOZGUJEH563ZEK7M33J4UESRFO4PDKWD5KZNPROABQ/tx/LYT64MWSNDK34CVYOO7TA6ZCJ3NWI2OUDBBMX2A4QWF34FIRY4DQ
+spool/tmp
 @end example
 
-Except for @file{tmp}, all other directories are Base32-encoded node
-identifiers (@file{2WHB...OABQ}, @file{BYRR...CG6Q} in our example).
-Each node subdirectory has @file{rx} (received, partially received and
-currently unprocessed packets) and @file{tx} (for outbound packets)
-directories.
+@table @file
 
-Each @file{rx}/@file{tx} directory contains one file per encrypted
-packet. Its filename is Base32 encoded BLAKE2b hash of the contents. So
-it can be integrity checked at any time. @file{5ZIB...UMKW.part} is
-partially received file from @file{2WHB...OABQ} node. @file{tx}
-directory can not contain partially written files -- they are moved
-atomically from @file{tmp}.
+@cindex tmp directory
+@item tmp
+directory contains various temporary files that under normal
+circumstances are renamed to necessary files inside other directories.
+All directories in @file{spool} @strong{have to} be on the same
+filesystem for working renaming.
 
-When @ref{nncp-toss} utility is called with @option{-seen} option, it
-will create empty @file{XXX.seen} files, telling that some kind of
-packet was already tossed sometime.
+@item 2WHBV3TPZHDOZGUJEH563ZEK7M33J4UESRFO4PDKWD5KZNPROABQ
+is an example Base32-encoded neighbour identifier.
 
-Only one process can work with @file{rx}/@file{tx} directories at once,
-so there are corresponding lock files.
+@cindex rx directory
+@cindex tx directory
+@item rx, tx
+directories are for incoming and outgoing encrypted packets. @file{rx}
+contains currently unfinished, non-checked, unprocessed, etc packets.
+
+@cindex lock files
+@item toss.lock, rx.lock, tx.lock
+Lock files. Only single process can work with @file{rx}/@file{tx}
+directories at once.
+
+@item LYT64MWSNDK34CVYOO7TA6ZCJ3NWI2OUDBBMX2A4QWF34FIRY4DQ
+is an example @ref{Encrypted, encrypted packet}. Its filename is Base32
+encoded @ref{MTH} hash of the whole contents. It can be integrity checked
+anytime.
+
+@cindex part files
+@item LYT64MWSNDK34CVYOO7TA6ZCJ3NWI2OUDBBMX2A4QWF34FIRY4DQ.part
+is an example @strong{partly} received file. It can appear only when
+online transfer is used. Its filename is sent by remote side and until
+file is fully downloaded -- it plays no role.
+
+@cindex nock files
+@item LYT64MWSNDK34CVYOO7TA6ZCJ3NWI2OUDBBMX2A4QWF34FIRY4DQ.nock
+non-checksummed (NoCK) @strong{fully} received file. Its checksum is
+verified against its filename either by @command{@ref{nncp-check}}, or
+by working online daemons. If it is correct, then its extension is trimmed.
+
+@cindex seen files
+@item seen/LYT64MWSNDK34CVYOO7TA6ZCJ3NWI2OUDBBMX2A4QWF34FIRY4DQ
+@command{@ref{nncp-toss}} utility can be invoked with @option{-seen}
+option, leading to creation of @file{seen/} files, telling that the file
+with specified hash has already been processed before. It could be
+useful when there are use-cases where multiple ways of packets transfer
+available and there is possibility of duplicates reception. You have to
+manually remove them, when you do not need them (probably because they
+are expired).
+
+@cindex hdr files
+@anchor{HdrFile}
+@item hdr/LYT64MWSNDK34CVYOO7TA6ZCJ3NWI2OUDBBMX2A4QWF34FIRY4DQ
+If no @ref{CfgNoHdr, nohdr} option is enabled in configuration file,
+then @file{hdr/} files are automatically created for every ordinary
+(fully received and checksummed) packet. It literally contains just the
+header of the corresponding packet. It will be automatically created
+even during simple @command{@ref{nncp-stat}} call. On filesystems with
+big blocksize (ZFS for example) it can greatly help listing the packets
+in directories, because it prevents unnecessary read-amplification. On
+other filesystems probably it won't help at all, or even harm
+performance.
+
+There is a hack: you can create more dense @file{hdr/} allocation by
+removing all @file{hdr/} files and then running @command{@ref{nncp-stat}},
+that will recreate them. In many cases many @file{hdr/} files will be
+allocated more or less linearly on the disk, decreasing listing time
+even more.
+
+@end table

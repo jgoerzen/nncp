@@ -1,0 +1,68 @@
+@node Configuration
+@cindex configuration file
+@unnumbered Configuration file
+
+@cindex Hjson
+NNCP uses single file configuration file in @url{https://hjson.org/,
+Hjson} format (see also section about @ref{Configuration directory,
+directory layout}) . Initially it is created with @command{@ref{nncp-cfgnew}}
+command and at minimum it can look like this:
+
+@verbatim
+spool: /var/spool/nncp
+log: /var/spool/nncp/log
+
+self: {
+  id: RKOLY...KAMXQ
+  exchpub: 2NZKH...CMI7A
+  exchprv: KETPP...2OJZA
+  signpub: EXD7M...YAOFA
+  signprv: B3EMS..XMAHCQ
+  noiseprv: 3TJDF...2D7DQ
+  noisepub: MIXYN...BGNDQ
+}
+
+neigh: {
+  self: {
+    id: RKOLY...KAMXQ
+    exchpub: 2NZKH...CMI7A
+    signpub: EXD7M...YAOFA
+    noisepub: MIXYN...BGNDQ
+  }
+}
+@end verbatim
+
+@cindex JSON
+@pindex hjson-cli
+@pindex gojq
+@pindex gjo
+Do not forget that Hjson can be safely converted to JSON and vice versa
+(loosing formatting and comments of course). By default
+@command{hjson-cli} utility from @code{github.com/hjson/hjson-go} is
+built together with @command{nncp-*} commands too. For querying
+information from the JSON from the command line you can use
+@code{github.com/itchyny/gojq} and @code{github.com/skanehira/gjo} for
+building it up.
+
+And for being able to communicate with at least one other node, you just
+need to add single key to the @code{neigh} section similar to the "self".
+
+Whole configuration file can be separated on five sections:
+
+@menu
+* General options: CfgGeneral
+* Self-node keypairs: CfgSelf
+* Notifications: CfgNotify
+* Neighbours: CfgNeigh
+* Areas: CfgAreas
+
+You can optionally convert it to directory layout
+* Configuration directory::
+@end menu
+
+@include cfg/general.texi
+@include cfg/self.texi
+@include cfg/notify.texi
+@include cfg/neigh.texi
+@include cfg/areas.texi
+@include cfg/dir.texi

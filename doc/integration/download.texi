@@ -1,0 +1,43 @@
+@node DownloadService
+@cindex download service
+@pindex warcer.sh
+@pindex wgeter.sh
+@section Downloading service
+
+Previous sections tell about manual downloading and sending results to
+remote node. But one wish to remotely initiate downloading. That can be
+easily solved with @ref{CfgExec, exec} handles.
+
+@verbatim
+exec: {
+  warcer: ["/bin/sh", "/path/to/warcer.sh"]
+  wgeter: ["/bin/sh", "/path/to/wgeter.sh"]
+  aria2c: [
+    "/usr/local/bin/aria2c",
+    "--on-download-complete", "aria2-downloaded.sh",
+    "--on-bt-download-complete", "aria2-downloaded.sh"
+  ]
+}
+@end verbatim
+
+@file{warcer.sh} contents:
+
+@verbatiminclude warcer.sh
+
+@file{wgeter.sh} contents:
+
+@verbatiminclude wgeter.sh
+
+Now you can queue that node to send you some website's page, file or
+BitTorrents:
+
+@example
+$ echo http://www.nncpgo.org/Postfix.html |
+    nncp-exec remote.node warcer postfix-whole-page
+$ echo http://www.nncpgo.org/Postfix.html |
+    nncp-exec remote.node wgeter postfix-html-page
+$ echo \
+    http://www.nncpgo.org/download/nncp-0.11.tar.xz
+    http://www.nncpgo.org/download/nncp-0.11.tar.xz.sig |
+    nncp-exec remote.node aria2c
+@end example

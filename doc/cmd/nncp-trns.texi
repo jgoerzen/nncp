@@ -1,0 +1,14 @@
+@node nncp-trns
+@pindex nncp-trns
+@section nncp-trns
+
+@example
+$ nncp-trns [options] -via NODEx[,@dots{}] NODE:PKT
+$ nncp-trns [options] -via NODEx[,@dots{}] /path/to/PKT
+
+@end example
+
+Transit specified encrypted packet via another @option{NODEx}es.
+Just manual transition packets creator. Normally you should not use that
+command at all, preferring automatic wrapping in transitional packets
+using the general @option{-via} option and configuration's files one.

@@ -2,16 +2,11 @@
 @documentencoding UTF-8
 @settitle NNCP
 
-@dircategory Networking tools
-@direntry
-* NNCP: (nncp).                Secure Node to Node Copy.
-@end direntry
-
 @copying
-This manual is for NNCP (Node to Node copy) --  collection of utilities
+This manual is for NNCP (Node to Node copy) -- collection of utilities
 simplifying secure store-and-forward files and mail exchanging.
 
-Copyright @copyright{} 2016-2020 @email{stargrave@@stargrave.org, Sergey Matveev}
+Copyright @copyright{} 2016-2022 @email{stargrave@@stargrave.org, Sergey Matveev}
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -22,10 +17,24 @@ A copy of the license is included in the section entitled "Copying conditions".
 @end copying
 
 @node Top
-@top
+@top NNCP
 
+@cindex Pedro
+@verbatiminclude pedro.txt
 
 @include about.texi
+
+@cindex articles
+There are also articles about its usage outside this website:
+
+@itemize
+@item @url{https://www.complete.org/nncp/, Various related articles} by John Goerzen
+@item @url{https://habr.com/en/post/330712/, NNCP: лечение online- и цензуро- зависимости store-and-forward методом} (on russian)
+@item @url{https://changelog.complete.org/archives/tag/nncp, Series of descriptive articles} by John Goerzen
+@item @url{https://www.youtube.com/watch?v=0i3r63pnyHM, Presentation of NNCP on Internet Freedom Conference 2019} (on russian)
+    (@url{http://www.stargrave.org/20191207-Internet_Freedom_Conference-NNCP.webm.torrent, torrent})
+@item @url{https://habr.com/ru/post/692254/, Неужто так сложно передать зашифрованный файл? Эволюция формата пакетов NNCP} (on russian)
+@end itemize
 
 @center Interested? @ref{Tarballs, @strong{Download it}}!
 
@@ -34,44 +43,58 @@ A copy of the license is included in the section entitled "Copying conditions".
 * Use cases::
 * Workflow::
 * News::
-* Информация на русском: Русский.
+* Информация на русском: Русский
 * Installation::
 * Configuration::
-* Call configuration: Call.
+* Call configuration: Call
+* Multicast areas: Multicast
 * Integration::
 * Commands::
+* Administration::
 * Niceness::
-* Chunked files: Chunked.
+* Chunked files: Chunked
 * Bundles::
-* Spool directory: Spool.
-* Log format: Log.
-* Packet format: Packet.
-* Sync protocol: Sync.
-* EBlob format: EBlob.
+* Spool directory: Spool
+* Log format: Log
+* Packet format: Packet
+* Merkle Tree Hashing: MTH
+* Sync protocol: Sync
+* MultiCast Discovery: MCD
+* Yggdrasil support: Yggdrasil
+* EBlob format: EBlob
+* Mirrors::
 * Thanks::
-* Contacts and feedback: Contacts.
-* Copying conditions: Copying.
+* Indices::
+* Contacts and feedback: Contacts
+* Copying conditions: Copying
 @end menu
 
 @include comparison.texi
-@include usecases.texi
+@include usecases/index.texi
 @include workflow.texi
 @include news.texi
 @include russian.texi
 @include install.texi
-@include cfg.texi
+@include cfg/index.texi
 @include call.texi
-@include integration.texi
-@include cmds.texi
+@include multicast.texi
+@include integration/index.texi
+@include cmd/index.texi
+@include admin.texi
 @include niceness.texi
 @include chunked.texi
 @include bundles.texi
 @include spool.texi
 @include log.texi
-@include pkt.texi
+@include pkt/index.texi
+@include mth.texi
 @include sp.texi
+@include mcd.texi
+@include yggdrasil.texi
 @include eblob.texi
+@include mirrors.texi
 @include thanks.texi
+@include indices.texi
 @include contacts.texi
 
 @node Copying

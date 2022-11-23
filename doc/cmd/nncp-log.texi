@@ -1,0 +1,10 @@
+@node nncp-log
+@pindex nncp-log
+@section nncp-log
+
+@example
+$ nncp-log [options]
+@end example
+
+Parse @ref{Log, log} file and print out its records in short
+human-readable form.

@@ -1,0 +1,40 @@
+@node nncp-cfgenc
+@pindex nncp-cfgenc
+@section nncp-cfgenc
+
+@example
+$ nncp-cfgenc [options] [-s INT] [-t INT] [-p INT] cfg.hjson > cfg.hjson.eblob
+$ nncp-cfgenc [options] -d cfg.hjson.eblob > cfg.hjson
+@end example
+
+This command allows you to encrypt provided @file{cfg.hjson} file with
+the passphrase, producing @ref{EBlob, eblob}, to safely keep your
+configuration file with private keys. This utility was written for users
+who do not want (or can not) to use either @url{https://gnupg.org/,
+GnuPG} or similar tools. That @file{eblob} file can be used directly in
+@option{-cfg} option of nearly all commands.
+
+@option{-s}, @option{-t}, @option{-p} are used to tune @file{eblob}'s
+password strengthening function. Space memory cost (@option{-s}),
+specified in number of BLAKE2b-256 blocks (32 bytes), tells how many
+memory must be used for hashing -- bigger values are better, but slower.
+Time cost (@option{-t}) tells how many rounds/iterations must be
+performed -- bigger is better, but slower. Number of parallel jobs
+(@option{-p}) tells how many computation processes will be run: this is
+the same as running that number of independent hashers and then joining
+their result together.
+
+When invoked for encryption, passphrase is entered manually twice. When
+invoked for decryption (@option{-d} option), it is asked once and exits
+if passphrase can not decrypt @file{eblob}.
+
+@option{-dump} options parses @file{eblob} and prints parameters used
+during its creation. For example:
+@example
+$ nncp-cfgenc -dump /usr/local/etc/nncp.hjson.eblob
+Strengthening function: Balloon with BLAKE2b-256
+Memory space cost: 1048576 bytes
+Number of rounds: 16
+Number of parallel jobs: 2
+Blob size: 2494
+@end example

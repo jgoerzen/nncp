@@ -1,0 +1,46 @@
+@node UsecaseAirgap
+@cindex air-gap
+@section Highly secure isolated air-gap computers
+
+If you worry much about security, then air-gapped computer could be the
+only choice you can afford. Computer without any modems, wired and
+wireless networks. Obviously the only possibility to exchange mail and
+files is to use physically removable storage devices like CD-ROM, hard
+drive, SD, tape and USB flash drives (@strong{worst} choice, due to
+those devices complexity).
+
+Presumably you have got another own hop before that computer: another
+intermediate node which performs basic verification of retrieved storage
+devices, possibly by rewriting the data from USB/hard drives to CD-RWs.
+
+NNCP supports packets relying (transitioning) out-of-box.
+
+@verbatim
+neigh: {
+  bob: {
+    [...]
+    addrs: {
+      lan: "[fe80::5400%igb0]:5400"
+    }
+  }
+  bob-airgap:
+    [...]
+    via: ["bob"]
+  }
+}
+@end verbatim
+
+That @ref{Configuration, configuration file} tells that we have got two
+known neighbours: @emph{bob} and @emph{bob-airgap}. @emph{bob} can be
+reached via online connection using @emph{lan} address.
+@emph{bob-airgap} can be reached by sending intermediate relay packet
+through the @emph{bob}.
+
+Any command like @command{@ref{nncp-file} myfile bob-airgap:} will
+automatically create an encapsulated packet: one for the destination
+endpoint, and other carrying it for intermediate relaying node.
+
+Pay attention that relaying node knows nothing about the packet inside,
+but just its size and priority. Transition packets are encrypted too:
+using well-known @url{https://en.wikipedia.org/wiki/Onion_routing, onion
+encryption} technology. @emph{bob} can not read @emph{bob-airgap}'s packets.

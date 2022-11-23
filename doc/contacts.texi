@@ -1,8 +1,15 @@
 @node Contacts
+@cindex contacts
+@cindex maillist
+@cindex IRC
+@cindex Matrix
 @unnumbered Contacts
 
 Please send questions regarding the use of NNCP, bug reports and patches to
-@url{https://lists.cypherpunks.ru/pipermail/nncp-devel/, nncp-devel}
+@url{http://lists.cypherpunks.ru/nncp_002ddevel.html, nncp-devel}
 mailing list. Announcements also go to this mailing list.
+
+There are also community-supported @code{#nncp:matrix.org} Matrix
+channel and @code{irc://irc.oftc.net/nncp} IRC channel bridged to it.
 
 Official website is @url{http://www.nncpgo.org/}.

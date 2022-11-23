@@ -1,0 +1,45 @@
+@node CfgNotify
+@cindex email notification
+@cindex notification configuration options
+@cindex logging handles
+@section Configuration notification options
+
+That section controls what notifications are enabled and how must be
+sent through the email. Notifications are sent for successful tossing of
+file, freq or exec packet.
+
+@verbatim
+notify: {
+  file: {
+    from: nncp@localhost
+    to: user+file@example.com
+  }
+  freq: {
+    from: nncp@localhost
+    to: user+freq@example.com
+  }
+  exec: {
+    bob.somehandle: {
+      from: nncp+bob@localhost
+      to: user+somehandle@example.com
+    }
+    *.anotherhandle: {
+      from: nncp@localhost
+      to: user+anotherhandle@example.com
+    }
+  }
+}
+@end verbatim
+
+Corresponding @strong{from} and @strong{to} fields will be substituted
+in notification email message. @code{neigh.self.exec.sendmail} will be
+used as a local mailer (command called for sending email message).
+
+You can omit either of those two @code{from}/@code{to} sections to omit
+corresponding notifications, or the whole section at once.
+
+@code{notify.exec} section is a mapping of exec handles and
+corresponding @code{from}/@code{to} sections. Each handle has either
+@code{NODE.HANDLE} or @code{*.HANDLE} syntax. You can override
+notification options for some node with the first type of name. Handle
+command's output will be included in notification messages.

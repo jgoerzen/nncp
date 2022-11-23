@@ -1,0 +1,17 @@
+@node UsecaseCensor
+@section Network censorship bypassing, health
+
+This is some kind of bad link too. Some governments tend to forbid
+@strong{any} kind of private communication between people, allowing only
+entertainment content delivering and popular social networks access
+(that are already bloated with advertisements, locally executed
+@url{https://www.gnu.org/philosophy/free-sw.html, proprietary}
+JavaScript code (for spying on user activities, collect data on them),
+shamelessly exploiting the very basic human need of communication).
+
+This is their natural wish. But nobody forces you to obey huge
+corporations like Apple, Google or Microsoft. It is your choice to
+create an isolated friend-to-friend network with piles of harmless
+content and private messaging. Only predators silently watch for their
+victims in mammals world -- it harms your health being watched and
+feeling that you are the victim that has already done something wrong.

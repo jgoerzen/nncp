@@ -1,0 +1,25 @@
+@node UsecaseUnreliable
+@cindex unreliable link
+@section Unreliable/expensive communication link
+
+Assume that you have got slow modem/radio/cellular link that frequently
+disconnects and causes TCP timeouts. Not all HTTP servers support file
+download continuation. SMTP does not support resuming at all and heavy
+messages is problematic to retrieve. Moreover, each disconnect leads to
+the same data retransmission again, that can not be afforded sometimes.
+
+Just send your @ref{nncp-exec, mail} and @ref{nncp-file, files} through
+NNCP. You can use either offline delivery methods -- read about them in
+the next section, or you can use included NNCP @ref{nncp-daemon, TCP
+daemon}.
+
+The command:
+
+@example
+$ nncp-file file_i_want_to_send bob:
+$ nncp-file another_file bob:movie.avi
+@end example
+
+will queue two files for sending to @emph{bob} node. Fire and forget!
+Now this is daemon's job (or offline transfer) to send this files part
+by part to remote system when it is available.

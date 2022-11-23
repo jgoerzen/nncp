@@ -1,36 +1,60 @@
 @node Installation
+@cindex installation
+@cindex packages
+@cindex distributions
 @unnumbered Installation
-
-@set VERSION 5.3.3
 
 Possibly NNCP package already exists for your distribution:
 
 @itemize
-@item @url{https://www.freshports.org/net/nncp/, FreeBSD ports}
+
+@cindex Arch Linux
+@cindex AUR
+@item Arch Linux @url{https://aur.archlinux.org/packages/nncp, AUR}
+
+@cindex Debian
+@item @url{https://tracker.debian.org/pkg/nncp, Debian packages}
+
+@cindex DragonFly
 @item @url{https://github.com/DragonFlyBSD/DPorts/tree/master/net/nncp, DragonFly BSD ports}
+
+@cindex FreeBSD
+@item @url{https://www.freshports.org/net/nncp/, FreeBSD ports}
+
+@cindex Guix
+@item GNU @url{https://git.savannah.gnu.org/cgit/guix.git/tree/gnu/packages/uucp.scm, Guix}
+
+@cindex NetBSD
+@item @url{https://pkgsrc.se/wip/nncp, NetBSD package}
+
+@cindex NixOS
+@item @url{https://github.com/NixOS/nixpkgs/tree/master/pkgs/tools/misc/nncp, NixOS packages}
+
+@cindex Void Linux
 @item @url{https://github.com/void-linux/void-packages/blob/master/srcpkgs/nncp/template, Void Linux}
-@item @url{https://qa.debian.org/developer.php?login=jgoerzen@@complete.org, Debian packages} (pending inclusion, maintainer's page)
-@item @url{https://github.com/NixOS/nixpkgs/pull/75772, NixOS packages} (pending inclusion, maintainer's page)
 @end itemize
 
+@cindex POSIX
 NNCP should run on any POSIX-compatible operating system.
 
-NNCP is written on @url{https://golang.org/, Go} programming language
-and you have to install Go compiler 1.10+ version. @command{Make} (BSD
-and GNU versions are fine) is recommended for convenient building.
-@url{https://www.gnu.org/software/texinfo/, Texinfo} is used for
-building documentation (although tarballs already include it).
+@pindex go
+@pindex texinfo
+NNCP is written on @url{https://go.dev/, Go} programming language
+and you have to install Go compiler 1.17+ version.
+@url{http://cr.yp.to/redo.html, redo} build system is recommended for
+convenience. @url{https://www.gnu.org/software/texinfo/, Texinfo} is
+used for building documentation (although tarballs already include it).
 
 In general you must get @ref{Tarballs, the tarball}, check its
-@ref{Integrity, integrity and authenticity} and run @command{make}.
+@ref{Integrity, integrity and authenticity} and run @command{redo}.
 Look for general and platform-specific @ref{Build-instructions, build
 instructions}.
 
 @menu
-* Prepared tarballs: Tarballs.
-* Tarballs integrity check: Integrity.
-* Build instructions: Build-instructions.
-* Development source code: Sources.
+* Prepared tarballs: Tarballs
+* Tarballs integrity check: Integrity
+* Build instructions: Build-instructions
+* Development source code: Sources
 @end menu
 
 @include download.texi

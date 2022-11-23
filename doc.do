@@ -1,0 +1,1 @@
+redo-ifchange doc/all

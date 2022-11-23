@@ -1,0 +1,200 @@
+@node Yggdrasil
+@cindex yggdrasil
+@unnumbered Yggdrasil support
+
+NNCP is able to act as a node of
+@url{https://yggdrasil-network.github.io/, Yggdrasil} overlay network.
+Current IPv6 adoption for @strong{home} users is relatively bad in many
+countries. That is why Yggdrasil overlay network uses dynamic spanning
+tree mesh network for packets routing, making it useful for gaining
+hosts high reachability without complex manual manipulations. By default
+it creates 200::/7 IPv6 network, where each host's address is derived
+from its public key.
+
+NNCP reuses Yggdrasil's source code, but instead of relying on operating
+system's network stack, that would require use of some kind
+full-featured TUN network interface, there is pure Go built-in stack,
+responsible for IPv6 and TCP protocols support. You do not need to think
+about network interfaces, addressing and firewall setup at all:
+@command{@ref{nncp-daemon}} acts as Yggdrasil IPv6 reachable host,
+listening on single TCP port. You can reach it using ordinary
+non-Yggdrasil capable version of @command{@ref{nncp-call}}, calling
+corresponding 200::/7 IPv6 address through native Yggdrasil daemon
+created TUN interface. @command{@ref{nncp-daemon}},
+@command{@ref{nncp-call}}* can freely peer with Yggdrasil nodes, reusing
+existing infrastructure.
+
+Only minor modifications were done to current NNCP's tools:
+
+@itemize
+
+@cindex yggdrasils schema
+@item @command{@ref{nncp-daemon}} has @option{-yggdrasil yggdrasils://}
+option, making it also as a Yggdrasil listener network node. It can
+automatically connect to other peers and participate in routing. It does
+not have to answer NNCP's online protocol requests at all and just can
+be some intermediate routing point in the whole mesh network.
+
+@cindex yggdrasilc schema
+@item @command{@ref{nncp-call}}/@command{@ref{nncp-caller}} commands understand
+@code{yggdrasilc://} addresses, pointing to the desired Yggdrasil's
+public key (that also acts as the destination host's address). Yggdrasil
+background goroutine is automatically started, connecting to the
+specified Yggdrasil entrypoints, calling remote NNCP node and initiating
+NNCP's native @ref{Sync, online protocol} handshake on top of that.
+
+@item @command{@ref{nncp-cfgnew}} is able to generate ed25519 keypair.
+
+@item @ref{CfgYggdrasilAliases, Configuration file} optionally contains
+@code{yggdrasil-aliases} map.
+
+@end itemize
+
+How to start using NNCP through that overlay network?
+
+@enumerate
+
+@item
+Generate ed25519 keypair, that will be used for identification and
+authentication of your node in Yggdrasil network:
+
+@example
+$ nncp-cfgnew -yggdrasil
+Public: 4fd64130e23cf7abdbc0fabdf2ae12bbc2ab7179861efa296d2beb0181ae07ea
+Private: 571fb05c81e62a572096566fd48e87ad47e706b1f600dd625ebbf86d310332624fd64130e23cf7abdbc0fabdf2ae12bbc2ab7179861efa296d2beb0181ae07ea
+@end example
+
+You should share that public key with other NNCP peers.
+
+@item
+Start @command{@ref{nncp-daemon}} listening on Yggdrasil's incoming connections.
+You have to specify:
+
+@itemize
+
+@vindex PrivateKey
+@item
+Your private key (generated above). Yggdrasil's @code{PrivateKey} analogue.
+
+@item
+Optional non-default port you will listen on Yggdrasil's IPv6 address.
+
+@vindex Listen
+@item
+Optional list of bind addresses, used for peering between the nodes.
+Yggdrasil's @code{Listen} analogue.
+
+@vindex Peers
+@item
+Optional list of peer addresses you should connect to.
+Yggdrasil's @code{Peers} analogue.
+
+@vindex AllowedPublicKeys
+@item
+Optional list of allowed peer public keys, allowed for incoming peering
+connections from. Yggdrasil's @code{AllowedPublicKeys} analogue.
+
+@item
+Optional list of multicast-related regular expressions to match desired
+network interfaces where Yggdrasil multicasting must be enabled. Beacon
+and listening are always enabled on them, but optionally you can specify
+port you forcefully want to listen on.
+
+@end itemize
+
+@example
+$ nncp-daemon -yggdrasil "yggdrasils://571f...07ea:6789"\
+"?bind=tcp://[::1]:1234"\
+"&bind=tcp://[2001::1]:1234"\
+"&pub=c6b7...9469"\
+"&pub=eb2d...ca07"\
+"&peer=tcp://example.com:2345"\
+"&peer=tcp://another.peer:3456%3Fkey=f879...2e9b"\
+"&mcast=.*:5400"\
+"&mcast=lo0"
+@end example
+
+That @code{yggdrasils://} is transformed to following Yggdrasil's
+configuration analogue:
+
+@verbatim
+{
+  PrivateKey: 571f...07ea
+  Listen: ["tcp://[::1]:1234", "tcp://[2001::1]:1234"]
+  AllowedPublicKeys: ["c6b7...9469", "eb2d...ca07"]
+  Peers: [
+    tcp://some.peer.be:2345
+    tcp://some.peer.ru:3456?key=f879...2e9b
+  ]
+  MulticastInterfaces: [
+    {
+        Regex: .*
+        Beacon: true
+        Listen: true
+        Port: 5400
+    }, {
+        Regex: lo0
+        Beacon: true
+        Listen: true
+        Port: 0
+    }
+  ]
+}
+@end verbatim
+
+Basically you have to specify only private key and either @code{bind} or
+@code{peer} address. Look for Yggdrasil's documentation for more
+description of each option and related behaviour.
+
+As you can see, private key is in command line arguments, that could be
+treated as a security issue. That is why it is preferred to specify them
+in @ref{CfgYggdrasilAliases, configuration}'s @code{yggdrasil-aliases}
+section, where you can alias all of entities and reference them in
+@option{-yggdrasil} or @code{yggdrasilc://}-addresses:
+
+@verbatim
+yggdrasil-aliases: {
+  myprv: 571f...07ea
+  bindPublic: tcp://[2001::1]:1234
+  bindLocalhost: tcp://[::1]:2345
+  peerBE: tcp://some.peer.be:2345
+  peerRU: tcp://some.peer.ru:3456?key=f879...2e9b
+  somePeerPub1: c6b7...9469
+  somePeerPub2: eb2d...ca07
+  remoteAlicePub: 52be...3c14
+  mcastAll: .*:5400
+}
+@end verbatim
+
+And now you can more conveniently and safely specify:
+
+@example
+$ nncp-daemon -yggdrasil "yggdrasils://myprv:6789"\
+"?bind=bindPublic&bind=bindLocalhost"\
+"&peer=peerBE&peer=peerRU"\
+"&pub=somePeerPub1&pub=somePeerPub2"\
+"&mcast=mcastAll&mcast=lo0"
+@end example
+
+@item
+Make calls to that node from another ones, by using
+@code{yggdrasilc://}-address, similarly:
+
+@example
+yggdrasilc://PUB[:PORT]?prv=PRV[&peer=PEER][&mcast=REGEX[:PORT]]
+@end example
+
+where @code{PUB} is remote node's public key.
+
+@example
+$ nncp-call alice "yggdrasilc://remoteAlicePub?prv=myprv&mcast=mcastAll"
+@end example
+
+@end enumerate
+
+Per private key Yggdrasil core goroutine is started when first call is
+initiated and stays until program is finished. You can have multiple
+Yggdrasil-related private keys and multiple (Yggdrasil) cores will work
+simultaneously. But running multiple cores for one private key with
+varying configuration (except for destination public key of course) is
+not supported.

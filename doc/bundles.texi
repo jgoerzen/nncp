@@ -1,17 +1,20 @@
 @node Bundles
+@cindex bundles
+@cindex tapes
+@cindex streaming media
 @unnumbered Bundles
 
-Usual @ref{nncp-xfer} command requires filesystem it can operate on.
-That presumes random access media storage usage, like hard drives, USB
-flash drives and similar. But media like CD-ROM and especially tape
-drives are sequential by nature. You can prepare intermediate directory
-for recording to CD-ROM disc/tape, but that requires additional storage
-and is inconvenient.
+Usual @command{@ref{nncp-xfer}} command requires filesystem it can
+operate on. That presumes random access media storage usage, like hard
+drives, USB flash drives and similar. But media like CD-ROM and
+especially tape drives are sequential by nature. You can prepare
+intermediate directory for recording to CD-ROM disc/tape, but that
+requires additional storage and is inconvenient.
 
-Bundles, created with @ref{nncp-bundle} command are convenient
-alternative to ordinary @command{nncp-xfer}. Bundle is just a collection
-of @ref{Encrypted, encrypted packets}, stream of packets. It could be
-sequentially streamed for recording and digested back.
+Bundles, created with @command{@ref{nncp-bundle}} command are convenient
+alternative to ordinary @command{@ref{nncp-xfer}}. Bundle is just a
+collection of @ref{Encrypted, encrypted packets}, stream of packets. It
+could be sequentially streamed for recording and digested back.
 
 @itemize
 
@@ -48,8 +51,11 @@ can contain mix of various recipients.
 
 @end itemize
 
+@pindex pax
+@pindex tar
 Technically bundle is valid POSIX.1-2001
 @url{https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html#tag_20_92_13_01, pax archive}
 with directory/files hierarchy identical to that is used in
-@ref{nncp-xfer}: @file{NNCP/RECIPIENT/SENDER/PACKET}. So bundle can also
-be created by manual tar-ing of @command{nncp-xfer} resulting directory.
+@command{@ref{nncp-xfer}}: @file{NNCP/RECIPIENT/SENDER/PACKET}.
+So bundle can also be created by manual tar-ing of
+@command{@ref{nncp-xfer}} resulting directory.

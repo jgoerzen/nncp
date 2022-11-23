@@ -1,0 +1,16 @@
+@node FreqIndex
+@cindex index files
+@section Index files for freqing
+
+In many cases you do not know exact files list on remote machine you
+want to freq from. Because files can be updated there. It is useful to
+run cron-ed job on it to create files listing you can freq and search
+for files in it:
+
+@example
+0  4  *  *  *  cd /storage ; tmp=`mktemp` ; \
+    tree -f -h -N --du --timefmt \%Y-\%m-\%d |
+    zstdmt -19 > $tmp && chmod 644 $tmp && mv $tmp TREE.txt.zst ; \
+    tree -J -f --timefmt \%Y-\%m-\%d |
+    zstdmt -19 > $tmp && chmod 644 $tmp && mv $tmp TREE.json.zst
+@end example

@@ -1,0 +1,65 @@
+@node nncp-rm
+@pindex nncp-rm
+@section nncp-rm
+
+@example
+$ nncp-rm [options] [-older X] -tmp
+$ nncp-rm [options] -lock
+$ nncp-rm [options] [-older X] @{-all|-node NODE@} -part
+$ nncp-rm [options] [-older X] @{-all|-node NODE@} -seen
+$ nncp-rm [options] [-older X] @{-all|-node NODE@} -nock
+$ nncp-rm [options] [-older X] @{-all|-node NODE@} -area
+$ nncp-rm [options] [-older X] @{-all|-node NODE@} @{-rx|-tx@} [-hdr]
+$ nncp-rm [options] [-older X] @{-all|-node NODE@} -pkt <<EOF
+PKT1
+PKT2
+NODEx/PKT3
+@dots{}
+EOF
+@end example
+
+This command is aimed to delete various files from your spool directory.
+@option{-older} option may limit the subset of files to be deleted for
+most commands.
+
+@itemize
+
+@item If @option{-tmp} option is specified, then it will delete
+temporary files in @file{spool/tmp} directory. Files may stay in it when
+commands like @command{@ref{nncp-file}} fail for some reason.
+
+@item If @option{-lock} option is specified, then all @file{.lock} files
+will be deleted in your spool directory.
+
+@item If @option{-pkt} option is specified, then only the specified list
+of packets (Base32 names) will be deleted. It is read from @code{stdin}.
+This could be useful when you see some packet failing to be processed.
+Packet identifiers may have "directories" prepended, that are ignored.
+
+@item @option{-rx} and @option{-tx} options will delete packets in
+corresponding queue directories. Corresponding @file{hdr/} files are
+also automatically deleted.
+
+@item @option{-part} option limits that to @file{.part}ly downloaded packets.
+
+@item @option{-nock} option limits that to non-checksummed
+(non-verified) @file{.nock} files.
+
+@item @option{-seen} option deletes @file{seen/} files.
+
+@item @option{-hdr} option deletes cached @file{hdr/} files.
+
+@item @option{-area} option deletes seen files in @file{area/} subdirectories.
+
+@end itemize
+
+@option{-dryrun} option just prints what will be deleted.
+
+@option{-older} accepts an integer with appended time unit:
+
+@itemize
+@item @code{10s} -- 10 seconds
+@item @code{5m} -- 5 minutes
+@item @code{12h} -- 12 hours
+@item @code{2d} -- 2 days
+@end itemize

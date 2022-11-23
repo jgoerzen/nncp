@@ -1,0 +1,14 @@
+@node nncp-cfgmin
+@cindex stripped configuration
+@cindex minimized configuration
+@pindex nncp-cfgmin
+@section nncp-cfgmin
+
+@example
+$ nncp-cfgmin [options] > stripped.hjson
+@end example
+
+Print out stripped configuration version: only path to @ref{Spool,
+spool}, path to log file, neighbours public keys are stayed. This is
+useful mainly for usage with @command{@ref{nncp-xfer}} that has to know
+only neighbours, without private keys involving.

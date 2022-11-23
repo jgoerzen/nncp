@@ -1,0 +1,148 @@
+@node Multicast
+@cindex multicast area
+@unnumbered Multicast areas
+
+NNCP has ability to multicast packets: send single packet to multiple
+recipients, which also can send it further to others. It can also be
+called echomail (like in FidoNet networks) or newsgroup (like in Usenet
+networks).
+
+@anchor{Area}
+Each multicast group is identified by so-called @strong{area}. Area
+consists of private/public Curve25519 keypairs for @ref{Encrypted area,
+packets encryption}, identity (BLAKE2b-256 hash of the public key) and
+possible subscribers. Areas are created with @command{@ref{nncp-cfgnew}}
+command.
+
+You can make either file or exec transmissions to the areas. Those
+ordinary file/exec packets are double wrapped in:
+
+@itemize
+@item encrypted packet, securing the actual packet contents from
+participants not having area's keypairs (but still being able to relay
+that encrypted packet to the others)
+@item area packet, containing area's identity, telling that tossing node
+can should it to the subscribers further
+@end itemize
+
+@vindex MsgHash
+Area's message identity (@code{MsgHash}) is the hash of the encrypted
+packet header. Because the area packet, containing the encrypted packet,
+is relayed as-is without any modifications, that area message's hash
+will be the same on each node it reaches.
+
+@ref{nncp-toss, Tosser}'s algorithm of processing the area packet is
+following:
+
+@itemize
+@item check is it known area's identity (@code{AREA}).
+    Fail/skip if it is unknown
+@item hash encrypted packet's header, getting the @code{MsgHash}
+@item for each area's subscribers:
+    @itemize
+    @item check if that message was already seen (sent or received from)
+        before by the destination node: check existence of
+        @file{SPOOL/NODE/area/AREA/MsgHash} file. Skip that node if
+        it exists
+    @item if subscriber's node is not the one we received the packet
+        from, then create outgoing encrypted packet to it, with that
+        area packet inside
+    @item create corresponding @file{MsgHash} file
+    @item "rewind" the outer encrypted file to the beginning and repeat
+        the whole cycle again, while all of subscribers will "seen" that
+        area's message.
+
+        Expensive signature verification and shared key computation
+        procedures are skipped in the following cycles -- only symmetric
+        cryptography will be in use, having negligible CPU resource
+        consumption.
+    @end itemize
+@item check if we have seen that area's message before by looking at
+    @file{SPOOL/SELF/area/AREA/MsgHash}. If so, remove the packet,
+    because it is just a ordinary possible duplicate, finish its processing
+@item check if we have got corresponding area's private key. If no key
+    exists, then remove the packet, finish its processing -- we just
+    relay it further without being able to read it
+@item look if area's encrypted packet's sender is known to us. If
+    neither it is known, nor we have @code{allow-unknown} configuration
+    option set for that area, then fail
+@item otherwise start decryption procedure, possibly ignoring the
+    sender's signature verification if it is unknown
+@item fed the decrypted contents to the toss-procedure as an ordinary
+    plain packet, receiving files or exec calls
+@item mark area's message as the seen one, remove the packet, finish
+    processing
+@end itemize
+
+Because outgoing packets creation for each subscriber can be time and
+(disk) resource consuming, we can suddenly fail. It would be bad if we
+will loose the possibility to retry the multicasting process again. So
+we have got to save somehow outgoing area's message in permanent
+storage, while outgoing copies are created. That is why the initial (not
+relaying) message to the area is sent to the @strong{self} and processed
+by the @ref{nncp-toss, tosser} to create necessary outgoing message
+copies. Because message to myself is also encrypted, area's message is
+encrypted and secured and noone sees plaintext @code{MsgHash}, knowing
+that you either originated or have that message on the disk.
+
+For example we have got 4 nodes participating in the single area and
+let's send file to that area from the @code{nodeA}:
+
+@example
+nodeA -> subs: ["nodeB", "nodeD"]
+nodeB -> subs: ["nodeC", "nodeD", "nodeA"], no keys
+nodeC -> subs: ["nodeB"]
+nodeD -> subs: ["nodeA", "nodeB"]
+@end example
+
+@example
+A -- B -- C
+\   /
+ \ /
+  D
+@end example
+
+@example
+$ nncp-file nodelist-20210704.rec.zst area:nodelist-updates:
+$ nncp-toss -node self
+@end example
+
+@enumerate
+@item
+@command{@ref{nncp-file}} creates an encrypted packet with area packet and
+encrypted packet inside it, with our own @code{self} node as a recipient
+(in the @file{SPOOL/SELF/tx} directory). It also creates the
+@file{SPOOL/SELF/area/AREA/MsgHash} file.
+
+@item
+@command{@ref{nncp-toss}} sees @file{tx/} file and "opens" it, applying the
+area message tossing procedure as described above. That will create
+outgoing packets in @file{SPOOL/nodeB/tx} and @file{SPOOL/nodeD/tx}
+directories with @file{SPOOL/nodeB/area/AREA/MsgHash}
+@file{SPOOL/nodeD/area/AREA/MsgHash} files. Because we already have
+@file{SPOOL/SELF/area/AREA/MsgHash}, that packet is removed then.
+
+@item
+When @code{nodeB} receives the encrypted packet, it sees the area one
+inside. It copies/relays it to the @code{nodeC} and @code{nodeD}. It can
+not read area's message because it lacks the keys.
+
+@item
+@code{nodeC} does not relay it to anyone. Just stores
+@file{nodelist-20210704.rec.zst} in the incoming directory.
+
+@item
+@code{nodeD} receives packets from both @code{nodeA} and @code{nodeB}.
+Only one of them processed, and other is ignored because corresponding
+@file{MsgHash} file will exist.
+
+If @code{nodeD} will receive packet from the @code{nodeB} first, it will
+relay it to the @code{nodeA} also, that will silently remove it when
+tossing, because it was already seen.
+
+@item
+When @code{nodeC} sends message to the area, then @code{nodeA} will
+receive it twice from @code{nodeB} and @code{nodeD}, ignoring one of
+them during tossing.
+
+@end enumerate

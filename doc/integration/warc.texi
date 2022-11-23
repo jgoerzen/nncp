@@ -1,0 +1,79 @@
+@node WARCs
+@cindex WARC
+@pindex wget
+@section Integration with Web pages
+
+Simple HTML web page can be downloaded very easily for sending and
+viewing it offline after:
+
+@example
+$ wget http://www.example.com/page.html
+@end example
+
+But most web pages contain links to images, CSS and JavaScript files,
+required for complete rendering.
+@url{https://www.gnu.org/software/wget/, GNU Wget} supports that
+documents parsing and understanding page dependencies. You can download
+the whole page with dependencies the following way:
+
+@example
+$ wget \
+    --page-requisites \
+    --convert-links \
+    --adjust-extension \
+    --restrict-file-names=ascii \
+    --span-hosts \
+    --random-wait \
+    --execute robots=off \
+    http://www.example.com/page.html
+@end example
+
+that will create @file{www.example.com} directory with all files
+necessary to view @file{page.html} web page. You can create single file
+compressed tarball with that directory and send it to remote node:
+
+@example
+$ tar cf - www.example.com | zstd |
+    nncp-file - remote.node:www.example.com-page.tar.zst
+@end example
+
+But there are multi-paged articles, there are the whole interesting
+sites you want to get in a single package. You can mirror the whole web
+site by utilizing @command{wget}'s recursive feature:
+
+@example
+$ wget \
+    --recursive \
+    --timestamping \
+    -l inf \
+    --no-remove-listing \
+    --no-parent [@dots{}] \
+    http://www.example.com/
+@end example
+
+There is a standard for creating
+@url{https://en.wikipedia.org/wiki/Web_ARChive, Web ARChives}:
+@strong{WARC}. Fortunately again, @command{wget} supports it as an
+output format.
+
+@example
+$ wget [--page-requisites] [--recursive] \
+    --warc-file www.example.com-$(date '+%Y%M%d%H%m%S') \
+    --no-warc-keep-log --no-warc-digests \
+    [--no-warc-compression] [--warc-max-size=XXX] \
+    [@dots{}] http://www.example.com/
+@end example
+
+@pindex crawl
+Or even more simpler @url{https://git.jordan.im/crawl/tree/README.md, crawl}
+utility written on Go too.
+
+@pindex tofuproxy
+That command will create @file{www.example.com-XXX.warc} web archive.
+It could produce specialized segmented
+@url{https://en.wikipedia.org/wiki/Gzip, gzip} and
+@url{https://en.wikipedia.org/wiki/Zstandard, Zstandard}
+indexing/searching-friendly compressed archives. I can advise my own
+@url{http://www.tofuproxy.stargrave.org/WARCs.html, tofuproxy} software
+(also written on Go) to index, browse and extract those archives
+conveniently.

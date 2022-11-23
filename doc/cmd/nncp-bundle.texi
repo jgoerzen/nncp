@@ -1,0 +1,47 @@
+@node nncp-bundle
+@pindex nncp-bundle
+@section nncp-bundle
+
+@example
+$ nncp-bundle [options] -tx [-delete] NODE [NODE @dots{}] > @dots{}
+$ nncp-bundle [options] -rx -delete [-dryrun] [NODE @dots{}] < @dots{}
+$ nncp-bundle [options] -rx [-check] [-dryrun] [NODE @dots{}] < @dots{}
+@end example
+
+With @option{-tx} option, this command creates @ref{Bundles, bundle} of
+@ref{Encrypted, encrypted packets} from the spool directory and writes
+it to @code{stdout}.
+
+With @option{-rx} option, this command takes bundle from @code{stdin}
+and copies all found packets for our node to the spool directory. Pay
+attention that @strong{no} integrity checking is done by default. Modern
+tape drives could easily provide too much throughput your CPU won't be
+able to verify on the fly. So if you won't @ref{nncp-toss, toss}
+received packets at the place, it is advisable either to run
+@command{@ref{nncp-check}} utility for packets integrity verification,
+or to use @option{-check} option to enable on the fly integrity check.
+
+You can specify multiple @option{NODE} arguments, telling for what nodes
+you want to create the stream, or take it from. If no nodes are
+specified for @option{-rx} mode, then all packets aimed at us will be
+processed.
+
+When packets are sent through the stream, they are still kept in the
+spool directory, because there is no assurance that they are transferred
+to the media (media (CD-ROM, tape drive, raw hard drive) can end). If
+you want to forcefully delete them (after they are successfully flushed
+to @code{stdout}) anyway, use @option{-delete} option.
+
+But you can verify produced stream after, by digesting it by yourself
+with @option{-rx} and @option{-delete} options -- in that mode, stream
+packets integrity will be checked and they will be deleted from the
+spool if everything is good. So it is advisable to recheck your streams:
+
+@example
+$ nncp-bundle -tx ALICE BOB WHATEVER | cdrecord -tao -
+$ dd if=/dev/cd0 bs=2048 | nncp-bundle -rx -delete
+@end example
+
+@option{-dryrun} option prevents any writes to the spool. This is
+useful when you need to see what packets will pass by and possibly check
+their integrity.

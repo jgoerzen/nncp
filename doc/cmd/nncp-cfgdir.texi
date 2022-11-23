@@ -1,0 +1,13 @@
+@node nncp-cfgdir
+@pindex nncp-cfgdir
+@section nncp-cfgdir
+
+@example
+$ nncp-cfgdir [options] [-cfg @dots{}] -dump /path/to/dir
+$ nncp-cfgdir [options] -load /path/to/dir > cfg.hjson
+@end example
+
+@option{-dump} option dumps current configuration file to the
+@ref{Configuration directory, directory layout} at @file{/path/to/dir}.
+@option{-load} loads it and parses, outputing the resulting Hjson to
+@code{stdout}.

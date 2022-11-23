@@ -1,0 +1,41 @@
+@node Mirrors
+@cindex mirror
+@unnumbered Mirrors
+
+Main NNCP website is hosted on two geographically distant servers
+located in Moscow region, Russian Federation. Only one of those servers
+supports TLS and another just proxies the traffic to it. So TLS-capable
+version has less availability.
+
+@cindex DANE
+@cindex DNSCurve
+@cindex ca.cypherpunks.ru
+It can be authenticated with
+@url{http://www.ca.cypherpunks.ru/, ca.cypherpunks.ru} certificate, through the
+@url{https://datatracker.ietf.org/doc/html/rfc6698, DANE} record, that
+in turn can be authenticated with
+@url{https://dnscurve.org/, DNSCurve}-secured
+@url{http://www.stargrave.org/Trust-anchor.html, trust anchors}.
+Both @code{ca.cypherpunks.ru} and DNSCurve trust anchors are
+signed with @code{12AD 3268 9C66 0D42 6967  FD75 CB82 0563 2107 AD8A}
+@url{https://en.wikipedia.org/wiki/OpenPGP, OpenPGP}
+@url{http://www.stargrave.org/Contacts.html, public key}.
+
+Also there is @url{https://yggdrasil-network.github.io/, Yggdrasil}
+accessible address: @url{http://y.www.nncpgo.org/}.
+
+@table @asis
+
+@cindex quux.org
+@item @url{https://nncp.mirrors.quux.org/}
+
+Its creation @url{http://lists.cypherpunks.ru/archive/nncp-devel/87lf5fjvwb.fsf@@complete.org/T/, announcement}.
+Mirror of the whole NNCP's website with all tarballs, made by John Goerzen.
+It uses @url{https://letsencrypt.org/, Let's Encrypt} certificate
+authority, so can be more easily accessible for some people. If you have
+got NNCP-peering with
+@url{http://lists.cypherpunks.ru/archive/nncp-devel/20210731121239.j3grg2di22vfc6ne@@faeroes.freeshell.org/T/, nncp.quux.org}
+node, then you can also @ref{nncp-freq, freq} the @ref{Tarballs, tarballs}
+from it.
+
+@end table

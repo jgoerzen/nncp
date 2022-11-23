@@ -1,35 +1,41 @@
 @node Comparison
+@cindex comparison
+@cindex SMTP
+@cindex FTN
+@cindex FidoNet
+@cindex UUCP
 @unnumbered Comparison with existing solutions
 
 Here is comparison with @url{https://en.wikipedia.org/wiki/UUCP, UUCP}
-(Unix to Unix copy), FTN (@url{https://en.wikipedia.org/wiki/FidoNet,
-FidoNet} Technology Networks) and @url{https://en.wikipedia.org/wiki/SMTP, SMTP}
+(Unix to Unix copy), FTN (@url{https://en.wikipedia.org/wiki/FidoNet, FidoNet}
+Technology Networks) and @url{https://en.wikipedia.org/wiki/SMTP, SMTP}
 (because it is also store-and-forward solution).
 
 @multitable @columnfractions 0.40 0.15 0.15 0.15 0.15
 @headitem @tab UUCP @tab FTN @tab NNCP @tab SMTP
 
-@item Ease of setup @tab Medium @tab Hard @tab Easy @tab Hard
-@item Mail transmission @tab @strong{Yes} @tab @strong{Yes} @tab @strong{Yes} @tab @strong{Yes}
-@item News transmission @tab @strong{Yes} @tab @strong{Yes} @tab No @tab No
-@item File transmission @tab @strong{Yes} @tab @strong{Yes} @tab @strong{Yes} @tab No
-@item Chunked files @tab No @tab @strong{Yes} @tab @strong{Yes} @tab No
-@item Remote command execution @tab @strong{Yes} @tab No @tab @strong{Yes} @tab No
-@item Resumable downloads @tab @strong{Yes} @tab @strong{Yes} @tab @strong{Yes} @tab No
-@item Packets prioritizing @tab @strong{Yes} @tab No @tab @strong{Yes} @tab No
-@item Mail compression @tab No @tab @strong{Yes} @tab @strong{Yes} @tab No
-@item SMTP integration @tab @strong{Yes} @tab No @tab @strong{Yes} @tab N/A
-@item Push/poll @tab @strong{Both} @tab @strong{Both} @tab @strong{Both} @tab Push
-@item DTN @tab @strong{Yes} @tab @strong{Yes} @tab @strong{Yes} @tab No
-@item Intended network size @tab Dozens @tab Global @tab Dozens @tab Global
-@item Routing @tab Manual/static @tab Federated @tab Manual/static @tab Federated
-@item PSTN support @tab @strong{Yes} @tab @strong{Yes} @tab Possible @tab No
-@item Anonymous peers @tab @strong{Yes} @tab No @tab No @tab @strong{Yes}
-@item Peers authentication @tab PAP @tab PAP/CHAP @tab public-key @tab No
-@item Packets encryption @tab No @tab No @tab @strong{Yes} @tab No
-@item Metadata privacy @tab No @tab No @tab @strong{Yes} @tab No
-@item Packets integrity check @tab No @tab No @tab @strong{Yes} @tab No
-@item Sneakernet friendliness @tab No @tab Partially @tab @strong{Yes} @tab No
+@item Ease of setup            @tab Medium        @tab Hard          @tab Easy          @tab Hard
+@item Mail transmission        @tab @strong{Yes}  @tab @strong{Yes}  @tab @strong{Yes}  @tab @strong{Yes}
+@item News transmission        @tab @strong{Yes}  @tab @strong{Yes}  @tab @strong{Yes}  @tab No
+@item File transmission        @tab @strong{Yes}  @tab @strong{Yes}  @tab @strong{Yes}  @tab No
+@item Multicast transmission   @tab No            @tab @strong{Yes}  @tab @strong{Yes}  @tab No
+@item Chunked files            @tab No            @tab @strong{Yes}  @tab @strong{Yes}  @tab No
+@item Remote command execution @tab @strong{Yes}  @tab No            @tab @strong{Yes}  @tab No
+@item Resumable downloads      @tab @strong{Yes}  @tab @strong{Yes}  @tab @strong{Yes}  @tab No
+@item Packets prioritizing     @tab @strong{Yes}  @tab No            @tab @strong{Yes}  @tab No
+@item Mail compression         @tab No            @tab @strong{Yes}  @tab @strong{Yes}  @tab No
+@item SMTP integration         @tab @strong{Yes}  @tab No            @tab @strong{Yes}  @tab N/A
+@item Push/poll                @tab @strong{Both} @tab @strong{Both} @tab @strong{Both} @tab Push
+@item DTN                      @tab @strong{Yes}  @tab @strong{Yes}  @tab @strong{Yes}  @tab No
+@item Intended network size    @tab Dozens        @tab Global        @tab Dozens        @tab Global
+@item Routing                  @tab Manual/static @tab Federated     @tab Manual/static @tab Federated
+@item PSTN support             @tab @strong{Yes}  @tab @strong{Yes}  @tab Possible      @tab No
+@item Anonymous peers          @tab @strong{Yes}  @tab No            @tab No            @tab @strong{Yes}
+@item Peers authentication     @tab PAP           @tab PAP/CHAP      @tab public-key    @tab No
+@item Packets encryption       @tab No            @tab No            @tab @strong{Yes}  @tab No
+@item Metadata privacy         @tab No            @tab No            @tab @strong{Yes}  @tab No
+@item Packets integrity check  @tab No            @tab No            @tab @strong{Yes}  @tab No
+@item Sneakernet friendliness  @tab No            @tab Partially     @tab @strong{Yes}  @tab No
 
 @end multitable
 
@@ -48,10 +54,6 @@ FidoNet} Technology Networks) and @url{https://en.wikipedia.org/wiki/SMTP, SMTP}
     NNCP requires editing of single Hjson @ref{Configuration,
     configuration file}.
 
-@item News transmission
-    SMTP does not know anything about news, NNTP and so forth. Neither
-    does NNCP, because they are not used very much nowadays.
-
 @item File transmission
     SMTP could transfer files only Base64-encoding them -- this is very
     inefficient.
@@ -68,9 +70,9 @@ FidoNet} Technology Networks) and @url{https://en.wikipedia.org/wiki/SMTP, SMTP}
     gigabytes files are queued in parallel.
 
 @item SMTP integration
-    Mail servers like @url{http://www.postfix.org/, Postfix} offers
-    documentation and configuration file examples how to use it with
-    UUCP. @url{http://www.exim.org/, Exim} and
+    Mail servers like @url{http://www.postfix.org/, Postfix} and
+    @url{http://www.exim.org/, Exim} offers documentation and
+    configuration file examples how to use it with UUCP.
     @url{http://www.sendmail.com/sm/open_source/, Sendmail} could be
     integrated with UUCP rather easily too. For using NNCP, just replace
     UUCP commands with NNCP ones.
@@ -90,6 +92,7 @@ FidoNet} Technology Networks) and @url{https://en.wikipedia.org/wiki/SMTP, SMTP}
     UUCP and NNCP does not known nothing about routing. You have to
     explicitly tell how to send (what hops to use) packets to each node.
 
+@cindex PSTN
 @item PSTN support
     UUCP and FidoNet always have been working with modems out-of-box.
     Only many years later they gained support for working over TCP/IP
@@ -97,11 +100,15 @@ FidoNet} Technology Networks) and @url{https://en.wikipedia.org/wiki/SMTP, SMTP}
     TCP daemon, but nothing prohibits using of another 8-bit aware
     online transport.
 
+@cindex anonymity
+@cindex Sybil attack
 @item Anonymous peers
     NNCP and FTN are friend-to-friend networks exclusively. This is very
     secure and mitigates many possible man-in-the-middle (MitM) and
     @url{https://en.wikipedia.org/wiki/Sybil_attack, Sybil} attacks.
 
+@cindex sneakernet
+@cindex floppynet
 @item Sneakernet friendliness
     No one, except NNCP, supports data exchanging via removable storages
     likes flash drives, CD-ROMs, tapes and hard drives out-of-box. It
@@ -110,3 +117,43 @@ FidoNet} Technology Networks) and @url{https://en.wikipedia.org/wiki/SMTP, SMTP}
     requires more manual work to do so.
 
 @end table
+
+@cindex UUCP commands
+Also there is
+@url{https://changelog.complete.org/archives/10165-asynchronous-email-exim-over-nncp-or-uucp, copy of}
+comparable commands of UUCP and NNCP, just for the interest:
+
+@multitable @columnfractions 0.5 0.25 0.25
+@headitem Purpose @tab UUCP @tab NNCP
+
+@pindex uucico
+@pindex uupoll
+@pindex uux
+@pindex uucp
+@pindex uuxqt
+@item Connect to remote system
+    @tab @command{uucico -s}, @command{uupoll}
+    @tab @command{@ref{nncp-call}}, @command{nncp-caller}
+@item Receive connection (pipe, daemon, etc)
+    @tab @command{uucico} (@option{-l} or similar)
+    @tab @command{@ref{nncp-daemon}}
+@item Request remote execution, @code{stdin} piped in
+    @tab @command{uux}
+    @tab @command{@ref{nncp-exec}}
+@item Copy file to remote machine
+    @tab @command{uucp}
+    @tab @command{@ref{nncp-file}}
+@item Copy file from remote machine
+    @tab @command{uucp}
+    @tab @command{@ref{nncp-freq}}
+@item Process received requests
+    @tab @command{uuxqt}
+    @tab @command{@ref{nncp-toss}}
+@item Move outbound requests to dir (for USB stick, airgap, etc)
+    @tab N/A
+    @tab @command{@ref{nncp-xfer}}
+@item Create streaming package of outbound requests
+    @tab N/A
+    @tab @command{@ref{nncp-bundle}}
+
+@end multitable

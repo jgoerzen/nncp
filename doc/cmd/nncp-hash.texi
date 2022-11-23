@@ -1,0 +1,18 @@
+@node nncp-hash
+@pindex nncp-hash
+@section nncp-hash
+
+@example
+$ nncp-hash [-file @dots{}] [-seek X] [-debug] [-progress]
+@end example
+
+Calculate @ref{MTH} hash of either @code{stdin}, or @option{-file} if
+specified.
+
+You can optionally force seeking the file first, reading only part of
+the file, and then prepending unread portion of data, with the
+@option{-seek} option. It is intended only for testing and debugging of
+MTH hasher capabilities.
+
+@option{-debug} option shows all intermediate MTH hashes.
+And @option{-progress} will show progress bar.

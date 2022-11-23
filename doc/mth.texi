@@ -1,0 +1,46 @@
+@node MTH
+@cindex MTH
+@cindex hashing
+@cindex merkle tree
+@cindex BLAKE3
+@unnumbered Merkle Tree Hashing
+
+NNCP uses @url{https://github.com/BLAKE3-team/BLAKE3, BLAKE3} hash
+function in @url{https://en.wikipedia.org/wiki/Merkle_Tree, Merkle Tree}
+mode of operation for checksumming @ref{Encrypted, encrypted packets}
+and @ref{Chunked, chunked} files.
+
+Previously ordinary BLAKE2b-256 was used, but it prevented partial
+calculations of file parts, so you had to fully read the whole file
+again after its resumed download.
+
+MTH divides data on 128 KiB blocks, hashes each of them independently
+and then calculates the Merkle tree root:
+
+@verbatim
+                node3
+               /   \
+              /     \
+           node2    leaf4
+          /    \       \
+         /      \       \
+        /        \       \
+       /          \       \
+      /            \       \
+    node0         node1    leaf4
+   /    \        /    \      \
+  /      \      /      \      \
+leaf0  leaf1  leaf2  leaf3  leaf4
+  |      |      |      |      |
+block  block  block  block  block
+@end verbatim
+
+Leaf's value is keyed BLAKE3-256 hash of underlying block (128 KiB,
+except for probably the last one). Node's value is keyed BLAKE3-256 hash
+of two underlying leafs. Keys are
+@verb{|BLAKE3-256("NNCP MTH LEAF")|} and
+@verb{|BLAKE3-256("NNCP MTH NODE")|}.
+Keyed operation allows working with an aligned data (128KiB or 64B
+boundaries), unlike popular way of prepending @verb{|0x00|} and
+@verb{|0x01|} to the hashed data, being more efficient with an attention
+to BLAKE3's internal Merkle tree.

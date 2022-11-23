@@ -1,4 +1,5 @@
 @node Build-instructions
+@cindex building
 @section Build instructions
 
 Make sure that Go is installed. For example to install it from packages:
@@ -15,12 +16,82 @@ $ [fetch|wget] http://www.nncpgo.org/download/nncp-@value{VERSION}.tar.xz
 $ [fetch|wget] http://www.nncpgo.org/download/nncp-@value{VERSION}.tar.xz.sig
 $ gpg --verify nncp-@value{VERSION}.tar.xz.sig nncp-@value{VERSION}.tar.xz
 $ xz --decompress --stdout nncp-@value{VERSION}.tar.xz | tar xf -
-$ make -C nncp-@value{VERSION} all
+$ cd nncp-@value{VERSION}
+$ redo all
 @end example
 
-There is @command{install} make-target respecting @env{DESTDIR}. It will
-install binaries and info-documentation:
+@pindex info
+After that you should get various @command{bin/nncp-*} binaries and
+@command{bin/hjson-cli} command (only for your convenience, not
+necessary installation). For example, documentation for
+@command{nncp-bundle} command can be get with
+@command{info doc/nncp.info -n nncp-bundle}.
+
+@pindex redo
+@pindex apenwarr/redo
+@pindex apenwarr/do
+@pindex redo-c
+@pindex baredo
+@pindex goredo
+It uses @url{http://cr.yp.to/redo.html, redo} build system for that
+examples. You can use one of its various implementations, or at least
+minimalistic POSIX shell @command{contrib/do} (just replace
+@command{redo} with @command{contrib/do} in the example above) included
+in tarball. Following ones are tested to work with:
+@url{http://www.goredo.cypherpunks.ru/, goredo} (NNCP's author creation),
+@url{https://redo.readthedocs.io/, apenwarr/redo} (@code{contrib/do} is
+from that project), @url{https://github.com/leahneukirchen/redo-c, redo-c},
+@url{https://github.com/gotroyb127/baredo, baredo}.
+
+@vindex PREFIX
+@vindex DESTDIR
+@vindex GO
+@vindex MAKEINFO
+@vindex PLANTUML
+@vindex PREFIX
+@vindex SENDMAIL
+@vindex CFGPATH
+@vindex SPOOLPATH
+@vindex LOGPATH
+@vindex BINDIR
+@vindex INFODIR
+@vindex DOCDIR
+@file{config} file contains some environment variables that are
+respected during installation:
+@env{$PREFIX},
+@env{$DESTDIR},
+@env{$GO},
+@env{$MAKEINFO},
+@env{$PLANTUML},
+@env{$PREFIX},
+@env{$SENDMAIL},
+@env{$CFGPATH},
+@env{$SPOOLPATH},
+@env{$LOGPATH},
+@env{$BINDIR},
+@env{$INFODIR},
+@env{$DOCDIR}.
+
+There is @command{install} target for binaries and info-documentation
+installation:
 
 @example
-# make -C nncp-@value{VERSION} install PREFIX=/usr/local
+# PREFIX=/usr/local redo install
 @end example
+
+@vindex nofsnotify
+@cindex kqueue
+@cindex epoll
+@vindex GO_CFLAGS
+NNCP depends on @code{github.com/fsnotify/fsnotify} library, that is
+solely relies on OS-specific mechanisms. There is possibility that you
+have either broken or unsupported ones. You can still build NNCP with
+@code{-tags nofsnotify} build option, to skip @code{fsnotify} library
+usage at all:
+
+@example
+$ GO_CFLAGS="-tags nofsnotify" redo @dots{}
+@end example
+
+@vindex noyggdrasil
+You can also disable Yggdrasil support with @code{-tags noyggdrasil}.

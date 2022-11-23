@@ -1,0 +1,32 @@
+@node Сценарии
+@section Сценарии использования
+
+@menu
+* Доступность почтового сервера время от времени: UsecaseMailRU
+* Легковесная и быстрая замена POP3/IMAP4: UsecasePOPRU
+* Ненадёжный/дорогой канал связи: UsecaseUnreliableRU
+* Медленная/дорогая связь для больших объёмов данных, плохой QoS: UsecaseQoSRU
+* Экстремальные наземные окружающие условия, нет связи: UsecaseNoLinkRU
+* Односторонняя широковещательная связь: UsecaseBroadcastRU
+* Спутниковые каналы связи: UsecaseSatelliteLinksRU
+* Частные, изолированные MitM/Sybil-устойчивые сети: UsecaseF2FRU
+* Высоко защищённые изолированные компьютеры с воздушным зазором: UsecaseAirgapRU
+* Обход сетевой цензуры, здоровье: UsecaseCensorRU
+* Разведка, шпионаж, тайная агентура: UsecaseSpyRU
+* Дешёвая ночная связь: UsecaseCallerRU
+* Мультивещательная flooding рассылка: UsecaseMulticastRU
+@end menu
+
+@include usecases.ru/mail.texi
+@include usecases.ru/pop.texi
+@include usecases.ru/unreliable.texi
+@include usecases.ru/qos.texi
+@include usecases.ru/nolink.texi
+@include usecases.ru/broadcast.texi
+@include usecases.ru/satellite.texi
+@include usecases.ru/f2f.texi
+@include usecases.ru/airgap.texi
+@include usecases.ru/censor.texi
+@include usecases.ru/spy.texi
+@include usecases.ru/caller.texi
+@include usecases.ru/multicast.texi

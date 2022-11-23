@@ -1,0 +1,45 @@
+@node UsecaseCaller
+@section Cheap night transfers
+
+Your Internet/telephone traffic price can vary, depending on daytime.
+Night calls/connections could be twice as cheaper. You wish to send your
+files at that time, but keep high priority email infrequently passing
+through in anytime. Also you wish to pass any kind of traffic when the
+node is available through the LAN.
+
+You can easily set your preferences in @ref{Call, call configurations}
+for @command{@ref{nncp-caller}} command used in online communications.
+
+@verbatim
+neigh: {
+  [...]
+  some-node: {
+    [...]
+    addrs: {
+      lan: "[fe80::be5f:f4ff:fedd:2752%igb0]:5400"
+      wan: "some-node.com:5400"
+    }
+    calls: [
+      {
+        cron: "*/1 * * * *"
+        addr: lan
+        nice: MAX
+        onlinedeadline: 3600
+      }
+      {
+        cron: "*/10 * * * *"
+        addr: wan
+        nice: PRIORITY
+        xx: rx
+      }
+      {
+        cron: "*/1 0-7 * * *"
+        addr: wan
+        nice: BULK
+        onlinedeadline: 3600
+        maxonlinetime: 3600
+      }
+    ]
+  }
+}
+@end verbatim

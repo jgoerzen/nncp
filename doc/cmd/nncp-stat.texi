@@ -1,0 +1,14 @@
+@node nncp-stat
+@pindex nncp-stat
+@section nncp-stat
+
+@example
+$ nncp-stat [options] [-pkt] [-node NODE]
+@end example
+
+Print current @ref{Spool, spool} statistics about unsent and unprocessed
+packets. For each node (unless @option{-node} specified) and each
+niceness level there will be printed how many packets (with the total
+size) are in inbound (Rx) and outbound (Tx) queues, how many
+unchecksummed @file{.nock} packets or partly downloaded @file{.part}
+ones. @option{-pkt} option show information about each packet.

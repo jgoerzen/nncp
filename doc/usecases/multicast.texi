@@ -1,0 +1,81 @@
+@node UsecaseMulticast
+@section Multicast flooding transmission
+
+Do you need to send single mail message or file to many recipients at
+once? For example an update of some program, network participants list
+or available files for freqing? But you are not connected directly to
+each of them?
+
+@verbatim
+   A-------->E---->F    A -> B C E
+  / \        |\    ^    C -> H J
+ /   \       |  \  |    E -> D F G
+v     v      v    \v    D -> G
+B     C      D---->G    J -> K
+     / \     ^    /     K -> D G
+    /   \    |   /
+   v     v   v  /
+   H     J<->K<-
+@end verbatim
+
+NNCP has @ref{Multicast, multicast} packets format, allowing you to
+flood transmission of the single packet to multiple recipients.
+@strong{A} sends packet to three destinations. @strong{C} sends it to
+the two nodes next. @strong{E} sends it to three. Some participants may
+receive multiple copies of the same packet, like @strong{D}, @strong{J},
+@strong{G}, @strong{F}, but that copies will be just ignored. If
+@strong{B} sends packet to single known to him @strong{A}, then that
+packet will be distributed among all other multicast area subscribers.
+
+Moreover those multicast packets are encrypted and require key knowledge
+for reading. But that does not prevent their relaying! Also you are not
+required to know sender's public keys. That way you can easily create
+echo-conferences for files or commands (like mail message delivering)
+transmission.
+
+Let's create keys for the new multicast area:
+
+@verbatim
+$ nncp-cfgnew -area filelists -nocomments
+areas: {
+  filelists: {
+    id: TOU5TKOW4JBIZJBX63D4776C72FMWDAUAUSZNJX4DFOITVYQ5ZQA
+    pub: DSHL5O6BK2R3QKJAIJ7BC4UIGE73EC2LJPOV3VTS44KYOTUQYZLA
+    prv: AYD5FAA4GDDSAD5N65NJLLFS6TG2NSPQ46KAQO5U722JLVG34SOQ
+  }
+}
+@end verbatim
+
+and send that keypair everybody who wants to read that area.
+For intermediaries willing to relay packets on, but that should not read
+them, you just need to send area's identity. For example @strong{A} adds
+to his configuration:
+
+@verbatim
+areas: {
+  filelists: {
+    id: TOU...
+    pub: DSH...
+    prv: AYD...
+    subs: ["B", "C", "E"]
+    incoming: /home/A/areas/filelists
+  }
+@end verbatim
+
+and @strong{E}, that will be relaying intermediary (as we decided):
+
+@verbatim
+areas: {
+  filelists: {
+    id: TOU...
+    subs: ["D", "F", "G"]
+  }
+@end verbatim
+
+After you distributed the knowledge about @code{nodelist} multicast
+area, you can share @ref{FreqIndex, file lists}:
+
+@example
+$ nncp-file tree-of-A-20210715.txt.zst area:filelists:
+$ nncp-toss -node self
+@end example

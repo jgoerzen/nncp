@@ -1,0 +1,34 @@
+@node UsecaseQoS
+@cindex expensive link
+@cindex slow link
+@cindex bad QoS
+@section Slow/expensive link for high-volume data, bad QoS
+
+Assume that you can give your relatively cheap 2 TiB removable hard
+drive to someone each day at the morning (and take it back at the
+evening). This equals to 185 Mbps good quality (without any speed
+degradation) link in single direction. What about more and bigger hard
+drives? This type of data exchange is called
+@url{https://en.wikipedia.org/wiki/Sneakernet, sneakernet}/floppynet.
+
+NNCP allows traffic @ref{Niceness, prioritizing}: each packet has
+niceness level, that will guarantee that it will be processed earlier or
+later than the other ones. Nearly all commands has corresponding option:
+
+@example
+$ nncp-file -nice FLASH myfile node:dst
+$ nncp-xfer -nice PRIORITY /mnt/shared
+$ nncp-call -nice NORMAL bob
+[@dots{}]
+@end example
+
+Huge files could be split on smaller @ref{Chunked, chunks}, giving
+possibility to transfer virtually any volumes using small capacity
+storages.
+
+You can also use CD-ROM and tape drives:
+
+@example
+$ nncp-bundle -tx bob | cdrecord -tao -
+$ nncp-bundle -tx bob | dd of=/dev/sa0 bs=10240
+@end example

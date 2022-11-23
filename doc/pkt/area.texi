@@ -1,0 +1,24 @@
+@node Encrypted area
+@cindex encrypted area packet
+@section Encrypted area packet
+
+@ref{Multicast} area messages contains the encrypted packet, that is
+completely similar and have the same format as an ordinary
+@ref{Encrypted, encrypted packet}. But instead of the node's identity,
+area's identity is used as a recipient.
+
+For example when @code{nodeA} sends multicast packet with file
+transmission and @code{nodeB} is the area's subscriber, then
+@code{nodeA} has an encrypted packet to the @code{nodeB} in the outgoing
+spool directory:
+
+@verbatim
+ENCRYPTED PACKET (sender=nodeA, recipient=nodeB) WRAPS
+  PLAIN PACKET (type=area, path=AREA ID) WRAPS
+    ENCRYPTED PACKET (sender=nodeA, recipient=AREA) WRAPS  <-- MsgHash
+      PLAIN PACKET (type=file, path=FILENAME) WRAPS
+        FILE CONTENTS
+@end verbatim
+
+Area's message identity is the BLAKE2b-256 hash of header of the area's
+packet encrypted packet.

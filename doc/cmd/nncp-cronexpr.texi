@@ -1,0 +1,25 @@
+@node nncp-cronexpr
+@pindex nncp-cronexpr
+@section nncp-cronexpr
+
+@example
+$ nncp-cronexpr -num 12 "*/1 * * * * SAT,SUN 2021"
+@end example
+
+Check validity of specified @ref{CronExpr, cron expression} and print 12
+next time entities:
+
+@example
+$ nncp-cronexpr "*/5 * * * * * *"
+Now:    2021-07-04T08:26:26.229285858Z
+0:      2021-07-04T08:26:30Z
+1:      2021-07-04T08:26:35Z
+2:      2021-07-04T08:26:40Z
+3:      2021-07-04T08:26:45Z
+4:      2021-07-04T08:26:50Z
+5:      2021-07-04T08:26:55Z
+6:      2021-07-04T08:27:00Z
+7:      2021-07-04T08:27:05Z
+8:      2021-07-04T08:27:10Z
+9:      2021-07-04T08:27:15Z
+@end example

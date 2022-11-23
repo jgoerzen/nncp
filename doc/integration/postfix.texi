@@ -1,0 +1,141 @@
+@node Postfix
+@cindex Postfix integration
+@pindex postfix
+@section Integration with Postfix
+
+This section is taken from @url{http://www.postfix.org/UUCP_README.html,
+Postfix and UUCP} manual and just replaces UUCP-related calls with NNCP
+ones.
+
+@strong{Setting up a Postfix Internet to NNCP gateway}
+
+Here is how to set up a machine that sits on the Internet and that forwards
+mail to a LAN that is connected via NNCP.
+
+@itemize
+
+@item You need an @command{@ref{nncp-exec}} program that extracts the
+sender address from mail that arrives via NNCP, and that feeds the mail
+into the Postfix @command{sendmail} command.
+
+@item Define a @command{pipe(8)} based mail delivery transport for
+delivery via NNCP:
+@example
+/usr/local/etc/postfix/master.cf:
+nncp      unix  -       n       n       -       -       pipe
+  flags=Rqhu user=nncp argv=nncp-exec -quiet $nexthop sendmail $recipient
+@end example
+
+This runs the @command{@ref{nncp-exec}} command to place outgoing mail into
+the NNCP queue after replacing @var{$nexthop} by the receiving NNCP
+node and after replacing @var{$recipient} by the recipients. The
+@command{pipe(8)} delivery agent executes the @command{@ref{nncp-exec}}
+command without assistance from the shell, so there are no problems with
+shell meta characters in command-line parameters.
+
+@pindex sendmail.sh
+@vindex Return-Path
+@pindex reformail
+Pay attention to @code{flags}, containing @code{R}, telling Postfix to
+include @code{Return-Path:} header. Otherwise that envelope sender
+information may be lost. Possibly you will also need somehow to
+preserve that header on the receiving side, because @command{sendmail}
+command will replace it. For example you can rename it before feeding to
+@command{sendmail} with
+@code{reformail -R Return-Path: X-Original-Return-Path: | sendmail}, or
+extract with:
+
+@verbatiminclude sendmail.sh
+
+@vindex From_
+@cindex mbox
+@pindex maildrop
+Also pay attention that @command{maildrop} does not like @code{From_}
+mbox-style header, so you possibly want:
+
+@example
+mailbox_command = reformail -f0 | maildrop -d $@{USER@}
+@end example
+
+@item Specify that mail for @emph{example.com}, should be delivered via
+NNCP, to a host named @emph{nncp-host}:
+
+@example
+/usr/local/etc/postfix/transport:
+    example.com     nncp:nncp-host
+    .example.com    nncp:nncp-host
+@end example
+
+See the @command{transport(5)} manual page for more details.
+
+@item Execute the command @command{postmap /etc/postfix/transport}
+whenever you change the @file{transport} file.
+
+@item Enable @file{transport} table lookups:
+
+@example
+/usr/local/etc/postfix/main.cf:
+    transport_maps = hash:$config_directory/transport
+@end example
+
+@item Add @emph{example.com} to the list of domains that your site is
+willing to relay mail for.
+
+@example
+/usr/local/etc/postfix/main.cf:
+    relay_domains = example.com @dots{}other relay domains@dots{}
+@end example
+
+See the @option{relay_domains} configuration parameter description for
+details.
+
+@item Execute the command @command{postfix reload} to make the changes
+effective.
+
+@end itemize
+
+@strong{Setting up a Postfix LAN to NNCP gateway}
+
+Here is how to relay mail from a LAN via NNCP to the Internet.
+
+@itemize
+
+@item You need an @command{@ref{nncp-exec}} program that extracts the
+sender address from mail that arrives via NNCP, and that feeds the mail
+into the Postfix @command{sendmail} command.
+
+@item Specify that all remote mail must be sent via the @command{nncp}
+mail transport to your NNCP gateway host, say, @emph{nncp-gateway}:
+
+@example
+/usr/local/etc/postfix/main.cf:
+    relayhost = nncp-gateway
+    default_transport = nncp
+@end example
+
+Postfix 2.0 and later also allows the following more succinct form:
+
+@example
+/usr/local/etc/postfix/main.cf:
+    default_transport = nncp:nncp-gateway
+@end example
+
+@item Define a @command{pipe(8)} based message delivery transport for
+mail delivery via NNCP:
+
+@example
+/usr/local/etc/postfix/master.cf:
+nncp      unix  -       n       n       -       -       pipe
+  flags=Fqhu user=nncp argv=nncp-exec -quiet $nexthop sendmail $recipient
+@end example
+
+This runs the @command{@ref{nncp-exec}} command to place outgoing mail into
+the NNCP queue. It substitutes the hostname (@emph{nncp-gateway}, or
+whatever you specified) and the recipients before execution of the
+command. The @command{@ref{nncp-exec}} command is executed without assistance
+from the shell, so there are no problems with shell meta characters.
+
+@item Execute the command @command{postfix reload} to make the changes
+effective.
+
+@end itemize

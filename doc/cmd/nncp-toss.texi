@@ -1,0 +1,34 @@
+@node nncp-toss
+@pindex nncp-toss
+@section nncp-toss
+
+@example
+$ nncp-toss [options]
+    [-node NODE]
+    [-dryrun]
+    [-cycle INT]
+    [-seen]
+    [-nofile] [-nofreq] [-noexec] [-notrns] [-noarea]
+@end example
+
+Perform "tossing" operation on all inbound packets. This is the tool
+that decrypts all packets and processes all payload packets in them:
+copies files, sends mails, sends out file requests and relays transition
+packets. It should be run after each online/offline exchange.
+
+@option{-dryrun} option does not perform any writing and sending, just
+tells what it will do.
+
+@option{-cycle} option tells not to quit, but to repeat tossing every
+@option{INT} seconds in an infinite loop. That can be useful when
+running this command as a daemon.
+
+@option{-seen} option creates empty @file{seen/XXX} file after
+successful tossing of @file{XXX} packet. @command{@ref{nncp-xfer}},
+@command{@ref{nncp-bundle}}, @command{@ref{nncp-daemon}} and
+@command{@ref{nncp-call}} commands skip inbound packets that has been
+already seen, processed and tossed. This is helpful to prevent
+duplicates.
+
+@option{-nofile}, @option{-nofreq}, @option{-noexec}, @option{-notrns},
+@option{-noarea} options allow disabling any kind of packet types processing.

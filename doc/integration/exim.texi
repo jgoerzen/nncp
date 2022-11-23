@@ -1,0 +1,109 @@
+@node Exim
+@cindex Exim integration
+@section Integration with Exim
+
+This section is unaltered copy-paste of
+@url{https://changelog.complete.org/archives/10165-asynchronous-email-exim-over-nncp-or-uucp, Asynchronous Email: Exim over NNCP (or UUCP)}
+article by John Goerzen, with his permission.
+
+@strong{Sending from Exim to a smarthost}
+
+One common use for async email is from a satellite system: one that
+doesn't receive mail, or have local mailboxes, but just needs to get
+email out to the Internet. This is a common situation even for
+conventionally-connected systems; in Exim speak, this is a "satellite
+system that routes mail via a smarthost". That is, every outbound
+message goes to a specific target, which then is responsible for
+eventual delivery (over the Internet, LAN, whatever).
+
+This is fairly simple in Exim.
+
+@pindex bsmtp
+@pindex rmail
+We actually have two choices for how to do this: @command{bsmtp} or
+@command{rmail} mode. bsmtp (batch SMTP) is the more modern way, and is
+essentially a derivative of SMTP that explicitly can be queued
+asynchronously. Basically it's a set of SMTP commands that can be saved
+in a file. The alternative is @command{rmail} (which is just an alias
+for sendmail these days), where the data is piped to
+@command{rmail}/@command{sendmail} with the recipients given on the
+command line. Both can work with Exim and NNCP, but because we're doing
+shiny new things, we'll use @command{bsmtp}.
+
+These instructions are loosely based on the
+@url{https://people.debian.org/~jdg/bsmtp.html, Using outgoing BSMTP with Exim HOWTO}.
+Some of these may assume Debianness in the configuration, but should be
+easily enough extrapolated to other configs as well.
+
+First, configure Exim to use satellite mode with minimal DNS lookups
+(assuming that you may not have working DNS anyhow).
+
+Then, in the Exim primary router section for smarthost
+(@file{router/200_exim4-config_primary} in Debian split configurations),
+just change @code{transport = remote_smtp_smarthost to transport = nncp}.
+
+Now, define the NNCP transport. If you are on Debian, you might name this
+@file{transports/40_exim4-config_local_nncp}:
+
+@example
+nncp:
+  debug_print = "T: nncp transport for $local_part@@$domain"
+  driver = pipe
+  user = nncp
+  batch_max = 100
+  use_bsmtp
+  command = /usr/local/nncp/bin/nncp-exec -noprogress -quiet hostname_goes_here rsmtp
+.ifdef REMOTE_SMTP_HEADERS_REWRITE
+  headers_rewrite = REMOTE_SMTP_HEADERS_REWRITE
+.endif
+.ifdef REMOTE_SMTP_RETURN_PATH
+  return_path = REMOTE_SMTP_RETURN_PATH
+.endif
+@end example
+
+This is pretty straightforward. We pipe to @command{@ref{nncp-exec}}, run it
+as the nncp user. @command{@ref{nncp-exec}} sends it to a target node and runs
+whatever that node has called @command{rsmtp} (the command to receive
+bsmtp data). When the target node processes the request, it will run the
+configured command and pipe the data in to it.
+
+@strong{More complicated: Routing to various NNCP nodes}
+
+Perhaps you would like to be able to send mail directly to various NNCP
+nodes. There are a lot of ways to do that.
+
+Fundamentally, you will need a setup similar to the UUCP example in
+@url{https://www.exim.org/exim-html-current/doc/html/spec_html/ch-the_manualroute_router.html,
+Exim's manualroute manual}, which lets you define how to reach various
+hosts via UUCP/NNCP. Perhaps you have a star topology (every NNCP node
+exchanges email with a central hub). In the NNCP world, you have two
+choices of how you do this. You could, at the Exim level, make the
+central hub the smarthost for all the side nodes, and let it
+redistribute mail. That would work, but requires decrypting messages at
+the hub to let Exim process. The other alternative is to configure NNCP
+to just send to the destinations via the central hub; that takes
+advantage of onion routing and doesn't require any Exim processing at
+the central hub at all.
+
+@strong{Receiving mail from NNCP}
+
+On the receiving side, first you need to configure NNCP to authorize the
+execution of a mail program. In the section of your receiving host where
+you set the permissions for the client, include something like this:
+
+@example
+exec: @{
+    rsmtp: ["/usr/sbin/sendmail", "-bS"]
+@}
+@end example
+
+The @option{-bS} option is what tells Exim to receive BSMTP on @code{stdin}.
+
+@vindex MAIN_TRUSTED_USERS
+Now, you need to tell Exim that nncp is a trusted user (able to set From
+headers arbitrarily). Assuming you are running NNCP as the @code{nncp} user,
+then add @code{MAIN_TRUSTED_USERS = nncp} to a file such as
+@file{/etc/exim4/conf.d/main/01_exim4-config_local-nncp}. That's it!
+
+Some hosts, of course, both send and receive mail via NNCP and will need
+configurations for both.

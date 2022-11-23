@@ -1,0 +1,176 @@
+@node Encrypted
+@cindex encrypted packet
+@cindex AEAD
+@cindex ChaCha20-Poly1305
+@section Encrypted packet
+
+Encrypted packets are the only files found in spools, in exchangeable
+storages and that are synchronized between TCP daemons.
+
+Each encrypted packet has the following header:
+
+@verbatim
+  +------------ HEADER --------------------+   +------ ENCRYPTED -----+
+ /                                          \ /                        \
++--------------------------------------------+---------+----------...---+-----...--+
+| MAGIC | NICE | SENDER | RCPT | EPUB | SIGN | BLOCK 0 | BLOCK 1  ...   |   OPAD   |
++-------------------------------------/------\---------+----------...---+-----...--+
+                                     /        \
+                      +-------------------------------------+
+                      | MAGIC | NICE | SENDER | RCPT | EPUB |
+                      +-------------------------------------+
+@end verbatim
+
+@multitable @columnfractions 0.2 0.3 0.5
+@headitem @tab XDR type @tab Value
+@item Magic number @tab
+    8-byte, fixed length opaque data @tab
+    @verb{|N N C P E 0x00 0x00 0x06|}
+@item Niceness @tab
+    unsigned integer @tab
+    1-255, packet @ref{Niceness, niceness} level
+@item Sender @tab
+    32-byte, fixed length opaque data @tab
+    Sender node's id
+@item Recipient @tab
+    32-byte, fixed length opaque data @tab
+    Recipient node's id
+@item Exchange public key @tab
+    32-byte, fixed length opaque data @tab
+    Ephemeral curve25519 public key
+@item Signature @tab
+    64-byte, fixed length opaque data @tab
+    ed25519 signature for that packet's header over all previous fields.
+@end multitable
+
+Each @code{BLOCK} is AEAD-encrypted 128 KiB data. Last block can have
+smaller size. They are encrypted in AEAD mode using
+@url{https://cr.yp.to/chacha.html, ChaCha20}-@url{https://en.wikipedia.org/wiki/Poly1305, Poly1305}
+algorithms. Authenticated data is BLAKE3-256 hash of the unsigned
+portion of the header (the same data used in the signature). Nonce is
+block's sequence number (64-bit integer starting at 0).
+
+Concatenated plaintext of those blocks hold the following stream of data:
+
+@verbatim
++-----------+--------+---------------------+--------+
+|  PAYLOAD  |  SIZE  |  REST (OF PAYLOAD)  |  IPAD  |
++-----------+--------+---------------------+--------+
+            ^
+            |
+            +-- always aligned to the beginning of block
+@end verbatim
+
+Where @code{SIZE} is following XDR structure:
+
+@multitable @columnfractions 0.2 0.3 0.5
+@headitem @tab XDR type @tab Value
+@item Payload @tab
+    unsigned hyper integer @tab
+    Full payload size. @code{len(PAYLOAD) + len(REST)}
+@item Pad @tab
+    unsigned hyper integer @tab
+    Full padding size. @code{len(IPAD) + len(OPAD)}
+@end multitable
+
+@code{SIZE} is always at the beginning of the block. So payload and rest
+of it have variable length. Block containing @code{SIZE} is encrypted
+with the different key (@code{key=size}), to distinguish it from the
+"ordinary" ones (@code{key=full}).
+
+@code{IPAD} contains zeros and is shorter than single block. Padding is fully
+optional and is used only to hide the payload full size.
+
+It is acceptable to have either @code{PAYLOAD} or @code{REST} of it of
+zero length. For example:
+
+@verbatim
++------+-------------+
+| SIZE | PAYLOAD ... |
++------+-------------+
+ \------ BLOCK -----/
+         key=size
+
++------+-------------+------+
+| SIZE | PAYLOAD ... | IPAD |
++------+-------------+------+
+ \--------- BLOCK --------/
+            key=size
+
++--------------------------+    +------+-------------------+
+|          PAYLOAD         | .. | SIZE | IPAD ...           |
++--------------------------+    +------+-------------------+
+ \--------- BLOCK --------/      \--------- BLOCK --------/
+            key=full                        key=size
+
++--------------------------+    +------+-------------------+
+|          PAYLOAD         | .. | SIZE | PAYLOAD ...       |
++--------------------------+    +------+-------------------+
+ \--------- BLOCK --------/      \--------- BLOCK --------/
+            key=full                        key=size
+
++--------------------------+    +------+-------------+------+
+|          PAYLOAD         | .. | SIZE | PAYLOAD ... | IPAD |
++--------------------------+    +------+-------------+------+
+ \--------- BLOCK --------/      \--------- BLOCK --------/
+            key=full                        key=size
+
++--------------------------+    +------+-------------------+    +--------------------------+
+|          PAYLOAD         | .. | SIZE | PAYLOAD ...       | .. | PAYLOAD ...              |
++--------------------------+    +------+-------------------+    +--------------------------+
+ \--------- BLOCK --------/      \--------- BLOCK --------/      \--------- BLOCK --------/
+            key=full                        key=size                        key=full
+
++--------------------------+    +------+-------------------+    +-------------+-------------+
+|          PAYLOAD         | .. | SIZE | PAYLOAD ...       | .. | PAYLOAD ... | IPAD ...    |
++--------------------------+    +------+-------------------+    +-------------+------------+
+ \--------- BLOCK --------/      \--------- BLOCK --------/      \--------- BLOCK --------/
+            key=full                        key=size                        key=full
+@end verbatim
+
+@code{OPAD} is appended if @code{IPAD} (inside the block) has not enough
+length. @code{OPAD} is just an output of the XOF function. No encryption
+and explicit authentication is applied to it. XOF is just faster and can
+be computed deterministically on both ends -- you just have to
+authenticate its length.
+
+Each node has static @strong{exchange} and @strong{signature} keypairs.
+When node A want to send encrypted packet to node B, it:
+
+@enumerate
+@item generates ephemeral @url{http://cr.yp.to/ecdh.html, curve25519} keypair
+@item prepares structure for signing
+@item signs that structure using private
+    @url{http://ed25519.cr.yp.to/, ed25519} signature key
+@item takes remote node's exchange public key and performs
+    Diffie-Hellman computation on this remote static public key and
+    private ephemeral one
+@item derives three keys using BLAKE3 derivation function from the
+    curve25519-derived ephemeral source key:
+    @itemize
+    @item @code{key=full} with the context of:
+        @verb{|N N C P E 0x00 0x00 0x06 <SP> F U L L|}
+    @item @code{key=size} with the context of:
+        @verb{|N N C P E 0x00 0x00 0x06 <SP> S I Z E|}
+    @item @code{key=pad} with the context of:
+        @verb{|N N C P E 0x00 0x00 0x06 <SP> P A D|}
+    @end itemize
+@item calculates authenticated data: it is BLAKE3-256 hash of the
+    unsigned header (same used for signing)
+@item reads the payload by 128 KiB chunks. If it is enough data to fill
+    the entire 128 KiB block, then encrypt the chunk with
+    @code{key=full} key
+@item if there is not enough data, then payload is reaching the end.
+    @itemize
+    @item prepend @code{SIZE} structure to the finishing chunk of data.
+        All sizes at that time are known
+    @item produce block with @code{SIZE} even if there is no payload
+        data left
+    @item append remaining payload to the @code{SIZE}, if it is left
+    @item if there is padding, then fill current block to the end with
+        zeros (@code{IPAD})
+    @item encrypt the block with @code{key=size} key
+    @end itemize
+@item if there is more padding left (@code{OPAD}), then generate it with
+    BLAKE3 XOF function using the @code{key=pad} key
+@end enumerate

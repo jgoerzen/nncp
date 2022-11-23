@@ -1,0 +1,49 @@
+@node Feeds
+@cindex Web feeds integration
+@cindex RSS feeds integration
+@cindex Atom feeds integration
+@section Integration with Web feeds
+
+@pindex r2e
+RSS and Atom feeds could be collected using
+@url{https://github.com/wking/rss2email, rss2email} program. It converts
+all incoming feed entries to email messages. Read about how to integrate
+@ref{Postfix}/@ref{Exim} with email. @command{rss2email} could be run in
+a cron, to collect feeds without any user interaction. Also this program
+supports ETags and won't pollute the channel if remote server supports
+them too.
+
+After installing @command{rss2email}, create configuration file:
+
+@example
+$ r2e new rss-robot@@address.com
+@end example
+
+and add feeds you want to retrieve:
+
+@example
+$ r2e add http://www.nncpgo.org/download/releases.atom
+@end example
+
+and run the process:
+
+@example
+$ r2e run
+@end example
+
+@pindex feeder
+But it is more flexible and advisable to use use
+@url{https://www.feeder.stargrave.org/, feeder} (NNCP's author creation)
+that also transforms feed entries to Maildir email messages. Incoming
+entries are placed in @file{new/} Maildir directories, so you can easily
+send all of them:
+
+@example
+% tar cf - **/new/*(.) | zstdmt | nncp-file - remote.node:feeds-`date -Iseconds`.tar.zst
+% feeder/dir/contrib/feeds-oldenize.zsh
+@end example
+
+Unlike @command{r2e}, @command{feeder} has also
+@url{http://www.feeder.stargrave.org/Enclosures.html, enclosures} and
+@url{http://www.feeder.stargrave.org/WARCs.html, WARCs} downloading
+capabilities, that are also stored as a files on the disk.

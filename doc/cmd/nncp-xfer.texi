@@ -1,0 +1,32 @@
+@node nncp-xfer
+@pindex nncp-xfer
+@section nncp-xfer
+
+@example
+$ nncp-xfer [options] [-node NODE] [-mkdir] [-keep] [-rx|-tx] DIR
+@end example
+
+Search for directory in @file{DIR} containing inbound packets for us and
+move them to local @ref{Spool, spool} directory. Also search for known
+neighbours directories and move locally queued outbound packets to them.
+This command is used for offline packets transmission.
+
+If @option{-mkdir} option is specified, then outbound neighbour(s)
+directories will be created. This is useful for the first time usage,
+when storage device does not have any directories tree.
+
+If @option{-keep} option is specified, then keep copied files, do not
+remove them.
+
+@option{-rx} option tells only to move inbound packets addressed to us.
+@option{-tx} option tells exactly the opposite: move only outbound packets.
+
+@command{@ref{nncp-cfgmin}} could be useful for creating stripped
+minimalistic configuration file version without any private keys.
+
+@file{DIR} directory has the following structure:
+@file{RECIPIENT/SENDER/PACKET}, where @file{RECIPIENT} is Base32 encoded
+destination node, @file{SENDER} is Base32 encoded sender node.
+
+Also look for @command{@ref{nncp-bundle}}, especially if you deal with
+CD-ROM and tape drives.

@@ -1,0 +1,25 @@
+@node UsecaseMail
+@section Occasional connection to mail server
+
+Assume that you have got your own @url{http://www.postfix.org/,
+Postfix}/@url{http://www.exim.org/, Exim} SMTP server connected to the
+Internet. But you read and write emails on your notebook, that is
+connected to it just from time to time. How can you flush buffered mail
+queues when your notebook is connected?
+
+One possibility is to log in and run something like @command{postqueue
+-f}, but by default you have got only several days so and sender will
+receive notification emails that his messages still are not delivered
+yet. Also you must have secure link (SSH, VPN, etc).
+
+Another possibility is to use POP3/IMAP4 servers, but this is too
+overcomplicated and bloated for the simple task. Not an option.
+@url{https://en.wikipedia.org/wiki/KISS_principle, KISS}!
+
+Just tell both of your Postfix/Exim (on the server and notebook) to drop
+email as a mail via NNCP (@command{@ref{nncp-exec}}) to specified node.
+
+More information for Postfix is @ref{Postfix, here} and for Exim is
+@ref{Exim, here}. All mail will be stored in NNCP @ref{Spool, spool},
+that after exchanging and tossing will call local @command{sendmail}
+command to deliver them just like that happened on the same machine.

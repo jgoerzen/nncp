@@ -1,0 +1,123 @@
+@node Commands
+@cindex commands
+@unnumbered Commands
+
+Nearly all commands have the following common options:
+
+@table @option
+@vindex NNCPCFG
+@item -cfg
+    Path to configuration file. May be overridden by @env{$NNCPCFG}
+    environment variable. If file file is an encrypted @ref{EBlob,
+    eblob}, then ask for passphrase to decrypt it first.
+@item -debug
+    Print debug messages. Normally this option should not be used.
+@item -minsize
+    @anchor{OptMinSize}
+    Minimal required resulting packet size, in KiBs. For example if you
+    send 2 KiB file and set @option{-minsize 4}, then resulting packet
+    will be 4 KiB (containing file itself and some junk).
+@item -nice
+    Set desired outgoing packet @ref{Niceness, niceness level}.
+@item -replynice
+    Set desired reply packet @ref{Niceness, niceness level}. Only freq
+    and exec packets look at that niceness level.
+@item -via
+    Override @ref{CfgVia, via} configuration option for destination node.
+    Specified nodes must be separated with comma: @verb{|NODE1,NODE2|}.
+    With @verb{|-via -|} you can disable relaying at all.
+@vindex NNCPSPOOL
+@item -spool
+    Override path to spool directory. May be specified by
+    @env{$NNCPSPOOL} environment variable.
+@vindex NNCPLOG
+@item -log
+    Override path to logfile. May be specified by @env{$NNCPLOG}
+    environment variable.
+@item -quiet
+    Print only errors, omit simple informational messages. In any case
+    those messages are logged, so you can reread them using
+    @command{@ref{nncp-log}} command.
+@item -progress, -noprogress
+    Either force progress showing, or disable it.
+@item -version
+    Print version information.
+@item -warranty
+    Print warranty information (no warranty).
+@end table
+
+@vindex TMPDIR
+All commands respect @env{$TMPDIR} environment variable.
+
+@vindex NNCPNOSYNC
+If you set @env{$NNCPNOSYNC=1}, then all @code{fsync} operations will be
+skipped. That is dangerous option, but if there there are abilities to
+rollback possibly corrupted state to some stable snapshot, then disabled
+@code{fsync} can give considerable increase in performance.
+
+@menu
+Configuration file commands
+
+* nncp-cfgnew::
+* nncp-cfgmin::
+* nncp-cfgenc::
+* nncp-cfgdir::
+
+Packets creation commands
+
+* nncp-file::
+* nncp-exec::
+* nncp-freq::
+* nncp-trns::
+* nncp-ack::
+
+Packets sharing commands
+
+* nncp-xfer::
+* nncp-bundle::
+
+Checking and tossing commands
+
+* nncp-toss::
+* nncp-check::
+* nncp-reass::
+
+Online synchronization protocol commands
+
+* nncp-daemon::
+* nncp-call::
+* nncp-caller::
+* nncp-cronexpr::
+
+Maintenance, monitoring and debugging commands:
+
+* nncp-stat::
+* nncp-log::
+* nncp-rm::
+* nncp-pkt::
+* nncp-hash::
+@end menu
+
+@include cmd/nncp-cfgnew.texi
+@include cmd/nncp-cfgmin.texi
+@include cmd/nncp-cfgenc.texi
+@include cmd/nncp-cfgdir.texi
+@include cmd/nncp-file.texi
+@include cmd/nncp-exec.texi
+@include cmd/nncp-freq.texi
+@include cmd/nncp-trns.texi
+@include cmd/nncp-ack.texi
+@include cmd/nncp-xfer.texi
+@include cmd/nncp-bundle.texi
+@include cmd/nncp-toss.texi
+@include cmd/nncp-check.texi
+@include cmd/nncp-reass.texi
+@include cmd/nncp-daemon.texi
+@include cmd/nncp-call.texi
+@include cmd/nncp-caller.texi
+@include cmd/nncp-cronexpr.texi
+@include cmd/nncp-stat.texi
+@include cmd/nncp-log.texi
+@include cmd/nncp-rm.texi
+@include cmd/nncp-pkt.texi
+@include cmd/nncp-hash.texi

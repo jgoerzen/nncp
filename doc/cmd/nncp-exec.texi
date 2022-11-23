@@ -1,0 +1,50 @@
+@node nncp-exec
+@pindex nncp-exec
+@section nncp-exec
+
+@example
+$ nncp-exec [options] [-use-tmp] [-nocompress]      NODE HANDLE [ARG0 ARG1 @dots{}]
+$ nncp-exec [options] [-use-tmp] [-nocompress] area:AREA HANDLE [ARG0 ARG1 @dots{}]
+@end example
+
+Send execution command to @option{NODE} for specified @option{HANDLE}.
+Body is read from @code{stdin} into memory and compressed (unless
+@option{-nocompress} is specified). After receiving, remote side will
+execute specified @ref{CfgExec, handle} command with @option{ARG*}
+appended and decompressed body fed to command's @code{stdin}.
+
+For example, if remote side has following configuration file for your
+node:
+
+@verbatim
+exec: {
+  sendmail: [/usr/sbin/sendmail, "-t"]
+  appender: ["/bin/sh", "-c", "cat >> /append"]
+}
+@end verbatim
+
+@vindex NNCP_SELF
+@vindex NNCP_SENDER
+@vindex NNCP_NICE
+then executing @verb{|echo My message | nncp-exec -replynice 123 REMOTE
+sendmail root@localhost|} will lead to execution of:
+
+@example
+echo My message |
+    NNCP_SELF=REMOTE \
+    NNCP_SENDER=OurNodeId \
+    NNCP_NICE=123 \
+    /usr/sbin/sendmail -t root@@localhost
+@end example
+
+If @ref{CfgNotify, notification} is enabled on the remote side for exec
+handles, then it will sent simple letter after successful command
+execution with its output in message body.
+
+@strong{Pay attention} that packet generated with this command won't be
+be chunked.
+
+If you use @option{area:AREA} instead of @option{NODE}, then
+@ref{Multicast, multicast} packet will be sent to specified area. That
+creates outgoing packet to the @strong{self} node, so you have to run
+@ref{nncp-toss, tossing} to create outgoing packets to required subscribers.

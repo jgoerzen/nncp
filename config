@@ -1,0 +1,14 @@
+GO=${GO:-go}
+MAKEINFO=${MAKEINFO:-makeinfo}
+PLANTUML=${PLANTUML:-plantuml}
+
+PREFIX=${PREFIX:-/usr/local}
+
+SENDMAIL=${SENDMAIL:-/usr/sbin/sendmail}
+CFGPATH=${CFGPATH:-$PREFIX/etc/nncp.hjson}
+SPOOLPATH=${SPOOLPATH:-/var/spool/nncp}
+LOGPATH=${LOGPATH:-/var/spool/nncp/log}
+
+BINDIR=${BINDIR:-${DESTDIR}${PREFIX}/bin}
+INFODIR=${INFODIR:-${DESTDIR}${PREFIX}/info}
+DOCDIR=${DOCDIR:-${DESTDIR}${PREFIX}/share/doc/nncp}

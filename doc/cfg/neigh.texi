@@ -1,0 +1,176 @@
+@node CfgNeigh
+@cindex neighbour configuration options
+@section Configuration neighbour options
+
+@vindex neigh
+@strong{neigh} section contains all known neighbours information. It
+always has @strong{self} neighbour that is copy of our node's public
+data (public keys). It is useful for copy-paste sharing with your
+friends. Each section's key is a human-readable name of the neighbour.
+
+@verbatim
+neigh: {
+  self: {
+    id: RKOLY...KAMXQ
+    exchpub: 2NZKH...CMI7A
+    signpub: EXD7M...YAOFA
+    noisepub: MIXYN...BGNDQ
+    exec: {sendmail: ["/usr/sbin/sendmail"]}
+  }
+  alice: {
+    id: "XJZBK...65IJQ"
+    exchpub: MJACJ...FAI6A
+    signpub: T4AFC...N2FRQ
+    noisepub: UBM5K...VI42A
+    exec: {flag: ["/usr/bin/touch", "-t"]}
+    incoming: "/home/alice/incoming"
+    onlinedeadline: 1800
+    maxonlinetime: 3600
+    addrs: {
+      lan: "[fe80::1234%igb0]:5400"
+      internet: alice.com:3389
+      proxied: "|ssh remote.host nncp-daemon -ucspi"
+    }
+    calls: [
+      {
+        cron: "*/2 * * * *"
+      }
+    ]
+  }
+  bob: {
+    id: 2IZNP...UYGYA
+    exchpub: WFLMZ...B7NHA
+    signpub: GTGXG...IE3OA
+    exec: {
+      sendmail: ["/usr/sbin/sendmail"]
+      warcer: ["/path/to/warcer.sh"]
+      wgeter: ["/path/to/wgeter.sh"]
+    }
+    freq: {
+      path: "/home/bob/pub"
+      chunked: 1024
+      minsize: 2048
+    }
+    via: ["alice"]
+    rxrate: 10
+    txrate: 20
+  }
+}
+@end verbatim
+
+Except for @code{id}, @code{exchpub} and @code{signpub} each neighbour
+node has the following fields:
+
+@table @code
+
+@item noisepub
+    If present, then node can be online called using @ref{Sync,
+    synchronization protocol}. Contains authentication public key.
+
+@vindex exec
+@pindex sendmail
+@anchor{CfgExec}
+@item exec
+    Dictionary consisting of handles and corresponding command line
+    arguments. In example above there are @command{sendmail} handles,
+    @command{warcer}, @command{wgeter} and @command{flag} one. Remote
+    node can queue some handle execution with providing additional
+    command line arguments and the body fed to command's @code{stdin}.
+
+    @verb{|sendmail: ["/usr/sbin/sendmail", "-t"]|} handle, when called by
+    @verb{|echo hello world | nncp-exec self sendmail ARG0 ARG1 ARG2|}
+    command, will execute:
+
+@example
+NNCP_SELF=OURNODE \
+NNCP_SENDER=REMOTE \
+NNCP_NICE=64 \
+/usr/sbin/sendmail -t ARG0 ARG1 ARG2
+@end example
+
+    feeding @verb{|hello world\n|} to that started @command{sendmail}
+    process.
+
+@vindex incoming
+@anchor{CfgIncoming}
+@item incoming
+    Full path to directory where all file uploads will be saved. May be
+    omitted to forbid file uploading on that node.
+
+@vindex freq
+@anchor{CfgFreq}
+@item freq
+    @table @code
+    @item path
+        Full path to directory from where file requests will queue files
+        for transmission. May be omitted to forbid freqing from that node.
+
+    @item chunked
+        If set, then enable @ref{Chunked, chunked} file transmission
+        during freqing. This is the desired chunk size in KiBs.
+
+    @item minsize
+        If set, then apply @ref{OptMinSize, -minsize} option during file
+        transmission.
+    @end table
+
+@vindex via
+@anchor{CfgVia}
+@item via
+    An array of node identifiers that will be used as a relay to that
+    node. For example @verb{|["foo","bar"]|} means that packet can reach
+    current node by transitioning through @code{foo} and then @code{bar}
+    nodes. May be omitted if direct connection exists and no relaying is
+    required.
+
+@vindex addrs
+@anchor{CfgAddrs}
+@item addrs
+    Dictionary containing known network addresses of the node. Each key
+    is human-readable name of the address. For direct TCP connections
+    use @verb{|host:port|} format, pointing to @command{@ref{nncp-daemon}}'s
+    listening instance.
+
+    Also you can pipe connection through the external command using
+    @verb{#|some command#} format. @code{/bin/sh -c "some command"} will
+    start and its @code{stdin}/@code{stdout} used as a connection.
+
+    To use @ref{Yggdrasil} network for connectivity, use
+    @code{yggdrasil:PUB;PRV;PEER[,@dots{}]} format, read about
+    @ref{CfgYggdrasilAliases, possible aliases} usage.
+
+    May be omitted if either no direct connection exists, or
+    @command{@ref{nncp-call}} is used with forced address specifying.
+
+@vindex rxrate
+@vindex txrate
+@anchor{CfgXxRate}
+@item rxrate/txrate
+    If greater than zero, then at most *rate packets per second will be
+    sent/received after the handshake. It could be used as crude
+    bandwidth traffic shaper: each packet has at most 64 KiB payload
+    size. If omitted -- no rate limits.
+
+@vindex onlinedeadline
+@anchor{CfgOnlineDeadline}
+@item onlinedeadline
+    Online connection deadline of nodes inactivity in seconds. It is the
+    time connection considered dead after not receiving/sending any
+    packets (except for PINGs) and connection must be terminated. By
+    default it is set to 10 seconds. This can be set to rather high
+    values to keep connection alive (to reduce handshake overhead and
+    delays), wait for appearing packets ready to send and notifying
+    remote side about their appearance.
+
+@vindex maxonlinetime
+@anchor{CfgMaxOnlineTime}
+@item maxonlinetime
+    If greater than zero, then it is maximal time of single connection.
+    Forcefully disconnect if it is exceeded.
+
+@anchor{CfgCalls}
+@item calls
+    List of @ref{Call, call configuration}s.
+    Can be omitted if @command{@ref{nncp-caller}} won't be used to call that node.
+
+@end table

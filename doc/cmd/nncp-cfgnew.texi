@@ -1,0 +1,21 @@
+@node nncp-cfgnew
+@pindex nncp-cfgnew
+@section nncp-cfgnew
+
+@example
+$ nncp-cfgnew [options] [-area NAME] [-yggdrasil] [-nocomments] > new.hjson
+@end example
+
+Generate new node configuration: private keys, example configuration
+file and print it to @code{stdout}. You must use this command when you
+setup the new node. @option{-nocomments} will create configuration file
+without descriptive huge comments -- useful for advanced users.
+
+With @option{-area} option you generate only the @ref{Area, area}
+related part of the configuration file.
+
+With @option{-yggdrasil} option only ed25519 keypair will be generated
+for use with @ref{Yggdrasil}.
+
+Pay attention that private keys generation consumes an entropy from your
+operating system.

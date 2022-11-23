@@ -1,4 +1,6 @@
 @node Niceness
+@cindex niceness
+@cindex priority
 @unnumbered Niceness
 
 Each transmitted packet has niceness level, as Unix has @command{nice}
@@ -10,20 +12,25 @@ Send big files with higher nice level! That will guarantee you that
 higher priority packets, like mail messages, will pass first, even when
 lower priority packet was already been partially downloaded.
 
-There are default niceness levels built-in for @ref{nncp-exec},
-@ref{nncp-file} and @ref{nncp-freq} commands. But pay attention that it
-can give information about underlying payload to the adversary!
+There are default niceness levels built-in for
+@command{@ref{nncp-exec}}, @command{@ref{nncp-file}} and
+@command{@ref{nncp-freq}} commands. But pay attention that it can give
+information about underlying payload to the adversary!
 
 There are 1-255 niceness levels. They could be specified either as
 integer, or using aliases with delta modifiers:
 
 @table @emph
+@vindex FLASH
 @item FLASH (F)
 Urgent priority.
+@vindex PRIORITY
 @item PRIORITY (P)
 High priority. Command execution/mail use that priority by default.
+@vindex NORMAL
 @item NORMAL (N)
 Normal priority. File requests use that priority by default.
+@vindex BULK
 @item BULK (B)
 Bundles shipped on a "least effort" basis. File transmission use that
 priority by default.

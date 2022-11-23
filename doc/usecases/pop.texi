@@ -1,0 +1,18 @@
+@node UsecasePOP
+@cindex POP3 replacement
+@cindex IMAP4 replacement
+@section Lightweight fast POP3/IMAP4 replacement
+
+@command{@ref{nncp-daemon}} can be connected with
+@command{@ref{nncp-caller}} for a long time -- it can create TCP
+connection that lasts for many hours. When SMTP server receives mail, it
+will call @command{@ref{nncp-exec}} creating an outbound encrypted
+packet. Daemon checks outbound directory each second and immediately
+sends notification about undelivered packets to remote side, that also
+downloads it at once.
+
+There are only dozens of bytes notifying about incoming packets, dozens
+of bytes telling to download those packets. Mail packets are compressed
+(POP3 and IMAP4 as a rule do not). You have lightweight, compressed,
+low-delay, reliable link for the mail with strong encryption and mutual
+sides authentication!

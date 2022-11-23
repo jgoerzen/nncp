@@ -1,0 +1,17 @@
+@node Packet
+@cindex packet format
+@cindex XDR
+@unnumbered Packet format
+
+All packets are
+@url{https://tools.ietf.org/html/rfc4506, XDR}-encoded structures.
+
+@menu
+* Plain packet: Plain
+* Encrypted packet: Encrypted
+* Encrypted area packet: Encrypted area
+@end menu
+
+@include pkt/plain.texi
+@include pkt/encrypted.texi
+@include pkt/area.texi

@@ -1,0 +1,16 @@
+@node nncp-caller
+@pindex nncp-caller
+@section nncp-caller
+
+@example
+$ nncp-caller [options] [NODE @dots{}]
+@end example
+
+Croned daemon that calls remote nodes from time to time, according to
+their @ref{CfgCalls, @emph{calls}} configuration field.
+
+Optional number of @option{NODE}s tells to ignore other ones.
+Otherwise all nodes with specified @emph{calls} configuration
+field will be called.
+
+Look at @command{@ref{nncp-call}} for more information.

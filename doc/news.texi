@@ -1,9 +1,705 @@
 @node News
+@cindex news
 @unnumbered News
 
 See also this page @ref{Новости, on russian}.
 
-@node Release 5.3.3
+@node Release 8_8_2
+@section Release 8.8.2
+@itemize
+
+@item
+Updated Yggdrasil library, with several other ones.
+
+@end itemize
+
+@node Release 8_8_1
+@section Release 8.8.1
+@itemize
+
+@item
+Fixed @command{nncp-daemon} failing with unauthenticated connection and
+enabled @option{-autotoss}.
+
+@item
+Updated dependencies.
+
+@end itemize
+
+@node Release 8_8_0
+@section Release 8.8.0
+@itemize
+
+@item
+Fixed buildability under Go 1.19.
+
+@item
+Minimal required Go version is 1.17.
+
+@item
+Updated dependencies.
+
+@end itemize
+
+@node Release 8_7_2
+@section Release 8.7.2
+@itemize
+
+@item
+More intuitive, clear and slightly more flexible behaviour of @command{nncp-rm}.
+
+@item
+@command{nncp-rm} also removes corresponding @file{hdr/} file for each
+removed packet.
+
+@end itemize
+
+@node Release 8_7_1
+@section Release 8.7.1
+@itemize
+
+@item
+@command{nncp-xfer} now correctly checks for @file{seen/} files for
+inbound packets.
+
+@end itemize
+
+@node Release 8_7_0
+@section Release 8.7.0
+@itemize
+
+@item
+@command{nncp-ack} does not acknowledge ACK-packets, preventing an
+endless loop of ACKs.
+
+@item
+@command{nncp-ack} previously did not remove corresponding @file{hdr/} files.
+
+@item
+@command{nncp-rm} now takes list of packet from @code{stdin} when
+@option{-pkt} option is used.
+
+@item
+@command{nncp-ack} now generates list of ACK packets it created, that
+could be used as an input to @command{nncp-rm} to remove outbound ACK
+packets.
+
+@end itemize
+
+@node Release 8_6_0
+@section Release 8.6.0
+@itemize
+
+@item
+@command{nncp-xfer} checks if locally copied packet's checksum differs
+from the source's one.
+
+@item
+@command{nncp-call} has bad return code if its queues contain unfinished jobs.
+
+@item
+@command{nncp-ack} command appeared, that sends explicit packet receipt
+acknowledgement (ACK packet). That acknowledgement deletes referenced
+packet from the outbound spool.
+
+@item
+Ability to turn @code{fsync} operation off using @env{$NNCPNOSYNC=1}
+environment variable.
+
+@item
+Added various indices in documentation, that should help searching in it.
+
+@end itemize
+
+@node Release 8_5_0
+@section Release 8.5.0
+@itemize
+
+@item
+Fixed @command{nncp-bundle} workability.
+
+@item
+Mistakenly @option{-mcd-wait} option was enabled by default in
+@command{nncp-call}.
+
+@item
+Ability to override internal default timeout for online protocol through
+@env{$NNCPDEADLINE} environment variable. Can be useful for very high
+delay links.
+
+@item
+NNCP builds on OpenBSD.
+
+@end itemize
+
+@node Release 8_4_0
+@section Release 8.4.0
+@itemize
+
+@item
+Multicast related interface names (@code{mcd-listen} and @code{mcd-send}
+configuration options) are now regular expressions. By default
+@command{nncp-cfgnew} uncomments them now with @code{.*} interface name.
+
+@item
+@command{nncp-call} command has @option{-mcd-wait} option to wait for
+multicast packet about node's address.
+
+@item
+@command{nncp-file} command skips everything that is neither regular
+file nor directory during pax-archive creation.
+
+@end itemize
+
+@node Release 8_3_0
+@section Release 8.3.0
+@itemize
+
+@item
+Fixed building issues on 32-bit systems.
+
+@end itemize
+
+@node Release 8_2_0
+@section Release 8.2.0
+@itemize
+
+@item
+Yggdrasil uses pure-Go IPv6+TCP network stack, instead of naked μTP
+transport protocol, making it able to work as an ordinary TCP server
+inside overlay network.
+
+@item
+Yggdrasil's @code{prv;bind1,bind2;pub@dots{}}-like configuration strings are
+replaced with URL-like ones (@code{yggdrasils://PRV?bind=BIND1&bind=BIND2&pub=PUB}).
+
+@item
+Ability to pass multicast-related parameters to Yggdrasil configuration.
+
+@item
+@command{nncp-daemon} is able to listen on both TCP and Yggdrasil-driven
+sockets simultaneously.
+
+@item
+@command{nncp-daemon}'s listening on peering endpoint socket is optional
+-- you can be reached through the peers.
+
+@end itemize
+
+@node Release 8_1_0
+@section Release 8.1.0
+@itemize
+
+@item
+@command{nncp-cfgdir} does not require @code{self} section existence in
+configuration file.
+
+@item
+Ability to act as Yggdrasil network client, using online protocol on top of it.
+
+@end itemize
+
+@node Release 8_0_2
+@section Release 8.0.2
+@itemize
+
+@item
+Fixed sending ability to areas.
+
+@end itemize
+
+@node Release 8_0_1
+@section Release 8.0.1
+@itemize
+
+@item
+Fixed incorrect @code{freq.chunked} value calculation. If it was missed,
+then chunked transfer mode was forcefully turned on anyway.
+
+@item
+Fixed incorrect full file's size calculation in @file{.nncp.meta}.
+
+@end itemize
+
+@node Release 8_0_0
+@section Release 8.0.0
+@itemize
+
+@item
+@strong{Incompatible} encrypted packet format change: payload and pad
+sizes are sent in-bound in the encrypted stream. That gives ability to
+streamingly create encrypted packets, without knowing sizes in advance,
+without creating temporary file or buffer data in memory.
+
+@item
+Proper encrypted packet padding verification is done now. This is not
+critical issue, but previously neither padding value, nor its size were
+authenticated, giving ability to iteratively strip trailing bytes and
+determine payload's size by observing the reaction of the encrypted
+packet processing.
+
+@item
+@command{nncp-exec} loses its @option{-use-tmp} option, because of
+streaming-compatible encrypted packets format.
+
+@item
+@command{nncp-file} and @command{nncp-exec} commands have
+@option{-maxsize} option, limiting maximal resulting encrypted packet's
+maximal size (returning error if it is exceeded). Could be useful,
+because no payload size could be known in advance.
+
+@end itemize
+
+@node Release 7_7_0
+@section Release 7.7.0
+@itemize
+
+@item
+Experimental @code{kqueue} and @code{inotify} based notifications
+support about spool directory changes, for reducing their often reading
+overhead.
+
+@item
+@file{.seen} and @file{.hdr} files moved to @file{seen/} and @file{hdr/}
+subdirectories, for faster scanning of spool directories.
+Current files migration required:
+
+@example
+$ find $NNCPSPOOL -type f -name "*.hdr" -exec rm @{@} +
+
+$ find $NNCPSPOOL -type d -name rx | while read rx ; do
+    cd $rx
+    mkdir -p seen
+    find . -type f -name "*.seen" | while read fn ; do
+        mv $fn seen/$@{fn%.seen@}
+    done
+done
+
+$ find $NNCPSPOOL -type d -name area | while read area ; do
+    find $area -type f -name "*.seen" | while read fn ; do
+        mv $fn $@{fn%.seen@}
+    done
+done
+@end example
+
+@end itemize
+
+@node Release 7_6_0
+@section Release 7.6.0
+@itemize
+
+@item
+Logging may be done to specified opened file descriptor
+(@env{$NNCPLOG=FD:5} for example).
+That is friendly to use under @command{daemontools}.
+
+@item
+Added additional checks of public keys existence in configuration file,
+preventing some commands from failing.
+
+@end itemize
+
+@node Release 7_5_1
+@section Release 7.5.1
+@itemize
+
+@item
+NNCP builds on NetBSD.
+
+@end itemize
+
+@node Release 7_5_0
+@section Release 7.5.0
+@itemize
+
+@item
+@command{nncp-daemon} is compatible with UCSPI-TCP interface, so log
+will contain remote side's address (when running under appropriate
+utility). @option{-ucspi} option should be used instead of @option{-inetd}.
+
+@item
+@command{nncp-call} can be UCSPI-TCP client, using @option{-ucspi} option.
+
+@item
+Do not exit if some of MCD network interfaces can not be listened --
+only warn about that.
+
+@end itemize
+
+@node Release 7_4_0
+@section Release 7.4.0
+@itemize
+
+@item
+Fixed simultaneous @command{nncp-daemon} and @command{nncp-caller} MCD work.
+
+@end itemize
+
+@node Release 7_3_2
+@section Release 7.3.2
+@itemize
+
+@item
+@command{hjson-cli} utility builds in vendor-mode now.
+
+@end itemize
+
+@node Release 7_3_1
+@section Release 7.3.1
+@itemize
+
+@item
+Fixed possibly left opened file descriptor in online commands.
+
+@item
+Severely decreased memory usage of MTH hashing.
+
+@end itemize
+
+@node Release 7_3_0
+@section Release 7.3.0
+@itemize
+
+@item
+Fixed some workability problems on 32-bit systems with big files.
+
+@item
+Ability to use directory with a bunch of files as a configuration.
+@command{nncp-cfgdir} command appeared.
+
+@end itemize
+
+@node Release 7_2_1
+@section Release 7.2.1
+@itemize
+
+@item
+Small optimizations in online commands.
+
+@end itemize
+
+@node Release 7_2_0
+@section Release 7.2.0
+@itemize
+
+@item
+@command{nncp-trns} command appeared for manual transition packets creation.
+
+@item
+If destination node of transitional packet has non empty @option{via}
+route, then do not ignore, but use it.
+
+@item
+Do not relay multicast packet to area message's originator, that
+obviously has seen its own packet.
+
+@item
+Much less memory usage during MTH hashing when offset is zero: when
+packet is not resumed, but for example checked with @command{nncp-check}
+command.
+
+@end itemize
+
+@node Release 7_1_1
+@section Release 7.1.1
+@itemize
+
+@item
+Fixed failing directories @code{fsync} after @file{.seen} file creation.
+
+@end itemize
+
+@node Release 7_1_0
+@section Release 7.1.0
+@itemize
+
+@item
+Multicasting areas feature appeared. Implemented merely by an additional
+plain packet type with @command{nncp-toss}, @command{nncp-file} and
+@command{nncp-exec} commands modification.
+
+@item
+Fixed workability of @command{nncp-file} and @command{nncp-exec}
+commands, that use temporary file (@code{stdin} and @option{-use-tmp}).
+
+@item
+Fixed disappearing bad return code in @command{nncp-exec} command.
+
+@item
+Fixed invalid @file{.hdr} generation when transitional packets are used.
+
+@item
+@option{-all} option appeared in @command{nncp-rm} command, applying to
+all the nodes at once.
+
+@item
+@option{-cycle} option appeared in @command{nncp-check} command, looping
+the check in infinite cycle.
+
+@item
+@command{nncp-rm} command can take node alias name.
+
+@item
+@command{nncp-pkt} can parse @file{.hdr} files.
+
+@end itemize
+
+@node Release 7_0_0
+@section Release 7.0.0
+@itemize
+
+@item
+Minimal required Go version is 1.13.
+
+@item
+Merkle Tree-based Hashing with BLAKE3 (MTH) is used instead of BLAKE2b.
+Because of that, there are backward @strong{incompatible} changes of
+encrypted files (everything laying in the spool directory) and
+@file{.meta} files of chunked transfer.
+
+Current implementation is far from being optimal: it lacks
+parallelizable calculations and has higher memory consumption: nearly
+512 KiB for each 1 GiB of file's data. Future performance and memory
+size optimizations should not lead to packet's format change. But it is
+still several times faster than BLAKE2b.
+
+@item
+Resumed online downloads, because of MTH, require reading only of the
+preceding part of file, not the whole one as was before.
+
+@item
+@command{nncp-hash} utility appeared for calculating file's MTH hash.
+
+@item
+BLAKE2 KDF and XOF functions are replaced with BLAKE3 in encrypted
+packets. Lowering number of used primitives. Also, its encrypted
+packet's header is used as an associated data during encryption.
+
+@item
+MultiCast Discovery uses
+@verb{|ff02::4e4e:4350|} address instead of @verb{|ff02::1|}.
+
+@item
+@command{nncp-cfgenc} mistakenly asked passphrase three times during encryption.
+
+@item
+@command{nncp-stat} reports about partly downloaded packets.
+
+@item
+Updated dependencies.
+
+@end itemize
+
+@node Release 6_6_0
+@section Release 6.6.0
+@itemize
+
+@item
+@command{nncp-daemon}, @command{nncp-call} and @command{nncp-caller}
+commands wait for all background checksummers completion after
+connection is finished.
+
+@item
+Added possibility of address determining through multicast announcement
+in local area network, so called MCD (MultiCast Discovery).
+
+@end itemize
+
+@node Release 6_5_0
+@section Release 6.5.0
+@itemize
+
+@item
+Fixed segfault in @command{nncp-daemon} when SP handshake did not succeed.
+
+@item
+Fixed possible bad return code ignoring in automatic tosser.
+
+@item
+Fixed race during file descriptors closing when online protocol call is
+finished, that could lead to write error of received packet fragment.
+
+@item
+Kill all packet transmission progress bars in @command{nncp-daemon},
+@command{nncp-call} and @command{nncp-caller} when call is finished.
+
+@end itemize
+
+@node Release 6_4_0
+@section Release 6.4.0
+@itemize
+
+@item
+Fixed possible race in online protocol, that lead to panic.
+
+@end itemize
+
+@node Release 6_3_0
+@section Release 6.3.0
+@itemize
+
+@item
+Fixed possible panic while showing progress during online protocol.
+
+@end itemize
+
+@node Release 6_2_1
+@section Release 6.2.1
+@itemize
+
+@item
+Three places in logs contained excess @code{%s}.
+
+@end itemize
+
+@node Release 6_2_0
+@section Release 6.2.0
+@itemize
+
+@item
+Returned @command{nncp-caller}'s @option{-autotoss*} options workability.
+
+@item
+Yet another logging refactoring and simplification.
+Should be no visible differences to the end user.
+
+@end itemize
+
+@node Release 6_1_0
+@section Release 6.1.0
+@itemize
+
+@item
+Optimization: most commands do not keep opened file descriptors now.
+Previously you can exceed maximal number of opened files if you have got
+many packets in the spool directory.
+
+@item
+Optimization: do not close file descriptor of the file we download
+online. Previously each chunk lead to expensive open/close calls.
+
+@item
+Online downloaded files are saved with @file{.nock} (non-checksummed)
+suffix, waiting either for @command{nncp-check}, or online daemons to
+perform integrity check.
+
+@item
+Optimization: files, that are not resumed, are checksummed immediately
+during the online download, skipping @file{.nock}-intermediate step.
+
+@item
+Ability to store encrypted packet's header in @file{.hdr} file, close to
+the packet itself. That can greatly increase performance of packets
+listing on filesystems with big block's size.
+
+@end itemize
+
+@node Release 6_0_0
+@section Release 6.0.0
+@itemize
+
+@item
+Log uses human readable and easy machine parseable
+@url{https://www.gnu.org/software/recutils/, recfile} format for the
+records, instead of structured RFC 3339 lines. Old logs are not readable
+by @command{nncp-log} anymore.
+
+@item
+@option{-autotoss*} option workability with @command{nncp-daemon}'s
+@option{-inetd} mode.
+
+@item
+Call's @option{when-tx-exists} allows to make a call only when outbound
+packets exists. Combined with seconds-aware cron expression that can be
+used as some kind of auto dialler.
+
+@item
+@command{nncp-cronexpr} command allows you to check validity and
+expectations of specified cron expression.
+
+@end itemize
+
+@node Release 5_6_0
+@section Release 5.6.0
+@itemize
+
+@item
+@option{-autotoss*} option runs tosser not after the call, but every
+second while it is active.
+
+@item
+@option{autotoss}, @option{autotoss-doseen},
+@option{autotoss-nofile}, @option{autotoss-nofreq},
+@option{autotoss-noexec}, @option{autotoss-notrns} options available in
+@option{calls} configuration section. You can configure per-call
+automatic tosser options.
+
+@item
+Use vendoring, instead of @env{$GOPATH} overriding during tarball
+installation, because current minimal Go's version is 1.12 and it
+supports modules.
+
+@end itemize
+
+@node Release 5_5_1
+@section Release 5.5.1
+@itemize
+
+@item
+Respect for @env{$BINDIR}, @env{$INFODIR} and @env{$DOCDIR} environment
+variables in @file{config} during installation.
+
+@end itemize
+
+@node Release 5_5_0
+@section Release 5.5.0
+@itemize
+
+@item
+Bugfixes in @command{nncp-call(er)}/@command{nncp-daemon},
+@command{nncp-bundle} and @command{nncp-stat}.
+
+@item
+@command{nncp-rm} has @option{-dryrun} and @option{-older} options now.
+
+@item
+@command{nncp-exec} has @option{-use-tmp} and @option{-nocompress}
+options now. Uncompressed packets are not compatible with previous NNCP
+versions.
+
+@item
+@command{nncp-call}, @command{nncp-caller} and @command{nncp-daemon} commands
+have @option{-autotoss*} options for running tosser after call is ended.
+
+@item
+Updated dependencies. Minimal required Go version is 1.12.
+
+@end itemize
+
+@node Release 5_4_1
+@section Release 5.4.1
+@itemize
+
+@item
+Fixed @code{SENDMAIL} variable usage during the build.
+
+@end itemize
+
+@node Release 5_4_0
+@section Release 5.4.0
+@itemize
+
+@item
+Updated dependencies.
+
+@item
+Build system is moved from Makefiles to @url{http://cr.yp.to/redo.html, redo}.
+This should not influence package maintainers, because minimal @command{redo}
+implementation is included in tarball.
+
+@end itemize
+
+@node Release 5_3_3
 @section Release 5.3.3
 @itemize
 
@@ -15,7 +711,7 @@ Updated dependencies.
 
 @end itemize
 
-@node Release 5.3.2
+@node Release 5_3_2
 @section Release 5.3.2
 @itemize
 
@@ -26,7 +722,7 @@ forcefully disconnect.
 
 @end itemize
 
-@node Release 5.3.1
+@node Release 5_3_1
 @section Release 5.3.1
 @itemize
 
@@ -40,7 +736,7 @@ about each packet in the spool.
 
 @end itemize
 
-@node Release 5.3.0
+@node Release 5_3_0
 @section Release 5.3.0
 @itemize
 
@@ -70,7 +766,7 @@ SP-connection. That allows faster determining of connection unworkability.
 
 @end itemize
 
-@node Release 5.2.1
+@node Release 5_2_1
 @section Release 5.2.1
 @itemize
 
@@ -79,7 +775,7 @@ Fixed SP protocol error handling, sometimes causing program panic.
 
 @end itemize
 
-@node Release 5.2.0
+@node Release 5_2_0
 @section Release 5.2.0
 @itemize
 
@@ -97,7 +793,7 @@ Free disk space check during @command{nncp-bundle -rx} call.
 
 @end itemize
 
-@node Release 5.1.2
+@node Release 5_1_2
 @section Release 5.1.2
 @itemize
 
@@ -111,11 +807,11 @@ Bugfix: private and public Noise keys were swapped in newly created
 configuration files, that lead to inability to authenticate online peers.
 
 @item
-Explicit directories fsync-ing for guaranteed files renaming.
+Explicit directories @code{fsync}-ing for guaranteed files renaming.
 
 @end itemize
 
-@node Release 5.1.1
+@node Release 5_1_1
 @section Release 5.1.1
 @itemize
 
@@ -124,7 +820,7 @@ Fixed workability of @command{nncp-file} with @option{-chunked 0} option.
 
 @end itemize
 
-@node Release 5.1.0
+@node Release 5_1_0
 @section Release 5.1.0
 @itemize
 
@@ -138,7 +834,7 @@ Free disk space is checked during outbound packets creation.
 @item
 @option{freq}, @option{freqminsize}, @option{freqchunked} configuration
 file options replaced with the structure:
-@option{freq: @{path: ..., minsize: ..., chunked: ...@}}.
+@option{freq: @{path: @dots{}, minsize: @dots{}, chunked: @dots{}@}}.
 
 @item
 Added @option{freq.maxsize} configuration file option, forbidding of
@@ -150,7 +846,7 @@ Ability to notify about successfully executed commands (exec) with
 
 @end itemize
 
-@node Release 5.0.0
+@node Release 5_0_0
 @section Release 5.0.0
 @itemize
 
@@ -198,13 +894,13 @@ Forbid any later GNU GPL version autousage
 
 @end itemize
 
-@node Release 4.1
+@node Release 4_1
 @section Release 4.1
 @itemize
 @item Workability on GNU/Linux systems and Go 1.10 is fixed.
 @end itemize
 
-@node Release 4.0
+@node Release 4_0
 @section Release 4.0
 @itemize
 
@@ -240,13 +936,13 @@ Begin using of @code{go.mod} subsystem.
 
 @end itemize
 
-@node Release 3.4
+@node Release 3_4
 @section Release 3.4
 @itemize
 @item @command{nncp-daemon} can be run as @command{inetd}-service.
 @end itemize
 
-@node Release 3.3
+@node Release 3_3
 @section Release 3.3
 @itemize
 
@@ -276,7 +972,7 @@ for @command{nncp-file} from 196 to 224.
 
 @end itemize
 
-@node Release 3.2
+@node Release 3_2
 @section Release 3.2
 @itemize
 @item
@@ -288,14 +984,14 @@ inside. NNCP accidentally was dependant on that bug. Explicit adding of
 archives.
 @end itemize
 
-@node Release 3.1
+@node Release 3_1
 @section Release 3.1
 @itemize
 @item
 Ability to disable relaying at all using @verb{|-via -|} command line option.
 @end itemize
 
-@node Release 3.0
+@node Release 3_0
 @section Release 3.0
 @itemize
 
@@ -313,8 +1009,8 @@ option in configuration file and using @command{nncp-exec} command:
     you must use @verb{|nncp-exec NODE sendmail RECIPIENT|}.
     @item
     @option{sendmail} configuration file option is replaced with
-    @option{exec}. @verb{|sendmail: [...]|} must be replaced with
-    @verb{|exec: sendmail: [...]|}.
+    @option{exec}. @code{sendmail: [@dots{}]} must be replaced with
+    @code{exec: sendmail: [@dots{}]}.
     @end itemize
 
 @item
@@ -327,8 +1023,8 @@ Chunked files, having size less than specified chunk size, will be sent
 as an ordinary single file.
 
 @item
-Exec commands are invoked with additional @env{NNCP_NICE} and
-@env{NNCP_SELF} environment variables.
+Exec commands are invoked with additional @env{$NNCP_NICE} and
+@env{$NNCP_SELF} environment variables.
 
 @item
 Files, that are sent as a reply to freq, have niceness level taken from
@@ -348,7 +1044,7 @@ off by specifying zero value.
 
 @end itemize
 
-@node Release 2.0
+@node Release 2_0
 @section Release 2.0
 @itemize
 
@@ -367,7 +1063,7 @@ identical to BLAKE2).
 
 @end itemize
 
-@node Release 1.0
+@node Release 1_0
 @section Release 1.0
 @itemize
 
@@ -377,9 +1073,10 @@ are not supported.
 
 @item
 @command{nncp-bundle} command can either create stream of encrypted
-packets, or digest it. It is useful when dealing with stdin/stdout based
-transmission methods (like writing to CD-ROM without intermediate
-prepared ISO image and working with tape drives).
+packets, or digest it. It is useful when dealing with
+@code{stdin}/@code{stdout} based transmission methods (like writing to
+CD-ROM without intermediate prepared ISO image and working with tape
+drives).
 
 @item
 @command{nncp-toss} is able to create @file{.seen} files preventing
@@ -400,19 +1097,19 @@ command line argument, or environment variable.
 
 @end itemize
 
-@node Release 0.12
+@node Release 0_12
 @section Release 0.12
 @itemize
-@item Sendmail command is called with @env{NNCP_SENDER} environment variable.
+@item Sendmail command is called with @env{$NNCP_SENDER} environment variable.
 @end itemize
 
-@node Release 0.11
+@node Release 0_11
 @section Release 0.11
 @itemize
 @item @command{nncp-stat}'s command output is sorted by node name.
 @end itemize
 
-@node Release 0.10
+@node Release 0_10
 @section Release 0.10
 @itemize
 @item
@@ -420,7 +1117,7 @@ command line argument, or environment variable.
 @file{SRC} path's element will be used by default.
 @end itemize
 
-@node Release 0.9
+@node Release 0_9
 @section Release 0.9
 @itemize
 @item
@@ -428,7 +1125,7 @@ Fix @option{-rx}/@option{-tx} arguments processing in
 @command{nncp-call} command. They were ignored.
 @end itemize
 
-@node Release 0.8
+@node Release 0_8
 @section Release 0.8
 @itemize
 @item
@@ -436,13 +1133,13 @@ Little bugfix in @command{nncp-file} command, where @option{-minsize}
 option for unchunked transfer was not in KiBs, but in bytes.
 @end itemize
 
-@node Release 0.7
+@node Release 0_7
 @section Release 0.7
 @itemize
 
 @item
-Ability to feed @command{nncp-file} from stdin, that uses an encrypted
-temporary file for that.
+Ability to feed @command{nncp-file} from @code{stdin}, that uses an
+encrypted temporary file for that.
 
 @item
 Chunked files transmission appeared with corresponding
@@ -476,14 +1173,14 @@ Cryptographic libraries (dependencies) are updated.
 
 @end itemize
 
-@node Release 0.6
+@node Release 0_6
 @section Release 0.6
 @itemize
 @item Small @command{nncp-rm} command appeared.
 @item Cryptographic libraries (dependencies) are updated.
 @end itemize
 
-@node Release 0.5
+@node Release 0_5
 @section Release 0.5
 @itemize
 @item
@@ -491,7 +1188,7 @@ Trivial small fix in default niceness level of @command{nncp-file}
 and @command{nncp-freq} commands.
 @end itemize
 
-@node Release 0.4
+@node Release 0_4
 @section Release 0.4
 @itemize
 
@@ -511,13 +1208,13 @@ is useful during @command{nncp-xfer} usage.
 
 @end itemize
 
-@node Release 0.3
+@node Release 0_3
 @section Release 0.3
 @itemize
 @item Fixed compatibility with Go 1.6.
 @end itemize
 
-@node Release 0.2
+@node Release 0_2
 @section Release 0.2
 @itemize
 

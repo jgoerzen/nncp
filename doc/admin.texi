@@ -1,0 +1,137 @@
+@node Administration
+@cindex administration
+@unnumbered Administration
+
+NNCP uses following files/directories you should be aware of:
+
+@itemize
+
+@item
+    @ref{Configuration} file, for example @file{/usr/local/etc/nncp.hjson}.
+    Should not be globally readable, because it contains private keys.
+
+@item
+    @ref{Spool} directory with inbound/outbound encrypted packets, for
+    example @file{/var/spool/nncp}.
+
+    It also contains temporary files (in @file{tmp/} directory),
+    possibly left alone, if some of the commands failed and prematurely
+    exited and that should be cleaned from time to time.
+
+    Partly transferred files are stored with @file{.part} suffix. And
+    possibly they also require cleanup if they are completely lost.
+
+    It can contain @file{.nock} files: fully downloaded, but still not
+    checksummed. Can be checksummed (with @file{.nock} extension removing)
+    with @command{@ref{nncp-check} -nock}.
+
+    Also it can contain @file{seen/} and @file{hdr/} subdirectories,
+    that should be cleaned too from time to time.
+
+    All of that cleaning tasks can be done with @command{@ref{nncp-rm}} utility.
+
+    @cindex shared spool
+    @cindex setgid
+    @pindex umask
+    @anchor{Shared spool}
+    If you want to share single spool directory with multiple grouped
+    Unix users, then you can @command{setgid} it and assure that umask
+    is group friendly. For convenience you can set @option{umask}
+    globally for invoked NNCP commands in the configuration file. For
+    example:
+
+@example
+$ chgrp nncp /usr/local/etc/nncp.hjson /var/spool/nncp
+$ chmod g+r /usr/local/etc/nncp.hjson
+$ chmod g+rwxs /var/spool/nncp
+$ echo 'umask: "007"' >> /usr/local/etc/nncp.hjson
+@end example
+
+@item
+    @ref{Log} file, for example @file{/var/spool/nncp/log}. It should be
+    rotated. Choose you own preferable way to do it.
+
+    @pindex newsyslog
+    Example @url{https://www.newsyslog.org/manual.html, newsyslog}'s entry:
+@example
+/var/spool/nncp/log		644	7	100	*	BCYN
+@end example
+
+@item
+    Optional @ref{CfgIncoming, incoming} directories where uploaded
+    files are stored. Probably you want to run @command{@ref{nncp-reass}}
+    from time to time to reassemble all chunked uploads. Example crontab
+    entry:
+
+@example
+*/1	*	*	*	*	nncp-reass -all -noprogress
+@end example
+
+@pindex daemontools
+@pindex supervise
+@pindex multilog
+@item
+    Possibly long running @command{@ref{nncp-daemon}},
+    @command{@ref{nncp-caller}}, @command{@ref{nncp-toss}},
+    @command{@ref{nncp-check}} daemons. As all software, they can
+    fail and you should place them under some supervisor control.
+
+    For example you can use @url{http://cr.yp.to/daemontools.html,
+    daemontools} for that task to run them under probably existing
+    @verb{|uucp|} user:
+
+@example
+# mkdir -p /var/service/.nncp-toss/log
+# cd /var/service/.nncp-toss
+
+# cat > run <<EOF
+#!/bin/sh -e
+exec 2>&1
+exec setuidgid uucp /usr/local/bin/nncp-toss -cycle 10
+EOF
+
+# cat > log/run <<EOF
+#!/bin/sh -e
+exec setuidgid uucp multilog t ./main
+EOF
+
+# chmod -R 755 /var/service/.nncp-toss
+# mv /var/service/.nncp-toss /var/service/nncp-toss
+@end example
+
+@pindex inetd
+@item
+    @command{@ref{nncp-daemon}} can also be run as
+    @url{https://en.wikipedia.org/wiki/Inetd, inetd} service on UUCP's port:
+
+@example
+uucp	stream	tcp6	nowait	nncpuser	/usr/local/bin/nncp-daemon	nncp-daemon -quiet -ucspi
+@end example
+
+@cindex UCSPI
+@pindex tcpserver
+@item
+    Or it can be also run as a @command{daemontools} daemon under
+    @url{http://cr.yp.to/ucspi-tcp.html, UCSPI-TCP}. In the example
+    below it uses native daemontools's logging capability:
+
+@example
+# mkdir -p /var/service/.nncp-daemon/log
+# cd /var/service/.nncp-daemon
+
+# cat > run <<EOF
+#!/bin/sh -e
+NNCPLOG=FD:4 exec envuidgid nncpuser tcpserver -DHRU -l 0 ::0 uucp \
+	/usr/local/bin/nncp-daemon -quiet -ucspi 4>&1
+EOF
+
+# cat > log/run <<EOF
+#!/bin/sh -e
+exec setuidgid uucp multilog ./main
+EOF
+
+# chmod -R 755 /var/service/.nncp-daemon
+# mv /var/service/.nncp-daemon /var/service/nncp-daemon
+@end example
+
+@end itemize
